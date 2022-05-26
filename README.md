@@ -11,7 +11,7 @@ Este API se encarga Generar las Cuentas Digitales.
 
 _En caso de necesitar realizar cambios en el código, solicitar acceso a la siguiente ubicación del repositorio en GIT_
 
-https://github.com/MontePiedadMx/MS_Intermediario_Redis.git (PENDIENTE)
+ https://github.com/MontePiedadMx/MS_Cuentas_Digitales
 
 Ver la sección **Despliegue** para conocer cómo desplegar el proyecto.
 
@@ -42,6 +42,8 @@ Para los diferentes ambientes es necesario especificar las urls a redireccionar
 NODE_ENV: Ambiente en donde se despliega la aplicación [ LOCAL ,DEV , TEST, PROD ]
 CONTEXT_NAME: Contexto del API [api]/[cuentadigital]
 CONTEXT_VERSION: Versión del API
+MONGO_URL: URL para la conexión con mongo
+MONGO_CERT_BASE64: Certificado base 64 para conextarse a mongo
 ```
 
 Para análisis de pruebas Sonar

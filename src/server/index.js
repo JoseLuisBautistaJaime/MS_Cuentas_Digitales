@@ -6,6 +6,7 @@ import { CONTEXT_NAME, CONTEXT_VERSION } from '../constansts'
 import LOG from '../commons/logger'
 import { Response } from '../commons/response'
 import appRoutes from '../routes'
+import mongoose from 'mongoose'
 
 const app = express()
 const appEnv = cfenv.getAppEnv()

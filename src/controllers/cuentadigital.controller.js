@@ -4,6 +4,7 @@
  */
 import LOG from '../commons/logger'
 import { Response } from '../commons/response'
+import mongo from '../service/mongo.service'
 
 const healthCheck = async (req, res) => {
     return Response.Ok(res)
