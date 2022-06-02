@@ -25,8 +25,8 @@ const mongoDbOptions = {
     reconnectTries: 1
 }
 
-mongoose.connect(url, mongoDbOptions)
-//mongoose.connect(url)
+//mongoose.connect(url, mongoDbOptions)
+mongoose.connect(url)
 
 if (mongoose.connection.readyState === 2) {
     LOG.info(`Mongo connected!!!`)

@@ -10,6 +10,13 @@ export const BAD_REQUEST = 'BAD REQUEST'
 export const UNAUTHORIZED = 'UNAUTHORIZED'
 export const INTERNAL_SERVER_ERROR = 'INTERNAL SERVER ERROR'
 
+// Headers
+export const HEADER_OAUTH = 'oauth.bearer'
+export const HEADER_ID_CONSUMIDOR = 'idConsumidor'
+export const HEADER_ID_DESTINO = 'idDestino'
+export const HEADER_USUARIO = 'usuario'
+export const HEADER_AUTHORIZATION = 'Authorization'
+
 // Operation Code
 export const CODE_SUCCESS = 'NMP-API-CUENTADIGITAL-200'
 export const CODE_NO_CONTENT = 'NMP-API-CUENTADIGITAL-204'
@@ -23,7 +30,4 @@ export const CODE_INTERNAL_BAD_GETAWAY = 'NMP-API-CUENTADIGITAL-502'
 // Messages
 export const MESSAGE_SUCCESS = 'Se ha realizado correctamente la operación'
 export const MESSAGE_EXITOSO = 'Resultado Exitoso'
-export const MESSAGE_SUCCESS_QUEUE = 'El pago se agrego a la Queue con exito'
-export const MESSAGE_SIN_RESULTADOS =
-  'No se encontraron prendas recuperadas candidatas a beneficio Infoprenda'
-export const MESSAGE_ERROR = "Ocurrio un error en la sincrinización de datos"
+export const MESSAGE_ERROR = "Ocurrio un error ne la generación de la información"
