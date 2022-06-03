@@ -114,3 +114,5 @@ dist
 
 .idea/
 .vscode/
+envmsc.bat
+package-lock.json
