@@ -39,7 +39,7 @@ export const handlerErrorValidation = validationErrors => {
   const message = getMessages(validationErrors.errors)
   LOG.debug('Valor mensaje:', message)
   throw new BadRequestException(
-    createMessageError('NMP-API-REDIS-400', { message })
+    createMessageError('NMP-API-CUENTADIGITAL-400', { message })
   )
 }
 

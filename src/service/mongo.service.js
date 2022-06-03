@@ -4,7 +4,7 @@ import LOG from '../commons/logger'
 const url = process.env.MONGO_URL
 
 if (url === undefined) {
-    LOG.error('Es necesaria la variable: REDIS_URL')
+    LOG.error('Es necesaria la variable: MONGO_URL')
     process.exit(1)
 }
 

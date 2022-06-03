@@ -9,6 +9,9 @@ import mongo from '../service/mongo.service'
 import { CommonValidator } from '../validator/common.validator'
 import { CODE_INTERNAL_SERVER_ERROR, MESSAGE_ERROR } from '../constansts'
 import handlerError from '../validator/handler-error'
+import { CuentaDigitalValidator } from '../validator/cuentadigital.validator'
+import { handlerErrorValidation } from '../validator/message.mapping'
+import { ComunicacionesController } from './comunicaciones.controller'
 
 const otpSecret = '22222';
 
@@ -20,9 +23,16 @@ const generateOTP = async (req, res) => {
     LOG.info('CTRL: Starting generateOTP method')
     try {
         await CommonValidator.validateHeaderOAG(req)
+
+        const validator = CuentaDigitalValidator.ValidatorSchema.validate(
+            req.body,
+            CuentaDigitalValidator.generateOPTRequest
+        )
+        if (validator.errors.length) handlerErrorValidation(validator)
+    
         const usuario = req.body.usuario;
 
-        const token_otp = _generateOTP(otpSecret,usuario,60,6);
+        const token_otp = await _generateOTP(otpSecret,usuario,60,6);
 
         LOG.debugJSON('CTRL token_otp', token_otp)
 
@@ -38,8 +48,18 @@ const generateOTP = async (req, res) => {
               return res.status(500).send(response)
         }
 
+        const destinatario = req.body.destinatario 
+        if (req.body.tipo === 'EMAIL') {
+            ComunicacionesController.enviarCodigoEMAIL(req, destinatario, token_otp)
+        } else {
+            ComunicacionesController.enviarCodigoSMS(req, destinatario, token_otp)
+        }
+
+        const response = {
+            codigoVerificacion: token_otp
+        }
         LOG.info('CTRL: Ending generateOTP method')
-        return res.status(200).send(token_otp)
+        return res.status(200).send(response)
     } catch (err) {
         LOG.error(err)
         return handlerError(res, err)
@@ -56,7 +76,7 @@ const  _generateOTP = async (secretA, usuario, periodo, digits) => {
         return totp.generate();
     } catch(err) {
         LOG.error(err)
-        return null;
+        return '0000';
     }
     
 }

@@ -3,6 +3,10 @@ export const { CONTEXT_NAME } = process.env
 export const { CONTEXT_VERSION } = process.env
 export const { LOG_LEVEL } = process.env
 export const { URL_OAUTH_VALIDATOR } = process.env
+export const { TEMPLATE_API_COMUNICACIONES_SMS } = process.env
+export const { URL_API_COMUNICACIONES } = process.env
+export const { TEMPLATE_API_COMUNICACIONES_EMAIL } = process.env
+
 // Operation Status
 export const SUCCESS = 'SUCCESS'
 export const NOT_FOUND = 'NOT FOUND'

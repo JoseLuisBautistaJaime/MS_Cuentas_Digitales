@@ -1,8 +1,13 @@
 import { CODE_BAD_REQUEST, HEADER_AUTHORIZATION, HEADER_ID_CONSUMIDOR, HEADER_ID_DESTINO, HEADER_OAUTH, HEADER_USUARIO } from "../constansts"
 import { BadRequestException, createMessageError } from '../commons/exceptions'
 
+/**
+ * Valida los encabezados necesarios para el OAG
+ *
+ * @param req El request con el Header a validar.
+ * @returns {Promise<void>}
+ */
 const validateHeaderOAG = async (req) => {
-
   await validarHeader(req, HEADER_ID_CONSUMIDOR)
   await validarHeader(req, HEADER_ID_DESTINO)
   await validarHeader(req, HEADER_USUARIO)
