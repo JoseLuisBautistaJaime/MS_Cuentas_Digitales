@@ -65,6 +65,7 @@ const enviarCodigoSMS = async(req, res, destinatario, codigo) => {
         const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
 
         LOG.debugJSON('CTRL: Terminando enviarCodigoSMS', bodyResp)
+        return bodyResp
     } catch (error) {
         LOG.error(error)
         return handlerError(res, error)
@@ -112,6 +113,7 @@ const enviarCodigoSMS = async(req, res, destinatario, codigo) => {
         const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
 
         LOG.debugJSON('CTRL: Terminando enviarCodigoEMAIL', bodyResp)
+        return bodyResp
     } catch (error) {
         LOG.error(error)
         return handlerError(res, error)

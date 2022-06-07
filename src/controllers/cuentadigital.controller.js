@@ -51,14 +51,14 @@ const generateOTP = async (req, res) => {
         LOG.debugJSON('proceso-eval: tokenOtp', tokenOtp)
 
         if (tokenOtp === null || tokenOtp === "") {
-             const controlExcepcion = {
-                codigo: CODE_INTERNAL_SERVER_ERROR,
-                mensaje: MESSAGE_ERROR
-              }
-              const response = {
-                controlExcepcion
-              }
-              return res.status(500).send(response)
+          const controlExcepcion = {
+            codigo: CODE_INTERNAL_SERVER_ERROR,
+            mensaje: MESSAGE_ERROR
+          }
+          const response = {
+            controlExcepcion
+          }
+          return res.status(500).send(response)
         }
 
 
@@ -75,8 +75,20 @@ const generateOTP = async (req, res) => {
         }
 
         // proceso: Envío del OTP por sms o email, especificado el el tipo
-        if (tipo === 'EMAIL') ComunicacionesController.enviarCodigoEMAIL(req, res, destinatario, tokenOtp)
-        if (tipo === 'SMS') ComunicacionesController.enviarCodigoSMS(req, res, destinatario, tokenOtp)
+        if (tipo === 'EMAIL') {
+          const statusEmail = await ComunicacionesController.enviarCodigoEMAIL(req, res, destinatario, tokenOtp)
+          LOG.debugJSON('statusEmail', statusEmail)
+          if (statusEmail.statusRequest !== 201) {
+            return res.status(500).send(statusEmail)
+          }
+        }
+        if (tipo === 'SMS') {
+          const statusSMS = await ComunicacionesController.enviarCodigoSMS(req, res, destinatario, tokenOtp)
+          LOG.debugJSON('statusSMS', statusSMS)
+          if (statusSMS.statusRequest !== 201) {
+            return res.status(500).send(statusSMS)
+          }
+        } 
 
          // Termiancion del proceso...
         const response = {
