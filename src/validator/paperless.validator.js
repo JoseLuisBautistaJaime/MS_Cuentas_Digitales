@@ -15,7 +15,7 @@ const paperlessRequest = {
           required: true
         },
         idCliente: {
-          type: "integer",
+          type: 'integer',
           required: true
         },
         nombre: {
@@ -192,8 +192,7 @@ const proyeccionesRequest = {
           noBoleta: {
             type: 'string',
             required: true
-          }
-          ,
+          },
           prestamoSobreAvaluo: {
             type: 'number',
             required: true
@@ -227,8 +226,7 @@ const proyeccionesRequest = {
                 montoTotal: {
                   type: 'number',
                   required: true
-                }
-                ,
+                },
                 fecha: {
                   type: 'string',
                   required: true
