@@ -37,7 +37,7 @@ const { HttpMethod } = HttpClientService
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
-const enviarCodigoSMS = async(req, destinatario, codigo) => {
+const enviarCodigoSMS = async(req, res, destinatario, codigo) => {
     LOG.debug('CTRL: Ejecutando enviarCodigoSMS')
     try {
         const header = await createHeaderComunicaciones(req)
@@ -78,7 +78,7 @@ const enviarCodigoSMS = async(req, destinatario, codigo) => {
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
- const enviarCodigoEMAIL = async(req, destinatario, codigo) => {
+ const enviarCodigoEMAIL = async(req, res, destinatario, codigo) => {
     LOG.debug('CTRL: Ejecutando enviarCodigoEMAIL')
     try {
         const header = await createHeaderComunicaciones(req)

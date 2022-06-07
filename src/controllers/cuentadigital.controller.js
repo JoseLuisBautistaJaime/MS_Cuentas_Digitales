@@ -75,8 +75,8 @@ const generateOTP = async (req, res) => {
         }
 
         // proceso: Envío del OTP por sms o email, especificado el el tipo
-        if (tipo === 'EMAIL') ComunicacionesController.enviarCodigoEMAIL(req, destinatario, tokenOtp)
-        if (tipo === 'SMS') ComunicacionesController.enviarCodigoSMS(req, destinatario, tokenOtp)
+        if (tipo === 'EMAIL') ComunicacionesController.enviarCodigoEMAIL(req, res, destinatario, tokenOtp)
+        if (tipo === 'SMS') ComunicacionesController.enviarCodigoSMS(req, res, destinatario, tokenOtp)
 
          // Termiancion del proceso...
         const response = {
