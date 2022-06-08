@@ -20,6 +20,7 @@ export const HEADER_ID_CONSUMIDOR = 'idConsumidor'
 export const HEADER_ID_DESTINO = 'idDestino'
 export const HEADER_USUARIO = 'usuario'
 export const HEADER_AUTHORIZATION = 'Authorization'
+export const HEADER_ID_CLIENTE = 'idCliente'
 
 // Operation Code
 export const CODE_SUCCESS = 'NMP-API-CUENTADIGITAL-200'
@@ -35,3 +36,6 @@ export const CODE_INTERNAL_BAD_GETAWAY = 'NMP-API-CUENTADIGITAL-502'
 export const MESSAGE_SUCCESS = 'Se ha realizado correctamente la operación'
 export const MESSAGE_EXITOSO = 'Resultado Exitoso'
 export const MESSAGE_ERROR = "Ocurrio un error ne la generación de la información"
+
+// EstatusActivacion
+export const STATUS_ACTIVATION_PROSPECT = 'PROSPECTO'

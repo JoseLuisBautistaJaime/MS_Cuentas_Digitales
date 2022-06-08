@@ -1,8 +1,8 @@
 import { Validator } from 'jsonschema'
 
 const ValidatorSchema = new Validator()
-const actializarUsuarioRequest = {
-  id: '/actializarUsuarioRequest',
+const usuarioRequest = {
+  id: '/usuarioRequest',
   type: 'object',
   properties: {
     idCliente: {
@@ -17,11 +17,11 @@ const actializarUsuarioRequest = {
       type: 'string',
       required: true
     },
-    appellidoPaterno: {
+    apellidoPaterno: {
       type: 'string',
       required: true
     },
-    appellidoMaterno: {
+    apellidoMaterno: {
       type: 'string',
       required: true
     }
@@ -54,14 +54,13 @@ const setEstatusActivacionRequest = {
   }
 };
 
-ValidatorSchema.addSchema(actializarUsuarioRequest, '/actializarUsuarioRequest');
+ValidatorSchema.addSchema(usuarioRequest, '/usuarioRequest');
 ValidatorSchema.addSchema(setEstatusActivacionRequest,'/setEstatusActivacionRequest');
 ValidatorSchema.addSchema(getEstatusActivacionRequest,'/getEstatusActivacionRequest');
 
 export const UsuarioValidator = {
   ValidatorSchema,
-  actializarUsuarioRequest,
-  setEstatusActivacionRequest,
-  getEstatusActivacionRequest
+  usuarioRequest,
+  setEstatusActivacionRequest
 }
 export default UsuarioValidator
