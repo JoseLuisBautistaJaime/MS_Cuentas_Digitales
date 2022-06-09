@@ -7,6 +7,7 @@ import { CommonValidator } from '../validator/common.validator'
 import handlerError from '../validator/handler-error'
 import { ClienteValidator } from '../validator/cliente.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
+import { CODE_INTERNAL_SERVER_ERROR, MESSAGE_ERROR } from '../constansts'
 // import { HEADER_ID_CLIENTE } from '../constansts'
 // import Usuario from '../models/usuario.model'
 // import { result } from 'lodash'
@@ -72,10 +73,21 @@ const setStatusActivacion = async (req, res) => {
 
 
 // ** Inicio: getCliente
-async function getClienteInternal(idCliente) {
+async function getClienteInternal(res, idCliente) {
   LOG.debugJSON('getClienteInternal: idCliente', idCliente)
   const cliente = await Cliente.findOne({ idCliente })
   LOG.debugJSON('getClienteInternal: cliente', cliente)
+
+  if (cliente === null || cliente === undefined) {
+    const controlExcepcion = {
+      codigo: CODE_INTERNAL_SERVER_ERROR,
+      mensaje: MESSAGE_ERROR
+    }
+    const response = {
+      controlExcepcion
+    }
+    return res.status(500).send(response)
+  }
   return cliente
 }
 
@@ -84,7 +96,7 @@ const getCliente = async (req, res) => {
   try {
     await CommonValidator.validateHeaderOAG(req)
     const { idCliente } = req.query
-    const result = await getClienteInternal(idCliente)
+    const result = await getClienteInternal(res, idCliente)
     LOG.info('CTRL: Terminado getCliente')
     return res.status(200).send(result)
   } catch (err) {
@@ -95,22 +107,21 @@ const getCliente = async (req, res) => {
 // ** Terminacion: getCliente
 
 // ** Inicio: getEstatusActivacion
-async function getStatusActivacionInternal(idCliente) {
-
+async function getStatusActivacionInternal(res, idCliente) {
   LOG.debugJSON('getStatusActivacionInternal-idCliente', idCliente)
-  const usuario = await getClienteInternal(idCliente)
+  const cliente = await getClienteInternal(res, idCliente)
   // const usuario = await Usuario.findOne({ idCliente })
-  LOG.debugJSON('ctrl: usuario', usuario)
+  LOG.debugJSON('ctrl: cliente', cliente)
 
   let result = {
     statusActivacion: 0,
     statusActivacionName: ''
   }
 
-  if (usuario === null)
+  if (cliente === null)
     result = { statusActivacion: 1, statusActivacionName: 'NoExisteCliente' }
   else {
-    let { statusActivacion } = usuario
+    let { statusActivacion } = cliente
     LOG.debugJSON('getStatusActivacionInternal: statusActivacion', statusActivacion)
 
     if (statusActivacion === '' || statusActivacion === undefined)
@@ -139,7 +150,7 @@ const getStatusActivacion = async (req, res) => {
   try {
     await CommonValidator.validateHeaderOAG(req)
     const { idCliente } = req.query
-    const result = await getStatusActivacionInternal(idCliente)
+    const result = await getStatusActivacionInternal(res, idCliente)
     LOG.info('CTRL: Terminado getStatusActivacion')
     return res.status(200).send(result)
   } catch (err) {
