@@ -9,6 +9,10 @@ const usuarioRequest = {
       type: 'string',
       required: true
     },
+    idDevice: {
+      type: 'string',
+      required: true
+    },
     tarjetaMonte: {
       type: 'string',
       required: true
@@ -28,8 +32,8 @@ const usuarioRequest = {
   }
 }
 
-const getEstatusActivacionRequest = {
-  id: '/getEstatusActivacionRequest',
+const getStatusActivacionRequest = {
+  id: '/getStatusActivacionRequest',
   type: 'object',
   properties: {
     idCliente: {
@@ -39,28 +43,28 @@ const getEstatusActivacionRequest = {
   }
 }
 
-const setEstatusActivacionRequest = {
-  id: '/setEstatusActivacionRequest',
+const setStatusActivacionRequest = {
+  id: '/setStatusActivacionRequest',
   type: 'object',
   properties: {
     idCliente: {
       type: 'string',
       required: true
     },
-    estatusActivacion: {
-      type: 'string',
+    statusActivacion: {
+      type: 'number',
       required: true
     }
   }
 };
 
 ValidatorSchema.addSchema(usuarioRequest, '/usuarioRequest');
-ValidatorSchema.addSchema(setEstatusActivacionRequest,'/setEstatusActivacionRequest');
-ValidatorSchema.addSchema(getEstatusActivacionRequest,'/getEstatusActivacionRequest');
+ValidatorSchema.addSchema(setStatusActivacionRequest,'/setStatusActivacionRequest');
+ValidatorSchema.addSchema(getStatusActivacionRequest,'/getStatusActivacionRequest');
 
 export const UsuarioValidator = {
   ValidatorSchema,
   usuarioRequest,
-  setEstatusActivacionRequest
+  setStatusActivacionRequest
 }
 export default UsuarioValidator

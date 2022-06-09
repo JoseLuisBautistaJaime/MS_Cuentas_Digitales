@@ -6,15 +6,11 @@ const generateOPTRequest = {
     id: '/generateOPTRequest',
     type: 'object',
     properties: {
-        usuario: {
+        idCliente: {
             type: 'string',
             required: true
         },
         tipo: {
-            type: 'string',
-            required: true
-        },
-        destinatario: {
             type: 'string',
             required: true
         }

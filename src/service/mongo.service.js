@@ -2,8 +2,8 @@
 import mongoose from 'mongoose'
 import LOG from '../commons/logger'
 
-const url = process.env.MONGO_URL
-// const url = 'mongodb://localhost:27017/ms-cuentasdigitales'
+// const url = process.env.MONGO_URL
+const url = 'mongodb://localhost:27017/ms-cuentasdigitales'
 
 if (url === undefined) {
   LOG.error('Es necesaria la variable: MONGO_URL')

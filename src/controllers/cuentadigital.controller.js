@@ -12,6 +12,7 @@ import handlerError from '../validator/handler-error'
 import { CuentaDigitalValidator } from '../validator/cuentadigital.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
 import { ComunicacionesController } from './comunicaciones.controller'
+import { usuarioController } from './cliente.controller'
 
 const healthCheck = async (req, res) => {
   return Response.Ok(res)
@@ -41,13 +42,17 @@ const generateOTP = async (req, res) => {
       CuentaDigitalValidator.generateOPTRequest
     )
     if (validator.errors.length) handlerErrorValidation(validator)
-    const { usuario, destinatario, tipo } = req.body
-    LOG.debugJSON('prms-usuario: usuario', usuario)
-    LOG.debugJSON('prms-destinatario: destinatario', destinatario)
+    const { idCliente, tipo } = req.body
+    LOG.debugJSON('prms-usuario: idCliente', idCliente)
+    // LOG.debugJSON('prms-destinatario: destinatario', destinatario)
     LOG.debugJSON('prms-tokenOtp: tipo', tipo)
 
+    LOG.debugJSON('prms-idCliente: ', idCliente)
+    const cliente = usuarioController.getClienteInternal(idCliente)
+    LOG.debugJSON('prms-cliente: ', cliente)
+
     // ejecición del proceso principal.
-    let TOTP = new createTOTP(usuario)
+    let TOTP = new createTOTP(cliente)
     const tokenOtp = TOTP.generate()
 
     LOG.debugJSON('proceso-eval: tokenOtp', tokenOtp)
@@ -62,7 +67,6 @@ const generateOTP = async (req, res) => {
       }
       return res.status(500).send(response)
     }
-
 
     // proceso: Validacion del campo tipo, para el envio de SMS.
     if (tipo !== 'SMS' && tipo !== 'EMAIL') {

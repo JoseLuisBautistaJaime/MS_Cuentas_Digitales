@@ -7,12 +7,13 @@ import { CommonValidator } from '../validator/common.validator'
 import handlerError from '../validator/handler-error'
 import { UsuarioValidator } from '../validator/usuario.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
-import { HEADER_ID_CLIENTE } from '../constansts'
+// import { HEADER_ID_CLIENTE } from '../constansts'
 // import Usuario from '../models/usuario.model'
 // import { result } from 'lodash'
 
 const usuarioSchema = new mongoose.Schema({
-  idCliente: { type: String, required: true },
+  idCliente: { type: String, index: true, required: true },
+  idDevice: { type: String, required: true },
   tarjetaMonte: { type: String, required: true },
   nombreCliente: { type: String, required: true },
   apellidoPaterno: { type: String, required: true },
@@ -20,25 +21,26 @@ const usuarioSchema = new mongoose.Schema({
   nombreCompleto: String,
   correoCliente: String,
   celularCliente: String,
-  estatusActivacion: String,
+  statusActivacion: { Type: Number },
+  Activacion: Object,
   codigoVerificacion: String,
   ultimaActualizacion: { type: Date, default: Date.now },
   fechaActivacion: { type: Date, default: null }
 })
 
 const Usuario = mongoose.model('Usuario', usuarioSchema)
+
 const healthCheck = async (req, res) => {
   return Response.Ok(res)
 }
-async function setEstatusActivacionInternal(idCliente, estatusActivacion) {
-  LOG.info('CTRL: setEstatusActivacionInternal')
+async function setStatusActivacionInternal(idCliente, statusActivacion) {
   const resultSave = await Usuario.findOneAndUpdate(
     {
       idCliente
     },
     {
       $set: {
-        estatusActivacion,
+        statusActivacion,
         ultimaActualizacion: Date.now()
       }
     },
@@ -49,17 +51,18 @@ async function setEstatusActivacionInternal(idCliente, estatusActivacion) {
   return resultSave
 }
 
-const setEstatusActivacion = async (req, res) => {
-  LOG.info('CTRL: Starting setEstatusActivacion method')
+const setStatusActivacion = async (req, res) => {
   try {
+    LOG.info('CTRL: setStatusActivacion')
     await CommonValidator.validateHeaderOAG(req)
     const validator = UsuarioValidator.ValidatorSchema.validate(
-       req.body,
-       UsuarioValidator.setEstatusActivacionRequest
+      req.body,
+      UsuarioValidator.setStatusActivacionRequest
     )
     if (validator.errors.length) handlerErrorValidation(validator)
-    const { idCliente, estatusActivacion } = req.body
-    const resultSave = await setEstatusActivacionInternal(idCliente, estatusActivacion)
+    const { idCliente, statusActivacion } = req.body
+    const resultSave = await setStatusActivacionInternal(idCliente, statusActivacion)
+    LOG.info('CTRL: Terminado setStatusActivacion')
     return Response.Ok(res)
   } catch (err) {
     LOG.error(err)
@@ -67,30 +70,78 @@ const setEstatusActivacion = async (req, res) => {
   }
 }
 
-// ** Inicio: getEstatusActivacion
-async function getEstatusActivacionInternal(idCliente) {
-  LOG.info('internal: getEstatusActivacionInternal')
-  const usuario = await Usuario.findOne({ idCliente })
-  LOG.debugJSON('ctrl: usuario', usuario)
-  if (usuario === null) return 'NoExiste'
-  const { estatusActivacion } = usuario
-  if (estatusActivacion === '' || estatusActivacion === undefined) return 'Prospecto'
-  return estatusActivacion
+
+// ** Inicio: getCliente
+async function getClienteInternal(idCliente) {
+  LOG.debugJSON('getClienteInternal: idCliente', idCliente)
+  const cliente = await Usuario.findOne({ idCliente })
+  LOG.debugJSON('getClienteInternal: cliente', cliente)
+  return cliente
 }
 
-const getEstatusActivacion = async (req, res) => {
-  LOG.info('CTRL: Starting getEstatusActivacion method')
+const getCliente = async (req, res) => {
+  LOG.info('CTRL: Starting getCliente')
   try {
     await CommonValidator.validateHeaderOAG(req)
-    await CommonValidator.validarHeader(req, HEADER_ID_CLIENTE)
-    const idCliente = req.header(HEADER_ID_CLIENTE)
-    const estatusUsuario = await getEstatusActivacionInternal(idCliente)
+    const { idCliente } = req.query
+    const result = await getClienteInternal(idCliente)
+    LOG.info('CTRL: Terminado getCliente')
+    return res.status(200).send(result)
+  } catch (err) {
+    LOG.error(err)
+    return handlerError(res, err)
+  }
+}
+// ** Terminacion: getCliente
 
-    LOG.info('CTRL: Terminado getEstatusActivacion method')
-    const resp = {
-      estatusUsuario: estatusUsuario
+// ** Inicio: getEstatusActivacion
+async function getStatusActivacionInternal(idCliente) {
+
+  LOG.debugJSON('getStatusActivacionInternal-idCliente', idCliente)
+  const usuario = await getClienteInternal(idCliente)
+  // const usuario = await Usuario.findOne({ idCliente })
+  LOG.debugJSON('ctrl: usuario', usuario)
+
+  let result = {
+    statusActivacion: 0,
+    statusActivacionName: ''
+  }
+
+  if (usuario === null)
+    result = { statusActivacion: 1, statusActivacionName: 'NoExisteCliente' }
+  else {
+    let { statusActivacion } = usuario
+    LOG.debugJSON('getStatusActivacionInternal: statusActivacion', statusActivacion)
+
+    if (statusActivacion === '' || statusActivacion === undefined)
+      statusActivacion = 2
+    switch (String(statusActivacion)) {
+      case '2':
+        LOG.debugJSON('switch(2): statusActivacion', statusActivacion)
+        result = { statusActivacion, statusActivacionName: 'Prospecto' }
+        break
+      case (3, '3'):
+        result = { statusActivacion, statusActivacionName: 'OtpGenerado' }
+        break
+      case (4, '4'):
+        result = { statusActivacion, statusActivacionName: 'Activado' }
+        break
+      default:
+        LOG.debugJSON('switch: statusActivacion', statusActivacion)
     }
-    return res.status(200).send(resp)
+    LOG.debugJSON('getStatusActivacionInternal: result', result)
+  }
+  return result
+}
+
+const getStatusActivacion = async (req, res) => {
+  LOG.info('CTRL: Starting getStatusActivacion')
+  try {
+    await CommonValidator.validateHeaderOAG(req)
+    const { idCliente } = req.query
+    const result = await getStatusActivacionInternal(idCliente)
+    LOG.info('CTRL: Terminado getStatusActivacion')
+    return res.status(200).send(result)
   } catch (err) {
     LOG.error(err)
     return handlerError(res, err)
@@ -99,7 +150,7 @@ const getEstatusActivacion = async (req, res) => {
 
 
 // ** Fin: getEstatusUsuario
-async function actualizarUsuarioInternal(body) {
+async function actualizarClienteInternal(body) {
   LOG.info('Internal: Starting actualizarUsuario method')
   const { idCliente } = body
   LOG.debugJSON('ctrl: idCliente', idCliente)
@@ -112,6 +163,7 @@ async function actualizarUsuarioInternal(body) {
   if (usuarioExist === 0) {
     const usuarioToAdd = new Usuario({
       idCliente,
+      idDevice: body.idDevice,
       tarjetaMonte: body.tarjetaMonte,
       nombreCliente: body.nombreCliente,
       apellidoPaterno: body.apellidoPaterno,
@@ -134,6 +186,7 @@ async function actualizarUsuarioInternal(body) {
       },
       {
         $set: {
+          idDevice: body.idDevice,
           tarjetaMonte: body.tarjetaMonte,
           nombreCliente: body.nombreCliente,
           apellidoPaterno: body.apellidoPaterno,
@@ -152,7 +205,7 @@ async function actualizarUsuarioInternal(body) {
   return resultSave
 }
 
-const actualizarUsuario = async (req, res) => {
+const actualizarCliente = async (req, res) => {
   LOG.info('CTRL: Starting actualizarUsuario method')
   try {
     await CommonValidator.validateHeaderOAG(req)
@@ -162,7 +215,7 @@ const actualizarUsuario = async (req, res) => {
     )
     if (validator.errors.length) handlerErrorValidation(validator)
     // busqueda del usuario
-    const resultSave = await actualizarUsuarioInternal(req.body)
+    const resultSave = await actualizarClienteInternal(req.body)
     LOG.debugJSON('ctrl: Usuario Actualizado', resultSave)
     return Response.Ok(res)
   } catch (err) {
@@ -171,13 +224,15 @@ const actualizarUsuario = async (req, res) => {
   }
 }
 
-export const usuarioController = {
+export const clienteController = {
   healthCheck,
-  actualizarUsuario,
-  actualizarUsuarioInternal,
-  getEstatusActivacion,
-  setEstatusActivacion,
-  getEstatusActivacionInternal,
-  setEstatusActivacionInternal
+  actualizarCliente,
+  actualizarClienteInternal,
+  getStatusActivacion,
+  getCliente,
+  getClienteInternal,
+  setStatusActivacion,
+  getStatusActivacionInternal,
+  setStatusActivacionInternal
 }
-export default usuarioController
+export default clienteController
