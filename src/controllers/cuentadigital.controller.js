@@ -3,6 +3,7 @@
  * Quarksoft S.A.P.I. de C.V. – Todos los derechos reservados. Para uso exclusivo de Nacional Monte de Piedad.
  */
 import * as OTPAuth from 'otpauth'
+import md5 from 'md5'
 import LOG from '../commons/logger'
 import { Response } from '../commons/response'
 import mongo from '../service/mongo.service'
@@ -12,52 +13,109 @@ import handlerError from '../validator/handler-error'
 import { CuentaDigitalValidator } from '../validator/cuentadigital.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
 import { ComunicacionesController } from './comunicaciones.controller'
-import { usuarioController } from './cliente.controller'
+import { clienteController } from './cliente.controller'
 
 const healthCheck = async (req, res) => {
   return Response.Ok(res)
 }
-const otpauthSecret = '666666'
+// const OTP_SECRET = '802312F9BDB98FF3E4F465BC18FF7F96'
+const OTP_SECRET = '666666'
+const OTP_DIGITS = 4
+const OTP_PERIOD = 60
 
-const createTOTP = (usuario) => {
-  let TOTP = new OTPAuth.TOTP({
+async function generateCodeOtp(idCliente, idDevice) {
+  const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`
+  LOG.debugJSON('paso 6. fullSecret', fullSecret)
+  const hashSecret = String(md5(fullSecret)).toUpperCase()
+  LOG.debugJSON('paso 7. hashSecret', hashSecret)
+  const totp = new OTPAuth.TOTP({
     issuer: 'NMP',
     label: 'experiencia2',
     algorithm: 'SHA512',
-    digits: 4,
-    period: 60,
-    secret: otpauthSecret
+    digits: OTP_DIGITS,
+    period: OTP_PERIOD,
+    secret: OTP_SECRET
+  })
+  LOG.debugJSON('paso 8. generate', totp)
+  const tokenOtp = totp.generate()
+  LOG.debugJSON('paso 8. tokenOtp', tokenOtp)
+  return tokenOtp
+}
+
+const createTOTP = () => {
+  const TOTP = new OTPAuth.TOTP({
+    issuer: 'NMP',
+    label: 'experiencia2',
+    algorithm: 'SHA512',
+    digits: OTP_DIGITS,
+    period: OTP_PERIOD,
+    secret: OTP_SECRET
   })
   return TOTP
 }
 
+async function sendOtp_toComunicaciones(req, res, modeSend, cliente, tokenOtp) {
+  const correoCliente = String(cliente.correoCliente)
+  const celularCliente = String(cliente.celularCliente)
+  LOG.debugJSON('sendOtp_toComunicaciones-correoCliente', correoCliente)
+  LOG.debugJSON('sendOtp_toComunicaciones-celularCliente', celularCliente)
 
-const generateOTP = async (req, res) => {
-  LOG.info('CTRL: Starting generateOTP method')
+  // validacion de excepciones..
+  if (tokenOtp === null || tokenOtp === '') {
+    const controlExcepcion = {
+      codigo: CODE_INTERNAL_SERVER_ERROR,
+      mensaje: MESSAGE_ERROR
+    }
+    const response = {
+      controlExcepcion
+    }
+    return res.status(500).send(response)
+  }
+  // proceso: Validacion del campo tipo, para el envio de SMS.
+  if (modeSend !== 'sms' && modeSend !== 'email') {
+    const controlExcepcion = {
+      codigo: CODE_INTERNAL_SERVER_ERROR,
+      mensaje: `${MESSAGE_ERROR} (la variable 'modeSend' debe tener un valor de 'EMAIL' o 'SMS')`
+    }
+    const response = {
+      controlExcepcion
+    }
+    return res.status(500).send(response)
+  }
+
+  // envio de otp por email o sms
+  if (modeSend === 'email') {
+    const statusEmail = await ComunicacionesController.enviarCodigoEMAIL(req, res, correoCliente, tokenOtp)
+    LOG.debugJSON('statusEmail', statusEmail)
+    if (statusEmail.statusRequest !== 201) {
+      return res.status(500).send(statusEmail)
+    }
+  }
+  if (modeSend === 'sms') {
+    const statusSMS = await ComunicacionesController.enviarCodigoSMS(req, res, celularCliente, tokenOtp)
+    LOG.debugJSON('statusSMS', statusSMS)
+    if (statusSMS.statusRequest !== 201) {
+      return res.status(500).send(statusSMS)
+    }
+  }
+}
+
+const sendOtp = async (req, res) => {
+  LOG.info('CTRL: Starting sendOTP method')
   try {
     // validaciones y carga de parametros
-    await CommonValidator.validateHeaderOAG(req)
-    const validator = CuentaDigitalValidator.ValidatorSchema.validate(
-      req.body,
-      CuentaDigitalValidator.generateOPTRequest
-    )
-    if (validator.errors.length) handlerErrorValidation(validator)
-    const { idCliente, tipo } = req.body
-    LOG.debugJSON('prms-usuario: idCliente', idCliente)
-    // LOG.debugJSON('prms-destinatario: destinatario', destinatario)
-    LOG.debugJSON('prms-tokenOtp: tipo', tipo)
+    // await CommonValidator.validateHeaderOAG(req)
+    // const validator = CuentaDigitalValidator.ValidatorSchema.validate(
+    //   req.body,
+    //   CuentaDigitalValidator.sendOtpRequest
+    // )
+    // if (validator.errors.length) handlerErrorValidation(validator)
 
-    LOG.debugJSON('prms-idCliente: ', idCliente)
-    const cliente = usuarioController.getClienteInternal(idCliente)
-    LOG.debugJSON('prms-cliente: ', cliente)
-
-    // ejecición del proceso principal.
-    let TOTP = new createTOTP(cliente)
-    const tokenOtp = TOTP.generate()
-
-    LOG.debugJSON('proceso-eval: tokenOtp', tokenOtp)
-
-    if (tokenOtp === null || tokenOtp === '') {
+    const idCliente = String(req.body.idCliente)
+    LOG.debugJSON('paso 1. CLIENTE', idCliente)
+    const cliente = await clienteController.getClienteInternal(idCliente)
+    LOG.debugJSON('paso 2. CLIENTE', cliente)
+    if (cliente === null || cliente === undefined) {
       const controlExcepcion = {
         codigo: CODE_INTERNAL_SERVER_ERROR,
         mensaje: MESSAGE_ERROR
@@ -68,39 +126,20 @@ const generateOTP = async (req, res) => {
       return res.status(500).send(response)
     }
 
-    // proceso: Validacion del campo tipo, para el envio de SMS.
-    if (tipo !== 'SMS' && tipo !== 'EMAIL') {
-      const controlExcepcion = {
-        codigo: CODE_INTERNAL_SERVER_ERROR,
-        mensaje: `${MESSAGE_ERROR} (la variable 'tipo' debe tener un valor de 'EMAIL' o 'SMS')`
-      }
-      const response = {
-        controlExcepcion
-      }
-      return res.status(500).send(response)
-    }
+    // Generacion del codigo OTP
+    LOG.debugJSON('paso 3. cliente.idDevice', String(cliente.idDevice))
+    const codeOtp = await generateCodeOtp(idCliente, String(cliente.idDevice))
 
-    // proceso: Envío del OTP por sms o email, especificado el el tipo
-    if (tipo === 'EMAIL') {
-      const statusEmail = await ComunicacionesController.enviarCodigoEMAIL(req, res, destinatario, tokenOtp )
-      LOG.debugJSON('statusEmail', statusEmail)
-      if (statusEmail.statusRequest !== 201) {
-        return res.status(500).send(statusEmail)
-      }
-    }
-    if (tipo === 'SMS') {
-      const statusSMS = await ComunicacionesController.enviarCodigoSMS(req, res, destinatario, tokenOtp)
-      LOG.debugJSON('statusSMS', statusSMS)
-      if (statusSMS.statusRequest !== 201) {
-        return res.status(500).send(statusSMS)
-      }
-    }
+    LOG.debugJSON('paso 4. codeOtp', codeOtp)
+    //  Envio del codigo otp..
+    const modeSend = String(req.body.modeSend).toLowerCase()
+    await sendOtp_toComunicaciones(req, res, modeSend, cliente, codeOtp)
 
     // Termiancion del proceso...
     const response = {
-      codigoVerificacion: tokenOtp
+      codeOtp
     }
-    LOG.info('CTRL: Ending generateOTP method')
+    LOG.info('CTRL: Ending sendOTP method')
     return res.status(200).send(response)
   } catch (err) {
     LOG.error(err)
@@ -108,22 +147,22 @@ const generateOTP = async (req, res) => {
   }
 }
 
-const validateOTP = async (req, res) => {
+const verifyOtp = async (req, res) => {
   LOG.info('CTRL: Starting validateOTP method')
   try {
     // validaciones y carga de parametros
     await CommonValidator.validateHeaderOAG(req)
-    const { usuario, otp } = req.body;
-    LOG.debugJSON('prms-usuario: usuario', usuario)
-    LOG.debugJSON('prms-tokenOtp: tokenOtp', otp)
+    const { idCliente, codeOtp } = req.body
+    LOG.debugJSON('prms-usuario: usuario', idCliente)
+    LOG.debugJSON('prms-tokenOtp: tokenOtp', codeOtp)
 
     // ejecición del proceso principal.
-    let TOTP = new createTOTP(usuario)
+    let TOTP = new createTOTP()
     let delta = TOTP.validate({
-      token: otp,
+      token: codeOtp,
       window: 1
     })
-    LOG.debugJSON('proceso-eval delta',delta)
+    LOG.debugJSON('proceso-eval delta', delta)
     let isValidOtp = false
     if (delta === 0) isValidOtp = true
     LOG.debugJSON('proceso-eval isValidOtp', isValidOtp)
@@ -153,7 +192,7 @@ const validateOTP = async (req, res) => {
 
 export const cuentaDigitalController = {
   healthCheck,
-  generateOTP,
-  validateOTP
+  sendOtp,
+  verifyOtp
 }
 export default cuentaDigitalController

@@ -5,8 +5,8 @@ import { clienteController } from '../controllers/cliente.controller'
 const router = express.Router()
 
 router.route('/').get(cuentaDigitalController.healthCheck)
-router.route('/generateOTP').post(cuentaDigitalController.generateOTP)
-router.route('/validateOTP').post(cuentaDigitalController.validateOTP)
+router.route('/sendOTP').post(cuentaDigitalController.sendOtp)
+router.route('/verifyOTP').post(cuentaDigitalController.verifyOtp)
 router.route('/actualizarCliente').post(clienteController.actualizarCliente)
 router.route('/getStatusActivacion').get(clienteController.getStatusActivacion)
 router.route('/setStatusActivacion').post(clienteController.setStatusActivacion)

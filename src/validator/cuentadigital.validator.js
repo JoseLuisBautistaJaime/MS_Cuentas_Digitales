@@ -2,24 +2,24 @@ import { Validator } from 'jsonschema';
 
 const ValidatorSchema = new Validator()
 
-const generateOPTRequest = {
-    id: '/generateOPTRequest',
+const sendOtpRequest = {
+    id: '/generateOtpRequest',
     type: 'object',
     properties: {
         idCliente: {
             type: 'string',
             required: true
         },
-        tipo: {
+        modeSend: {
             type: 'string',
             required: true
         }
     }
 }
 
-ValidatorSchema.addSchema(generateOPTRequest, '/generateOPTRequest')
+ValidatorSchema.addSchema(sendOtpRequest, '/sendOtpRequest')
 
 export const CuentaDigitalValidator = {
     ValidatorSchema,
-    generateOPTRequest
+    sendOtpRequest
 }
