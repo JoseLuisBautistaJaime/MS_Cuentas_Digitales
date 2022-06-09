@@ -5,13 +5,13 @@ import { Response } from '../commons/response'
 import { CommonValidator } from '../validator/common.validator'
 // import { CODE_INTERNAL_SERVER_ERROR, MESSAGE_ERROR } from '../constansts'
 import handlerError from '../validator/handler-error'
-import { UsuarioValidator } from '../validator/usuario.validator'
+import { ClienteValidator } from '../validator/cliente.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
 // import { HEADER_ID_CLIENTE } from '../constansts'
 // import Usuario from '../models/usuario.model'
 // import { result } from 'lodash'
 
-const usuarioSchema = new mongoose.Schema({
+const clienteSchema = new mongoose.Schema({
   idCliente: { type: String, index: true, required: true },
   idDevice: { type: String, required: true },
   tarjetaMonte: { type: String, required: true },
@@ -28,13 +28,13 @@ const usuarioSchema = new mongoose.Schema({
   fechaActivacion: { type: Date, default: null }
 })
 
-const Usuario = mongoose.model('Usuario', usuarioSchema)
+const Cliente = mongoose.model('Cliente', clienteSchema)
 
 const healthCheck = async (req, res) => {
   return Response.Ok(res)
 }
 async function setStatusActivacionInternal(idCliente, statusActivacion) {
-  const resultSave = await Usuario.findOneAndUpdate(
+  const resultSave = await Cliente.findOneAndUpdate(
     {
       idCliente
     },
@@ -55,9 +55,9 @@ const setStatusActivacion = async (req, res) => {
   try {
     LOG.info('CTRL: setStatusActivacion')
     await CommonValidator.validateHeaderOAG(req)
-    const validator = UsuarioValidator.ValidatorSchema.validate(
+    const validator = ClienteValidator.ValidatorSchema.validate(
       req.body,
-      UsuarioValidator.setStatusActivacionRequest
+      ClienteValidator.setStatusActivacionRequest
     )
     if (validator.errors.length) handlerErrorValidation(validator)
     const { idCliente, statusActivacion } = req.body
@@ -74,7 +74,7 @@ const setStatusActivacion = async (req, res) => {
 // ** Inicio: getCliente
 async function getClienteInternal(idCliente) {
   LOG.debugJSON('getClienteInternal: idCliente', idCliente)
-  const cliente = await Usuario.findOne({ idCliente })
+  const cliente = await Cliente.findOne({ idCliente })
   LOG.debugJSON('getClienteInternal: cliente', cliente)
   return cliente
 }
@@ -154,14 +154,14 @@ async function actualizarClienteInternal(body) {
   LOG.info('Internal: Starting actualizarUsuario method')
   const { idCliente } = body
   LOG.debugJSON('ctrl: idCliente', idCliente)
-  const usuarioExist = await Usuario.find({ idCliente }).count()
+  const usuarioExist = await Cliente.find({ idCliente }).count()
   LOG.debugJSON('prms:  usuarioExist', usuarioExist)
 
   LOG.debugJSON('prms:  body', body)
 
   let resultSave
   if (usuarioExist === 0) {
-    const usuarioToAdd = new Usuario({
+    const clienteToAdd = new Cliente({
       idCliente,
       idDevice: body.idDevice,
       tarjetaMonte: body.tarjetaMonte,
@@ -173,14 +173,14 @@ async function actualizarClienteInternal(body) {
       estatusActivacion: 'prospecto',
       ultimaActualizacion: Date.now()
     })
-    LOG.debugJSON('CTRL: usuarioToAdd', usuarioToAdd)
-    resultSave = await usuarioToAdd.save()
+    LOG.debugJSON('CTRL: clienteToAdd', clienteToAdd)
+    resultSave = await clienteToAdd.save()
     LOG.debugJSON('ctrl: Usuario Creado', idCliente)
   }
 
   // actualizacion de cambios (CUANDO EL CLIENTE YA EXISTE)
   if (usuarioExist !== 0) {
-    resultSave = await Usuario.findOneAndUpdate(
+    resultSave = await Cliente.findOneAndUpdate(
       {
         idCliente
       },
@@ -209,11 +209,11 @@ const actualizarCliente = async (req, res) => {
   LOG.info('CTRL: Starting actualizarUsuario method')
   try {
     await CommonValidator.validateHeaderOAG(req)
-    const validator = UsuarioValidator.ValidatorSchema.validate(
+    const validator = ClienteValidator.ValidatorSchema.validate(
       req.body,
-      UsuarioValidator.usuarioRequest
+      ClienteValidator.clienteRequest
     )
-    if (validator.errors.length) handlerErrorValidation(validator)
+     if (validator.errors.length) handlerErrorValidation(validator)
     // busqueda del usuario
     const resultSave = await actualizarClienteInternal(req.body)
     LOG.debugJSON('ctrl: Usuario Actualizado', resultSave)
