@@ -23,7 +23,6 @@ const mongoDbOptions = {
   ssl: true,
   sslValidate: true,
   sslCA: ca,
-  poolSize: 1,
   reconnectTries: 1
 }
 
