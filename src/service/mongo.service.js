@@ -22,8 +22,7 @@ const ca = Buffer.from(certBase64, 'base64').toString('utf-8')
 const mongoDbOptions = {
   ssl: true,
   sslValidate: true,
-  sslCA: ca,
-  reconnectTries: 1
+  sslCA: ca
 }
 
 mongoose.connect(url, mongoDbOptions)
