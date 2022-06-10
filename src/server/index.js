@@ -6,10 +6,11 @@ import { CONTEXT_NAME, CONTEXT_VERSION } from '../constansts'
 import LOG from '../commons/logger'
 import { Response } from '../commons/response'
 import appRoutes from '../routes'
-import mongoose from 'mongoose'
+import { createConnection } from '../commons/connection'
 
 const app = express()
 const appEnv = cfenv.getAppEnv()
+const nodeEnv = process.env.NODE_ENV
 
 const PORT = process.env.PORT || appEnv.port
 
@@ -60,8 +61,20 @@ app.use((error, req, res, next) => {
   next()
 })
 
-app.listen(PORT, appEnv.bind, () =>
-  LOG.info(`server running on ${appEnv.url}/${CONTEXT_NAME}/${CONTEXT_VERSION}`)
-)
+createConnection()
+  .then(() => {
+    app.listen(PORT, appEnv.bind, () => {
+      LOG.info(
+        `server running on ${appEnv.url}/${CONTEXT_NAME}/${CONTEXT_VERSION}`
+      )
+      if (nodeEnv !== 'production') {
+        LOG.info(
+          `Swagger documentation server running on ${appEnv.url}/api-docs/`
+        )
+      }
+    })
+  })
+  .catch(err => LOG.error(err))
+
 
 module.exports = app
