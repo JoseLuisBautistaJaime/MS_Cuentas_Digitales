@@ -20,8 +20,9 @@ const healthCheck = async (req, res) => {
   return Response.Ok(res)
 }
 
+// Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
-const OTP_DIGITS = 6
+const OTP_DIGITS = 4
 const OTP_PERIOD = 60
 
 function TOTP(idCliente, idDevice) {
