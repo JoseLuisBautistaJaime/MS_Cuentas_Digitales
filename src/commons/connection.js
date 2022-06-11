@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import cfenv from 'cfenv'
 import mongoose from 'mongoose'
-import LOG from './logger'
+import LOG from './LOG'
 
 const appEnv = cfenv.getAppEnv()
 const { services } = appEnv

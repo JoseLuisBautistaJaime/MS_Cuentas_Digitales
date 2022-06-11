@@ -1,32 +1,41 @@
 export const MESSAGES = {
-  'NMP-API-CUENTADIGITAL-200': {
+  'NMP.CUENTASDIGITALES.200': {
     template: 'SUCCESS',
     description: 'Se ha realizado correctamente la operación'
   },
-  'NMP-API-CUENTADIGITAL-204': {
+  'NMP.CUENTASDIGITALES.201': {
+    template: 'CREATED',
+    description: 'Se ha realizado correctamente la operación'
+  },
+  'NMP.CUENTASDIGITALES.204': {
     template: 'NO CONTENT',
     description: 'Se ha realizado correctamente la operación'
   },
-  'NMP-API-CUENTADIGITAL-400': {
+  'NMP.CUENTASDIGITALES.400': {
+    template: 'solicitud malformada'
+  },
+  'NMP.CUENTASDIGITALES.404': {
+    template: 'Not Found - <%= text %>'
+  },
+  'NMP.CUENTASDIGITALES.500': {
+    template: 'Internal Server Error - <%= text %>',
+    description: 'Error en el servidor'
+  },
+  'NMP.CUENTASDIGITALES.502': {
+    template: 'Bad Gateway - <%= text %>',
+    description: 'Error en el servidor'
+  },
+  'NMP.CUENTASDIGITALES.503': {
+    template: 'Service Unavailable - <%= text %>',
+    description: 'Error en el servidor'
+  },
+  'NMP.CUENTASDIGITALES.504': {
+    template: 'Gateway Timeout - <%= text %>',
+    description: 'Error en el servidor'
+  },
+  'NMP.CUENTASDIGITALES.001': {
     template: '<%= message %>',
-    description: 'Petición mal formada.'
-  },
-  'NMP-API-CUENTADIGITAL-401': {
-    description: 'Se ha producido un error de autorización'
-  },
-  'NMP-API-CUENTADIGITAL-403': {
-    description: 'Se ha producido un error de autorización'
-  },
-  'NMP-API-CUENTADIGITAL-404': {
-    description: 'No se encontraron resultados.'
-  },
-  'NMP-API-CUENTADIGITAL-500': {
-    template: '<%= text %>',
-    description: 'Error interno del servidor.'
-  },
-  'NMP-API-CUENTADIGITAL-502': {
-    template: 'BAD GETAWAY',
-    description: 'Error interno del servidor.'
+    description: 'Hay errores en la peticion.'
   }
 }
 

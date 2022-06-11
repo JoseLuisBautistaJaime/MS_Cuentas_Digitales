@@ -1,0 +1,11 @@
+{
+  "indexes": [
+    {
+      "v": { "$numberInt": "2" },
+      "key": { "_id": { "$numberInt": "1" } },
+      "name": "_id_"
+    }
+  ],
+  "uuid": "94eefd06c8d145208c2404657a0e904c",
+  "collectionName": "ep_catalogs"
+}

@@ -1,4 +1,4 @@
-import LOG from '../commons/logger'
+import LOG from '../commons/LOG'
 import { BadRequestException, createMessageError } from '../commons/exceptions'
 
 const NO_TIPO = 'is not of a type(s)'
@@ -36,10 +36,14 @@ const getMessages = errors => {
 }
 
 export const handlerErrorValidation = validationErrors => {
+  LOG.debug('HandlerErrorValidation <--- enter')
+  if (!validationErrors.errors.length) return
+
   const message = getMessages(validationErrors.errors)
-  LOG.debug('Valor mensaje:', message)
+  LOG.debug(message)
+  LOG.debug('HandlerErrorValidation <--- leave')
   throw new BadRequestException(
-    createMessageError('NMP-API-CUENTADIGITAL-400', { message })
+    createMessageError('NMP.CATALOGO.001', { message })
   )
 }
 

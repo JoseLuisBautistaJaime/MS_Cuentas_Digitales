@@ -11,10 +11,11 @@
     "SharedArrayBuffer": "readonly",
     "describe": true,
     "it": true,
+    "after": true,
     "before": true
   },
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 2020
   },
   "rules": {
     "import/no-unresolved": [
@@ -27,6 +28,7 @@
       }
     ],
     "prettier/prettier": "error",
-    "mocha/no-mocha-arrows": "off"
+    "mocha/no-mocha-arrows": "off",
+    "import/prefer-default-export": "off"
   }
 }

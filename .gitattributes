@@ -14,4 +14,4 @@ text=lf
 *.py linguist-vendored eol=lf
 Jenkinsfile linguist-vendored eol=lf
 LICENSE linguist-vendored eol=lf
-CHANGELOG.md export-ignore 
+CHANGELOG.md export-ignore

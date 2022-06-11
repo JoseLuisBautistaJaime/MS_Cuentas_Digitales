@@ -1,65 +1,66 @@
 import express from 'express'
-import httpContext from 'express-http-context'
 import bodyParser from 'body-parser'
 import cfenv from 'cfenv'
-import { CONTEXT_NAME, CONTEXT_VERSION } from '../constansts'
-import LOG from '../commons/logger'
-import { Response } from '../commons/response'
-import appRoutes from '../routes'
+import cors from 'cors'
+import swaggerJsDoc from 'swagger-jsdoc'
+import swaggerUI from 'swagger-ui-express'
+import { CONTEXT_NAME, CONTEXT_VERSION } from '../commons/constants'
 import { createConnection } from '../commons/connection'
+import LOG from '../commons/LOG'
+import appRoutes from '../routes'
+import { ePRoutes } from '../routes/ePRoutes'
+import { GLOBAL_CONSTANTS } from '../constants'
 
 const app = express()
 const appEnv = cfenv.getAppEnv()
-const nodeEnv = process.env.NODE_ENV
 
+const nodeEnv = process.env.NODE_ENV
 const PORT = process.env.PORT || appEnv.port
 
-app.use(httpContext.middleware)
-app.use((req, res, next) => {
-  httpContext.ns.bindEmitter(req)
-  httpContext.ns.bindEmitter(res)
-  httpContext.set('reqId', new Date().getTime())
-  next()
-})
+if (nodeEnv !== 'production') {
+  const swaggerOptions = {
+    swaggerDefinition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'Gestion de catálogos',
+        description: 'NMP catálogos'
+      },
+      servers: [
+        {
+          url: `{server}/${CONTEXT_NAME}/${CONTEXT_VERSION}/${GLOBAL_CONSTANTS.EP_PREFIX}`,
+          variables: {
+            server: {
+              default: appEnv.url
+            }
+          }
+        }
+      ]
+    },
+    apis: ['src/routes/ePRoutes.js']
+  }
 
-app.use(bodyParser.json({
-  limit: '10000mb'
-}))
-app.use(bodyParser.urlencoded({
-  limit: '10000mb',
-  parameterLimit: 5000000,
-  extended: false
-}))
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Credentials', true)
-  res.setHeader('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
-  next()
-})
+  const swaggerDocs = swaggerJsDoc(swaggerOptions)
+  app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
+}
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
+const corsOptionsDelegate = (req, callback) => {
+  const regex = new RegExp('(http|https)://localhost')
+  const corsOptions = regex.test(req.header('Origin'))
+    ? { origin: true }
+    : { origin: false }
+  callback(null, corsOptions)
+}
+
+app.use(cors(corsOptionsDelegate))
 
 app.use(`/${CONTEXT_NAME}/${CONTEXT_VERSION}`, appRoutes)
-
-app.use((req, res, next) => {
-  const error = new Error('Not found')
-  error.status = 404
-  next(error)
-})
-
-app.use((error, req, res, next) => {
-  res.status(error.status || 500)
-  if (error.status === 400) {
-    res.json(Response.BadRequest(res))
-  } else if (error.status === 401) {
-    res.json(Response.Unauthorized(res))
-  } else if (error.status === 404) {
-    res.json(Response.NotFound(res))
-  } else if (error.status === 502) {
-    res.json(Response.InernalBadGetaway(res))
-  } else {
-    res.json(Response.InernalError(res))
-  }
-  next()
-})
+app.use(
+  `/${CONTEXT_NAME}/${CONTEXT_VERSION}/${GLOBAL_CONSTANTS.EP_PREFIX}`,
+  ePRoutes
+)
 
 createConnection()
   .then(() => {
@@ -76,5 +77,4 @@ createConnection()
   })
   .catch(err => LOG.error(err))
 
-
-module.exports = app
+export default app

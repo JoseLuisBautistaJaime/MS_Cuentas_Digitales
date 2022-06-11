@@ -6,6 +6,10 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+#lock
+package-lock.json
+_env.txt
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
@@ -106,13 +110,5 @@ dist
 # TernJS port file
 .tern-port
 
-# Sqlite
-*.sqlite
-
-#Sonar scannerwork
+# sonnarqube
 .scannerwork
-
-.idea/
-.vscode/
-envmsc.bat
-package-lock.json
