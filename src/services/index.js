@@ -1,1 +1,1 @@
-export * from './ClienteService'
+export * from './Cliente.Service'

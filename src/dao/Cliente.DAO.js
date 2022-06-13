@@ -1,22 +1,24 @@
+// import LOG from '../commons/LOG'
+// import { PERPAGE } from '../commons/constants'
 import Mongoose from 'mongoose'
-import LOG from '../commons/LOG'
-import { PERPAGE } from '../commons/constants'
 import { clienteSchema } from '../models/cliente.model'
 
 const Cliente = Mongoose.model('cliente', clienteSchema)
 
-const find = async idCliente => {}
+const findByIdCliente = async idCliente => {
+  return Cliente.findOne({ idCliente })
+}
 
 const countIdCliente = async idCliente => {
-  return await Cliente.find({ idCliente }).count()
+  return Cliente.find({ idCliente }).count()
 }
 
 const save = async cliente => {
-  return await Cliente.create(cliente)
+  return Cliente.create(cliente)
 }
 
 const findOneAndUpdate = async (idCliente, cliente) => {
-  return await Cliente.findOneAndUpdate(
+  return Cliente.findOneAndUpdate(
     {
       idCliente
     },
@@ -39,7 +41,7 @@ const findOneAndUpdate = async (idCliente, cliente) => {
 }
 
 export const ClienteDAO = {
-  find,
+  findByIdCliente,
   countIdCliente,
   save,
   findOneAndUpdate

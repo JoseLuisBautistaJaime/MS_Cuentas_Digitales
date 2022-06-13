@@ -50,13 +50,15 @@
     "jsonschema": "^1.4.0",
     "lodash": "^4.17.20",
     "log4js": "^6.3.0",
+    "md5": "^2.3.0",
     "moment": "^2.29.1",
     "mongoose": "^5.10.15",
     "node-fetch": "^2.6.1",
     "nodemon": "^2.0.16",
+    "otpauth": "^7.1.3",
     "sonarqube-scanner": "^2.8.0",
     "stringstream": "^1.0.0",
-    "swagger-jsdoc": "^6.0.0-rc.3",
+    "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.1.5"
   },
   "devDependencies": {

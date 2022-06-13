@@ -58,9 +58,15 @@ const setStatusActivacionRequest = {
   }
 };
 
-ValidatorSchema.addSchema(clienteRequest, '/clienteRequest');
-ValidatorSchema.addSchema(setStatusActivacionRequest,'/setStatusActivacionRequest');
-ValidatorSchema.addSchema(getStatusActivacionRequest,'/getStatusActivacionRequest');
+ValidatorSchema.addSchema(clienteRequest, '/clienteRequest')
+ValidatorSchema.addSchema(
+  setStatusActivacionRequest,
+  '/setStatusActivacionRequest'
+)
+ValidatorSchema.addSchema(
+  getStatusActivacionRequest,
+  '/getStatusActivacionRequest'
+)
 
 export const ClienteValidator = {
   ValidatorSchema,

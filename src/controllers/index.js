@@ -1,1 +1,1 @@
-export * from './ClienteController'
+export * from './Cliente.Controller'

@@ -1,6 +1,12 @@
-import Mongoose from 'mongoose'
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
+
+const getCliente = async idCliente => {
+  LOG.info(`Cliente.Service.getCliente: P5 ${idCliente}`)
+  const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  LOG.info(`Cliente.Service.getCliente: P6 ${cliente}`)
+  return cliente
+}
 
 const actualizarCliente = async body => {
   LOG.info('Internal: Starting actualizarUsuario method')
@@ -41,5 +47,6 @@ const actualizarCliente = async body => {
 }
 
 export const ClienteService = {
-  actualizarCliente
+  actualizarCliente,
+  getCliente
 }
