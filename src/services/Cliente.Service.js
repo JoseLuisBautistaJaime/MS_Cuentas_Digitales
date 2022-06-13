@@ -9,9 +9,9 @@ const getCliente = async idCliente => {
 }
 
 const actualizarCliente = async body => {
-  LOG.info('Internal: Starting actualizarUsuario method')
+  LOG.info('SERV: Starting actualizarCliente method')
   const { idCliente } = body
-  LOG.info(`ctrl: idCliente ${idCliente}`)
+  LOG.info(`SERV: idCliente ${idCliente}`)
   const usuarioExist = await ClienteDAO.countIdCliente(idCliente)
   LOG.info(`prms:  usuarioExist ${usuarioExist}`)
   let resultSave
@@ -29,7 +29,7 @@ const actualizarCliente = async body => {
       ultimaActualizacion: Date.now()
     }
     resultSave = await ClienteDAO.save(clienteToAdd)
-    LOG.info(`ctrl: cliente guardado ${idCliente}`)
+    LOG.info(`SERV: cliente guardado ${idCliente}`)
   } else {
     const clienteUpdate = {
       idDevice: body.idDevice,
@@ -43,6 +43,7 @@ const actualizarCliente = async body => {
     }
     resultSave = await ClienteDAO.findOneAndUpdate(idCliente, clienteUpdate)
   }
+  LOG.info('SERV: Ending actualizarCliente method')
   return resultSave
 }
 
