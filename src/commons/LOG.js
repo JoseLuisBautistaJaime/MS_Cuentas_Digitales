@@ -9,7 +9,7 @@ log4JS.configure({
         pattern: '[%d{ISO8601}] [%[%-5.5p%]] - [%[%-8c%]] %m'
       }
     },
-    catalogo: {
+    cuentasdigitales: {
       type: 'dateFile',
       pattern: 'yyyy.MM.dd',
       alwaysIncludePattern: true,
@@ -23,13 +23,13 @@ log4JS.configure({
   },
   categories: {
     default: {
-      appenders: ['out', 'catalogo'],
+      appenders: ['out', 'cuentasdigitales'],
       level: process.env.LOG_LEVEL || 'info'
     }
   }
 })
 
-const LOG = log4JS.getLogger('catalogo')
+const LOG = log4JS.getLogger('cuentasdigitales')
 LOG.level = process.env.LOG_LEVEL || 'info'
 
 export default LOG
