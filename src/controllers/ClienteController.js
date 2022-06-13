@@ -11,7 +11,7 @@ const healthCheck = async (req, res) => {
 }
 
 const actualizarCliente = async (req, res) => {
-  LOG.info('CTRL: Starting actualizarUsuario method')
+  LOG.info('CTRL: Starting actualizarCliente method')
   try {
     await Util.validateHeaderOAG(req)
     const validator = ClienteValidator.ValidatorSchema.validate(
@@ -21,7 +21,7 @@ const actualizarCliente = async (req, res) => {
     if (validator.errors.length) handlerErrorValidation(validator)
     const resultSave = await ClienteService.actualizarCliente(req.body)
     LOG.info(`CTRL: Usuario Actualizado ${resultSave}`)
-    LOG.info('CTRL: Endig actualizarUsuario method')
+    LOG.info('CTRL: Endig actualizarCliente method')
     return Response.Ok(res)
   } catch (err) {
     LOG.error(err)
