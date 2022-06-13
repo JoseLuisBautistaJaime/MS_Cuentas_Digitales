@@ -20,7 +20,7 @@ const actualizarCliente = async (req, res) => {
     )
     if (validator.errors.length) handlerErrorValidation(validator)
     const resultSave = await ClienteService.actualizarCliente(req.body)
-    LOG.info(`CTRL: Usuario Actualizado ${resultSave}`)
+    LOG.info(`CTRL: Cliente Actualizado ${resultSave}`)
     LOG.info('CTRL: Endig actualizarCliente method')
     return Response.Ok(res)
   } catch (err) {
