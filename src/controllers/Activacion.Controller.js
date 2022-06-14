@@ -1,8 +1,7 @@
 import LOG from '../commons/LOG'
 import handleError from '../validator/handler-error'
-import { Util } from '../commons/utils'
+import { Util, Response } from '../commons'
 import { ActivacionService } from '../services/Activacion.Service'
-import { Response } from '../commons/response'
 
 const getStatusActivacion = async (req, res) => {
   LOG.info('CTRL: Starting getStatusActivacion')
@@ -76,4 +75,3 @@ export const ActivacionController = {
   sendOtp,
   verifyOtp
 }
-export default ActivacionController
