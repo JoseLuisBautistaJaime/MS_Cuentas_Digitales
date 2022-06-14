@@ -112,3 +112,4 @@ dist
 
 # sonnarqube
 .scannerwork
+/.idea/
