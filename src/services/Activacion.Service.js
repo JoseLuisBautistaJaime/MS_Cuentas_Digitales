@@ -47,10 +47,8 @@ const sendOtp = async (req, res, idCliente) => {
       req,
       res,
       String(req.body.modeSend).toLowerCase(),
-     
       cliente,
-     
-      cod
+      codeOtp
     )
   } catch (err) {
     return ''
