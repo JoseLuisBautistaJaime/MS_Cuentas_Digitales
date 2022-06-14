@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import Moment from 'moment'
 
 export const clienteSchema = new mongoose.Schema({
   idCliente: { type: String, index: true, required: true },

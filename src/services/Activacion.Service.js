@@ -1,6 +1,7 @@
 import md5 from 'md5'
 import * as OTPAuth from 'otpauth'
 import { ClienteService } from './Cliente.Service'
+import { ComunicacionesService } from './Comunicaciones.Service'
 import LOG from '../commons/LOG'
 import { ActivacionDAO } from '../dao/Activacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
@@ -34,14 +35,27 @@ async function setStatusActivacion(idCliente, statusActivacion) {
   await ActivacionDAO.setStatusActivacion(idCliente, statusActivacion)
 }
 
-const sendOtp = async idCliente => {
+const sendOtp = async (req, res, idCliente) => {
   LOG.info('CTRL: Starting sendOTP method')
 
   // validaciones y carga de parametros
   // proceso principal
   const cliente = await ClienteService.getCliente(idCliente)
   const codeOtp = new TOTP(idCliente, cliente.idDevice).generate()
-  // await sendOtpToComunicaciones(req, res, String(req.body.modeSend).toLowerCase(), cliente, codeOtp)
+  try {
+    await ComunicacionesService.sendOtpToComunicaciones(
+      req,
+      res,
+      String(req.body.modeSend).toLowerCase(),
+     
+      cliente,
+     
+      cod
+    eOtp
+    )
+  } catch (err) {
+    return ''
+  }
   await setStatusActivacion(idCliente, 3)
   // Termiancion del proceso...
   LOG.info('CTRL: Ending sendOTP method')

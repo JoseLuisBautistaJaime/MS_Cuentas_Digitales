@@ -31,5 +31,8 @@ log4JS.configure({
 
 const LOG = log4JS.getLogger('cuentasdigitales')
 LOG.level = process.env.LOG_LEVEL || 'info'
+LOG.debugJSON = (message, json) => {
+  LOG.debug(`${message}: ${JSON.stringify(json)}`)
+}
 
 export default LOG

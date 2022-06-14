@@ -2,6 +2,14 @@
 export const { CONTEXT_NAME } = process.env
 export const { CONTEXT_VERSION } = process.env
 
+// Comunicaciones.Service
+export const {
+  URL_API_COMUNICACIONES,
+  TEMPLATE_API_COMUNICACIONES_SMS,
+  TEMPLATE_API_COMUNICACIONES_EMAIL,
+  EMAIL_REMITENTE
+} = process.env
+
 // Headers
 export const HEADER_OAUTH = 'oauth.bearer'
 export const HEADER_ID_CONSUMIDOR = 'idConsumidor'

@@ -41,7 +41,8 @@ const sendOtp = async (req, res) => {
 
     // proceso principal
     const idCliente = String(req.body.idCliente)
-    const codeOtp = await ActivacionService.sendOtp(idCliente)
+    const codeOtp = await ActivacionService.sendOtp(req, res, idCliente)
+    if (codeOtp === '') return res.status(500).send()
 
     // Termiancion del proceso...
     LOG.info('CTRL: Ending sendOTP method')
