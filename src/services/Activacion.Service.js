@@ -51,7 +51,6 @@ const sendOtp = async (req, res, idCliente) => {
       cliente,
      
       cod
-    eOtp
     )
   } catch (err) {
     return ''

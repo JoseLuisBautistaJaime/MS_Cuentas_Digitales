@@ -14,14 +14,14 @@ export const createConnection = async () => {
       ? mongoServices[0].credentials
       : null
 
-  const uri = 'mongodb://localhost:27017/ms-cuentasdigitales'
+  let uri = ''
 
-  // if (credentials) {
-  //   // eslint-disable-next-line prefer-destructuring
-  //   uri = credentials.connection.mongodb.composed[0]
-  // } else {
-  //   uri = process.env.MONGO_URL
-  // }
+  if (credentials) {
+    // eslint-disable-next-line prefer-destructuring
+    uri = credentials.connection.mongodb.composed[0]
+  } else {
+    uri = process.env.MONGO_URL
+  }
 
   let options = {
     useNewUrlParser: true,
