@@ -8,7 +8,7 @@ import { ClienteDAO } from '../dao/Cliente.DAO'
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
 const OTP_DIGITS = 4
-const OTP_PERIOD = 60
+const OTP_PERIOD = 120
 
 function TOTP(idCliente, idDevice) {
   const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`
@@ -29,8 +29,8 @@ async function obtenerEstatusActivacion(idCliente) {
   return ActivacionDAO.obtenerEstatusActivacion(idCliente)
 }
 
-async function establecerEstatusActivacion(idCliente, statusActivacion) {
-  await ActivacionDAO.establecerEstatusActivacion(idCliente, statusActivacion)
+async function establecerEstatusActivacion(idCliente, estatusActivacion) {
+  await ActivacionDAO.establecerEstatusActivacion(idCliente, estatusActivacion)
 }
 
 const enviarOtp = async (req, res, idCliente) => {
@@ -74,7 +74,7 @@ const verificarOtp = async (idCliente, codigoOtp) => {
   let esValidoOtp = false
   if (delta === 0) esValidoOtp = true
   if (esValidoOtp) await establecerEstatusActivacion(idCliente, 4)
-  // LOG.debugJSON('proceso-eval isValidOtp', isValidOtp)
+  LOG.debugJSON('proceso-eval isValidOtp', esValidoOtp)
   return esValidoOtp
 }
 

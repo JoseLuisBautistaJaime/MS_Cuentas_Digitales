@@ -10,7 +10,7 @@ export const clienteSchema = new mongoose.Schema({
   nombreCompleto: String,
   correoCliente: String,
   celularCliente: String,
-  statusActivacion: { Type: Number },
+  estatusActivacion: { Type: Number },
   activacion: Object,
   codigoVerificacion: String,
   ultimaActualizacion: { type: Date, default: Date.now },

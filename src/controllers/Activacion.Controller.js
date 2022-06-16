@@ -4,9 +4,7 @@ import { Util, Response } from '../commons'
 import { ActivacionService } from '../services/Activacion.Service'
 
 const obtenerEstatusActivacion = async (req, res) => {
-  LOG.info(
-      'CTRL: Starting obtenerEstatusActivacion'
-    )
+  LOG.info('CTRL: Starting obtenerEstatusActivacion')
   try {
     await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
@@ -26,11 +24,8 @@ const establecerEstatusActivacion = async (req, res) => {
   try {
     await Util.validateHeaderOAG(req)
 
-    const { idCliente,
-      estatusActivacion } = req.body
-    await ActivacionService.establecerEstatusActivacion
-    (
-      
+    const { idCliente, estatusActivacion } = req.body
+    await ActivacionService.establecerEstatusActivacion(
       idCliente,
       estatusActivacion
     )

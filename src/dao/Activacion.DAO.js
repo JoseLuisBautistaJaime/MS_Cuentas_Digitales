@@ -30,11 +30,8 @@ async function obtenerEstatusActivacion(idCliente) {
   }
   if (cliente === null)
     result = {
-     
       estatusActivacion: 1,
-     
       estatusActivacionNombre: 'NoExisteCliente'
-   
     }
   else {
     let { estatusActivacion } = cliente
