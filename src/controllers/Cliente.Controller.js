@@ -6,7 +6,7 @@ import { ClienteService } from '../services/Cliente.Service'
 import { ClienteValidator } from '../validator/cliente.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
 
-const healthCheck = async (req, res) => {
+const healthCheck = async (_req, res) => {
   return Response.Ok(res)
 }
 
@@ -29,13 +29,13 @@ const actualizarCliente = async (req, res) => {
   }
 }
 
-const getCliente = async (req, res) => {
-  LOG.info('CTRL: Starting getCliente')
+const obtenerCliente = async (req, res) => {
+  LOG.info('CTRL: Starting obtenerCliente')
   try {
     await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
-    const result = await ClienteService.getCliente(idCliente)
-    LOG.info('CTRL: Endig getCliente')
+    const result = await ClienteService.obtenerCliente(idCliente)
+    LOG.info('CTRL: Endig obtenerCliente')
     return res.status(200).send(result)
   } catch (err) {
     LOG.error(err)
@@ -45,7 +45,7 @@ const getCliente = async (req, res) => {
 
 export const ClienteController = {
   healthCheck,
-  getCliente,
+  obtenerCliente,
   actualizarCliente
 }
 export default ClienteController

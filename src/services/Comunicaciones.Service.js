@@ -29,21 +29,19 @@ const createHeaderComunicaciones = async req => {
   const usuario = req.header(HEADER_USUARIO)
   const oauth = req.header(HEADER_OAUTH)
   const authorization = req.header(HEADER_AUTHORIZATION)
-  const header = {
+  // Regenerate Header
+  return {
     authorization,
     idConsumidor,
     idDestino,
     'oauth.bearer': oauth,
     usuario
   }
-  return header
 }
 
-async function sendOtpToComunicaciones(req, res, modeSend, cliente, tokenOtp) {
+async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, tokenOtp) {
   const correoCliente = String(cliente.correoCliente)
   const celularCliente = String(cliente.celularCliente)
-  LOG.debugJSON('sendOtp_toComunicaciones-correoCliente', correoCliente)
-  LOG.debugJSON('sendOtp_toComunicaciones-celularCliente', celularCliente)
 
   // validacion de excepciones..
   if (tokenOtp === null || tokenOtp === '') {
@@ -57,7 +55,7 @@ async function sendOtpToComunicaciones(req, res, modeSend, cliente, tokenOtp) {
     return res.status(500).send(res)
   }
   // proceso: Validacion del campo tipo, para el envio de SMS.
-  if (modeSend !== 'sms' && modeSend !== 'email') {
+  if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
     // const controlExcepcion = {
     //   codigo: CODE_INTERNAL_SERVER_ERROR,
     //   mensaje: `${MESSAGE_ERROR} (la variable 'modeSend' debe tener un valor de 'EMAIL' o 'SMS')`
@@ -69,7 +67,7 @@ async function sendOtpToComunicaciones(req, res, modeSend, cliente, tokenOtp) {
   }
 
   // envio de otp por email o sms
-  if (modeSend === 'email') {
+  if (modoEnvio === 'email') {
     const statusEmail = await enviarCodigoEMAIL(
       req,
       res,
@@ -81,7 +79,7 @@ async function sendOtpToComunicaciones(req, res, modeSend, cliente, tokenOtp) {
       return res.status(500).send(statusEmail)
     }
   }
-  if (modeSend === 'sms') {
+  if (modoEnvio === 'sms') {
     const statusSMS = await enviarCodigoSMS(req, res, celularCliente, tokenOtp)
     LOG.debugJSON('statusSMS', statusSMS)
     if (statusSMS.statusRequest !== 201) {

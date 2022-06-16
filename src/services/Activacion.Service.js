@@ -1,6 +1,5 @@
 import md5 from 'md5'
 import * as OTPAuth from 'otpauth'
-import { ClienteService } from './Cliente.Service'
 import { ComunicacionesService } from './Comunicaciones.Service'
 import LOG from '../commons/LOG'
 import { ActivacionDAO } from '../dao/Activacion.DAO'
@@ -15,7 +14,7 @@ function TOTP(idCliente, idDevice) {
   const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`
   LOG.info(`paso 6. fullSecret ${fullSecret}`)
   const hashSecret = String(md5(fullSecret)).toUpperCase()
-  const totp = new OTPAuth.TOTP({
+  return new OTPAuth.TOTP({
     issuer: 'ACME',
     label: 'AzureDiamond',
     algorithm: 'SHA1',
@@ -23,67 +22,66 @@ function TOTP(idCliente, idDevice) {
     period: OTP_PERIOD,
     secret: OTPAuth.Secret.fromUTF8(hashSecret)
   })
-  return totp
 }
 
 // ** Inicio: getEstatusActivacion
-async function getStatusActivacion(idCliente) {
-  return ActivacionDAO.getStatusActivacion(idCliente)
+async function obtenerEstatusActivacion(idCliente) {
+  return ActivacionDAO.obtenerEstatusActivacion(idCliente)
 }
 
-async function setStatusActivacion(idCliente, statusActivacion) {
-  await ActivacionDAO.setStatusActivacion(idCliente, statusActivacion)
+async function establecerEstatusActivacion(idCliente, statusActivacion) {
+  await ActivacionDAO.establecerEstatusActivacion(idCliente, statusActivacion)
 }
 
-const sendOtp = async (req, res, idCliente) => {
-  LOG.info('CTRL: Starting sendOTP method')
+const enviarOtp = async (req, res, idCliente) => {
+  LOG.info('CTRL: Starting enviarOtp method')
 
   // validaciones y carga de parametros
   // proceso principal
-  const cliente = await ClienteService.getCliente(idCliente)
-  const codeOtp = new TOTP(idCliente, cliente.idDevice).generate()
+  const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  const codigoOtp = new TOTP(idCliente, cliente.idDevice).generate()
   try {
     await ComunicacionesService.sendOtpToComunicaciones(
       req,
       res,
-      String(req.body.modeSend).toLowerCase(),
+      String(req.body.modoEnvio).toLowerCase(),
       cliente,
-      codeOtp
+      codigoOtp
     )
   } catch (err) {
     return ''
   }
-  await setStatusActivacion(idCliente, 3)
+  await establecerEstatusActivacion(idCliente, 3)
   // Termiancion del proceso...
-  LOG.info('CTRL: Ending sendOTP method')
-  return codeOtp
+  LOG.info('CTRL: Ending enviarOtp method')
+  return codigoOtp
 }
 
-const verifyOtp = async (idCliente, codeOtp) => {
+const verificarOtp = async (idCliente, codigoOtp) => {
   LOG.info('Service: Starting validateOTP method')
   // validaciones y carga de parametros
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
 
   LOG.info(`prms-usuario: usuario ${idCliente}`)
-  LOG.info(`prms-tokenOtp: tokenOtp ${codeOtp}`)
+  LOG.info(`prms-tokenOtp: tokenOtp ${codigoOtp}`)
 
   // ejecición del proceso principal.
   const delta = new TOTP(idCliente, cliente.idDevice).validate({
-    token: codeOtp,
+    token: codigoOtp,
     window: 1
   })
   // LOG.debugJSON('proceso-eval delta', delta)
-  let isValidOtp = false
-  if (delta === 0) isValidOtp = true
-  if (isValidOtp) await setStatusActivacion(idCliente, 4)
+  let esValidoOtp = false
+  if (delta === 0) esValidoOtp = true
+  if (esValidoOtp) await establecerEstatusActivacion(idCliente, 4)
   // LOG.debugJSON('proceso-eval isValidOtp', isValidOtp)
-  return isValidOtp
+  return esValidoOtp
 }
 
 export const ActivacionService = {
-  getStatusActivacion,
-  setStatusActivacion,
-  sendOtp,
-  verifyOtp
+  obtenerEstatusActivacion,
+  establecerEstatusActivacion,
+  enviarOtp,
+  verificarOtp
 }
 export default ActivacionService

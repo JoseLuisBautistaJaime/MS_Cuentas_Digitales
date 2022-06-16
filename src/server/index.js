@@ -47,7 +47,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 const corsOptionsDelegate = (req, callback) => {
-  const regex = new RegExp('(http|https)://localhost')
+  const regex = new RegExp(`(http|https)://localhost`)
   const corsOptions = regex.test(req.header('Origin'))
     ? { origin: true }
     : { origin: false }

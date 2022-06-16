@@ -20,4 +20,3 @@ applications:
       FTP_PASSWORD: ${FTP_PASSWORD}
       FTP_PORT: ${FTP_PORT}
       FTP_ROOT: ${FTP_ROOT}
-      RELOJ_API_HOST: ${RELOJ_API_HOST}

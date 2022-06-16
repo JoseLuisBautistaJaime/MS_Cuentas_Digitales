@@ -9,16 +9,16 @@ const router = express.Router()
 router.route('/').get(ClienteController.healthCheck)
 
 router.route('/actualizarCliente').post(ClienteController.actualizarCliente)
-router.route('/getCliente').get(ClienteController.getCliente)
+router.route('/obtenerCliente').get(ClienteController.obtenerCliente)
 router
-  .route('/getStatusActivacion')
-  .get(ActivacionController.getStatusActivacion)
+  .route('/obtenerEstatusActivacion')
+  .get(ActivacionController.obtenerEstatusActivacion)
 
 router
-  .route('/setStatusActivacion')
-  .post(ActivacionController.setStatusActivacion)
+  .route('/establecerEstatusActivacion')
+  .post(ActivacionController.establecerEstatusActivacion)
 
-router.route('/sendOtp').post(ActivacionController.sendOtp)
-router.route('/verifyOtp').post(ActivacionController.verifyOtp)
+router.route('/enviarOtp').post(ActivacionController.enviarOtp)
+router.route('/verificarOtp').post(ActivacionController.verificarOtp)
 
 export default router

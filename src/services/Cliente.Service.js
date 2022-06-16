@@ -1,19 +1,17 @@
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 
-const getCliente = async idCliente => {
-  LOG.info(`Cliente.Service.getCliente: P5 ${idCliente}`)
+const obtenerCliente = async idCliente => {
+  LOG.info(`SERV: Starting obtenerCliente ${idCliente}`)
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
-  LOG.info(`Cliente.Service.getCliente: P6 ${cliente}`)
+  LOG.info(`SERV: Ending obtenerCliente method ${cliente}`)
   return cliente
 }
 
 const actualizarCliente = async body => {
   LOG.info('SERV: Starting actualizarCliente method')
   const { idCliente } = body
-  LOG.info(`SERV: idCliente ${idCliente}`)
   const usuarioExist = await ClienteDAO.countIdCliente(idCliente)
-  LOG.info(`prms:  usuarioExist ${usuarioExist}`)
   let resultSave
   if (usuarioExist === 0) {
     const clienteToAdd = {
@@ -49,5 +47,5 @@ const actualizarCliente = async body => {
 
 export const ClienteService = {
   actualizarCliente,
-  getCliente
+  obtenerCliente
 }

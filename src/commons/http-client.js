@@ -38,9 +38,6 @@ const sendRequest = async ({
 
   LOG.debug(`url - ${url}`)
   LOG.debug(`method - ${method}`)
-  //LOG.debugJSON('body', body)
-  //LOG.debugJSON(`headers - ${headers}`)
-
   const options = {
     method,
     headers: {
@@ -61,7 +58,6 @@ const sendRequest = async ({
       parseResponse
     )
 
-    //LOG.debugJSON('response', responseBody)
     LOG.debugJSON('valido', ok)
     LOG.debugJSON('status', status)
     LOG.debug('SERVICE: Ending sendRequest method')

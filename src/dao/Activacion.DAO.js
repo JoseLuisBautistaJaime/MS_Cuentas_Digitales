@@ -1,18 +1,17 @@
 import Mongoose from 'mongoose'
-import LOG from '../commons/LOG'
 import { clienteSchema } from '../models/cliente.model'
 import { ClienteDAO } from './Cliente.DAO'
 
 const Cliente = Mongoose.model('cliente', clienteSchema)
 
-async function setStatusActivacion(idCliente, statusActivacion) {
-  const resultSave = await Cliente.findOneAndUpdate(
+async function establecerEstatusActivacion(idCliente, estatusActivacion) {
+  return Cliente.findOneAndUpdate(
     {
       idCliente
     },
     {
       $set: {
-        statusActivacion,
+        estatusActivacion,
         ultimaActualizacion: Date.now()
       }
     },
@@ -20,31 +19,36 @@ async function setStatusActivacion(idCliente, statusActivacion) {
       new: true
     }
   )
-  return resultSave
 }
 
-async function getStatusActivacion(idCliente) {
+async function obtenerEstatusActivacion(idCliente) {
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
 
   let result = {
-    statusActivacion: 0,
-    statusActivacionName: ''
+    estatusActivacion: 0,
+    estatusActivacionNombre: ''
   }
   if (cliente === null)
-    result = { statusActivacion: 1, statusActivacionName: 'NoExisteCliente' }
+    result = {
+     
+      estatusActivacion: 1,
+     
+      estatusActivacionNombre: 'NoExisteCliente'
+   
+    }
   else {
-    let { statusActivacion } = cliente
-    if (statusActivacion === '' || statusActivacion === undefined)
-      statusActivacion = 2
-    switch (String(statusActivacion)) {
+    let { estatusActivacion } = cliente
+    if (estatusActivacion === '' || estatusActivacion === undefined)
+      estatusActivacion = 2
+    switch (String(estatusActivacion)) {
       case '2':
-        result = { statusActivacion, statusActivacionName: 'Prospecto' }
+        result = { estatusActivacion, estatusActivacionNombre: 'Prospecto' }
         break
       case (3, '3'):
-        result = { statusActivacion, statusActivacionName: 'OtpGenerado' }
+        result = { estatusActivacion, estatusActivacionNombre: 'OtpGenerado' }
         break
       case (4, '4'):
-        result = { statusActivacion, statusActivacionName: 'Activado' }
+        result = { estatusActivacion, estatusActivacionNombre: 'Activado' }
         break
       default:
     }
@@ -53,8 +57,8 @@ async function getStatusActivacion(idCliente) {
 }
 
 export const ActivacionDAO = {
-  setStatusActivacion,
-  getStatusActivacion
+  establecerEstatusActivacion,
+  obtenerEstatusActivacion
 }
 
 export default ActivacionDAO
