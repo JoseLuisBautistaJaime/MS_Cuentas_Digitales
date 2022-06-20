@@ -1,8 +1,6 @@
 import express from 'express'
 import { ClienteController } from '../controllers/Cliente.Controller'
 import { ActivacionController } from '../controllers/Activacion.Controller'
-// var sslRootCAs = require('ssl-root-cas/latest')
-// sslRootCAs.inject()
 
 const router = express.Router()
 

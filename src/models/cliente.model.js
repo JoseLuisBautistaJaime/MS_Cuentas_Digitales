@@ -1,6 +1,22 @@
 import mongoose from 'mongoose'
 
+export const clienteActivacionLogEventsSchema = new mongoose.Schema({
+  createdAt: { type: Date, default: Date.now },
+  estatusActivacion: Number,
+  estatusActivacionNombre: String,
+  codigoOtp: String
+})
+
+export const clienteActivacionSchema = new mongoose.Schema({
+  estatusActivacion: Number,
+  estatusActivacionNombre: String,
+  codigoOtp: String,
+  ultimaActualizacion: { type: Date, default: Date.now },
+  fechaActivacion: { type: Date, default: null }
+})
+
 export const clienteSchema = new mongoose.Schema({
+  createdAt: { type: Date, default: Date.now },
   idCliente: { type: String, index: true, required: true },
   idDevice: { type: String, required: true },
   tarjetaMonte: { type: String, required: true },
@@ -10,9 +26,6 @@ export const clienteSchema = new mongoose.Schema({
   nombreCompleto: String,
   correoCliente: String,
   celularCliente: String,
-  estatusActivacion: { Type: Number },
-  activacion: Object,
-  codigoVerificacion: String,
-  ultimaActualizacion: { type: Date, default: Date.now },
-  fechaActivacion: { type: Date, default: null }
+  activacion: clienteActivacionSchema,
+  activacionLogEvents: [clienteActivacionLogEventsSchema]
 })

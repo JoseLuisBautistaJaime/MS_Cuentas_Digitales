@@ -29,15 +29,19 @@ async function obtenerEstatusActivacion(idCliente) {
   return ActivacionDAO.obtenerEstatusActivacion(idCliente)
 }
 
+/**
+ * SERV: Establece el estatus de actuvacion.
+ * @param {*} idCliente el número idCliente.
+ * @param {*} estatusActivacion El número del estatus de Activacion.
+ */
 async function establecerEstatusActivacion(idCliente, estatusActivacion) {
+  LOG.info('SERV: Starting establecerEstatusActivacion')
   await ActivacionDAO.establecerEstatusActivacion(idCliente, estatusActivacion)
+  LOG.info('SERV: Starting establecerEstatusActivacion')
 }
 
 const enviarOtp = async (req, res, idCliente) => {
-  LOG.info('CTRL: Starting enviarOtp method')
-
-  // validaciones y carga de parametros
-  // proceso principal
+  LOG.info('SERV: Starting enviarOtp method')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   const codigoOtp = new TOTP(idCliente, cliente.idDevice).generate()
   try {
@@ -52,8 +56,7 @@ const enviarOtp = async (req, res, idCliente) => {
     return ''
   }
   await establecerEstatusActivacion(idCliente, 3)
-  // Termiancion del proceso...
-  LOG.info('CTRL: Ending enviarOtp method')
+  LOG.info('SERV: Ending enviarOtp method')
   return codigoOtp
 }
 

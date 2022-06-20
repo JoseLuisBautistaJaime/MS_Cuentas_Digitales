@@ -49,24 +49,24 @@ describe('POST /actualizarCliente', () => {
         done()
       })
   })
-  it('Actualizar la información del cliente - Error header', done => {
-    const requestBody = {
-      idCliente: '1111',
-      idDevice: '23231',
-      tarjetaMonte: '3424234',
-      nombreCliente: 'Julio',
-      apellidoPaterno: 'Soto',
-      apellidoMaterno: 'Perez',
-      correoCliente: 'jsoto@quarksoft.net',
-      celularCliente: '4927952196'
-    }
-    chai
-      .request(app)
-      .post(`/${context}/${version}/actualizarCliente`)
-      .send(requestBody)
-      .end((err, res) => {
-        res.should.have.status(400)
-        done()
-      })
-  })
+  // it('Actualizar la información del cliente - Error header', done => {
+  //   const requestBody = {
+  //     idCliente: '1111',
+  //     idDevice: '23231',
+  //     tarjetaMonte: '3424234',
+  //     nombreCliente: 'Julio',
+  //     apellidoPaterno: 'Soto',
+  //     apellidoMaterno: 'Perez',
+  //     correoCliente: 'jsoto@quarksoft.net',
+  //     celularCliente: '4927952196'
+  //   }
+  //   chai
+  //     .request(app)
+  //     .post(`/${context}/${version}/actualizarCliente`)
+  //     .send(requestBody)
+  //     .end((err, res) => {
+  //       res.should.have.status(400)
+  //       done()
+  //     })
+  // })
 })

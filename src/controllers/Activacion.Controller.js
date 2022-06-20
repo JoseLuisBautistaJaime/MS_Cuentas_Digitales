@@ -9,9 +9,7 @@ const obtenerEstatusActivacion = async (req, res) => {
     await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
     const result = await ActivacionService.obtenerEstatusActivacion(idCliente)
-    LOG.info(
-      `CTRL: Terminado obtenerEstatusActivacion ${result.estatusActivacion}`
-    )
+    LOG.info(`CTRL: Terminado obtenerEstatusActivacion`)
     return res.status(200).send(result)
   } catch (err) {
     LOG.error(err)
@@ -65,11 +63,8 @@ const verificarOtp = async (req, res) => {
 
     const { idCliente, codigoOtp } = req.body
     const esValidoOtp = await ActivacionService.verificarOtp(
-      
       idCliente,
-     
       codigoOtp
-    
     )
 
     LOG.info('CTRL: Ending verificarOtp method')

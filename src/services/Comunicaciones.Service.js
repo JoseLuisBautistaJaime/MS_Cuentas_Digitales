@@ -7,7 +7,9 @@ import {
   HEADER_USUARIO,
   TEMPLATE_API_COMUNICACIONES_EMAIL,
   TEMPLATE_API_COMUNICACIONES_SMS,
-  URL_API_COMUNICACIONES
+  URL_API_COMUNICACIONES,
+  CODE_BAD_REQUEST,
+  CODE_INTERNAL_SERVER_ERROR
 } from '../commons/constants'
 import { HttpClientService } from '../commons/http-client'
 import handlerError from '../validator/handler-error'
@@ -39,31 +41,36 @@ const createHeaderComunicaciones = async req => {
   }
 }
 
-async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, tokenOtp) {
+/**
+ * sendOtpToComunicaciones: Envia el codigoOtp por el medio apropiado, validando el codigoOtp y el modoEnvio
+ * @param req Headers: Se recupera la información del request para validar la autenticación.
+ * @param {*} res Response del proceso padre.
+ * @param modoEnvio Modo de envio del codigo email o sms
+ * @param cliente Objeto cliente, obtenido directamente del modelo cliente_model
+ * @param codigoOtp Codigo OTP a enviar
+ * @returns Retorna true, si la ejecución fue exitosa. O desencadena excepción, en caso de existir alguna.
+ */
+async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, codigoOtp) {
+  LOG.debug('SERV: Iniciando sendOtpToComunicaciones')
   const correoCliente = String(cliente.correoCliente)
   const celularCliente = String(cliente.celularCliente)
 
-  // validacion de excepciones..
-  if (tokenOtp === null || tokenOtp === '') {
-    // const controlExcepcion = {
-    //   codigo: CODE_INTERNAL_SERVER_ERROR,
-    //   mensaje: MESSAGE_ERROR
-    // }
-    // const response = {
-    //   controlExcepcion
-    // }
-    return res.status(500).send(res)
+  // Validación del Token Otp..
+  if (codigoOtp === null || codigoOtp === '') {
+    const controlExcepcion = {
+      code: CODE_BAD_REQUEST,
+      message: 'BadRequest - Token no generado correctamente.'
+    }
+    return res.status(400).send({ controlExcepcion })
   }
-  // proceso: Validacion del campo tipo, para el envio de SMS.
+
+  // Modo de envio de sms..
   if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
-    // const controlExcepcion = {
-    //   codigo: CODE_INTERNAL_SERVER_ERROR,
-    //   mensaje: `${MESSAGE_ERROR} (la variable 'modeSend' debe tener un valor de 'EMAIL' o 'SMS')`
-    // }
-    // const response = {
-    //   controlExcepcion
-    // }
-    return res.status(500).send(res)
+    const controlExcepcion = {
+      code: CODE_BAD_REQUEST,
+      message: `BadRequest - El parametro en body 'modoEnvio' debe ser 'sms' o 'email'`
+    }
+    return res.status(400).send({ controlExcepcion })
   }
 
   // envio de otp por email o sms
@@ -72,20 +79,36 @@ async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, tokenOtp) {
       req,
       res,
       correoCliente,
-      tokenOtp
+     
+
+          
+      codigoOtp
+    
+    
+    
     )
-    LOG.debugJSON('statusEmail', statusEmail)
     if (statusEmail.statusRequest !== 201) {
-      return res.status(500).send(statusEmail)
+      LOG.debugJSON('email', statusEmail)
+      const controlExcepcion = {
+        code: CODE_INTERNAL_SERVER_ERROR,
+        message: `Internal Server Error - ${statusEmail.descripcionError}`
+      }
+      return res.status(500).send({ controlExcepcion })
     }
   }
+
+  // envio de otp por sms
   if (modoEnvio === 'sms') {
-    const statusSMS = await enviarCodigoSMS(req, res, celularCliente, tokenOtp)
-    LOG.debugJSON('statusSMS', statusSMS)
+    const statusSMS = await enviarCodigoSMS(req, res, celularCliente, codigoOtp)
     if (statusSMS.statusRequest !== 201) {
-      return res.status(500).send(statusSMS)
+      const controlExcepcion = {
+        code: CODE_INTERNAL_SERVER_ERROR,
+        message: `Internal Server Error - ${statusSMS.descripcionError}`
+      }
+      return res.status(500).send({ controlExcepcion })
     }
   }
+  LOG.debug('SERV: Terminando sendOtpToComunicaciones')
   return true
 }
 
@@ -96,8 +119,8 @@ async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, tokenOtp) {
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
-const enviarCodigoSMS = async (req, res, destinatario, codigo) => {
-  LOG.debug('SERV: Ejecutando enviarCodigoSMS')
+const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
+  LOG.debug('SERV: Iniciando enviarCodigoSMS')
   try {
     const header = await createHeaderComunicaciones(req)
 
@@ -109,7 +132,7 @@ const enviarCodigoSMS = async (req, res, destinatario, codigo) => {
       template: {
         id: TEMPLATE_API_COMUNICACIONES_SMS,
         metadata: {
-          codigo
+          codigo: codigoOtp
         }
       }
     }
@@ -138,7 +161,7 @@ const enviarCodigoSMS = async (req, res, destinatario, codigo) => {
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
-const enviarCodigoEMAIL = async (req, res, destinatario, codigo) => {
+const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
   LOG.debug('SERV: Ejecutando enviarCodigoEMAIL')
   try {
     const header = await createHeaderComunicaciones(req)
@@ -153,7 +176,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigo) => {
       template: {
         id: TEMPLATE_API_COMUNICACIONES_EMAIL,
         metadata: {
-          codigo
+          codigo: codigoOtp
         }
       },
       datosEmail: {

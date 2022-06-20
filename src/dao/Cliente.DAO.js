@@ -1,5 +1,3 @@
-// import LOG from '../commons/LOG'
-// import { PERPAGE } from '../commons/constants'
 import Mongoose from 'mongoose'
 import { clienteSchema } from '../models/cliente.model'
 

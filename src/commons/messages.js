@@ -11,8 +11,8 @@ export const MESSAGES = {
     template: 'NO CONTENT',
     description: 'Se ha realizado correctamente la operación'
   },
-  'NMP.CUENTASDIGITALES.400': {
-    template: 'solicitud malformada'
+  'NMP.CATALOGO.400': {
+    template: 'Bad Request - <%= text %>'
   },
   'NMP.CUENTASDIGITALES.404': {
     template: 'Not Found - <%= text %>'
