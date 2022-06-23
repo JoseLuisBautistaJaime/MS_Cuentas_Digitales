@@ -32,20 +32,6 @@ const changeToCollectionStandard = async collection => {
 }
 
 /**
- * Valida los encabezados necesarios para el OAG
- *
- * @param req El request con el Header a validar.
- * @returns {Promise<void>}
- */
-const validateHeaderOAG = async req => {
-  await validarHeader(req, HEADER_ID_CONSUMIDOR)
-  await validarHeader(req, HEADER_ID_DESTINO)
-  await validarHeader(req, HEADER_USUARIO)
-  await validarHeader(req, HEADER_OAUTH)
-  await validarHeader(req, HEADER_AUTHORIZATION)
-}
-
-/**
  * Expresión auxiliar utilizada para validar el encabezado recibido.
  *
  * @param req El request con el Header a validar.
@@ -60,6 +46,20 @@ const validarHeader = async (req, header) => {
       })
     )
   }
+}
+
+/**
+ * Valida los encabezados necesarios para el OAG
+ *
+ * @param req El request con el Header a validar.
+ * @returns {Promise<void>}
+ */
+const validateHeaderOAG = async req => {
+  await validarHeader(req, HEADER_ID_CONSUMIDOR)
+  await validarHeader(req, HEADER_ID_DESTINO)
+  await validarHeader(req, HEADER_USUARIO)
+  await validarHeader(req, HEADER_OAUTH)
+  await validarHeader(req, HEADER_AUTHORIZATION)
 }
 
 export const Util = {
