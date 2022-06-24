@@ -63,6 +63,8 @@ const verificarOtp = async (req, res) => {
 
     const { idCliente, codigoOtp } = req.body
     const esValidoOtp = await ActivacionService.verificarOtp(
+      req,
+      res,
       idCliente,
       codigoOtp
     )

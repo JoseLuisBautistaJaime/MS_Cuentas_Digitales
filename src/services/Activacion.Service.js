@@ -40,6 +40,12 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion) {
   LOG.info('SERV: Starting establecerEstatusActivacion')
 }
 
+/**
+ * SERV: para el envío del OTP
+ * @param {*} req request del Controller (requerido para el proceso de comunicaciones)
+ * @param {*} res response del Controller (requerido para el proceso de comunicaciones)
+ * @param {*} idCliente el número idCliente.
+ */
 const enviarOtp = async (req, res, idCliente) => {
   LOG.info('SERV: Starting enviarOtp method')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
@@ -60,7 +66,13 @@ const enviarOtp = async (req, res, idCliente) => {
   return codigoOtp
 }
 
-const verificarOtp = async (idCliente, codigoOtp) => {
+/**
+ * SERV: verificacion del OTP
+ * @param {*} req request del Controller (requerido para el proceso de comunicaciones)
+ * @param {*} res response del Controller (requerido para el proceso de comunicaciones)
+ * @param {*} idCliente el número idCliente.
+ */
+const verificarOtp = async (req, res, idCliente, codigoOtp) => {
   LOG.info('Service: Starting validateOTP method')
   // validaciones y carga de parametros
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
@@ -77,6 +89,9 @@ const verificarOtp = async (idCliente, codigoOtp) => {
   let esValidoOtp = false
   if (delta === 0) esValidoOtp = true
   if (esValidoOtp) await establecerEstatusActivacion(idCliente, 4)
+  if (esValidoOtp)
+    await ComunicacionesService.enviarActivacionEMAIL(req, res, cliente)
+
   LOG.debugJSON('proceso-eval isValidOtp', esValidoOtp)
   return esValidoOtp
 }
