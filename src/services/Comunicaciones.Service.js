@@ -1,10 +1,10 @@
 import {
-  EMAIL_REMITENTE,
   HEADER_AUTHORIZATION,
   HEADER_ID_CONSUMIDOR,
   HEADER_ID_DESTINO,
   HEADER_OAUTH,
   HEADER_USUARIO,
+  EMAIL_REMITENTE,
   TEMPLATE_API_COMUNICACIONES_EMAIL,
   TEMPLATE_API_COMUNICACIONES_EMAIL_ACTIVACION,
   TEMPLATE_API_COMUNICACIONES_SMS,
@@ -133,7 +133,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
  */
 const enviarActivacionEMAIL = async (req, res, cliente) => {
   LOG.debug('SERV: Ejecutando enviarActivacionEMAIL')
-  const clienteFullName = cliente.nombreCliente + ' ' + cliente.apellidoPaterno + ' ' + cliente.apellidoMaterno
+  const clienteFullName = `${cliente.nombreCliente} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`
   const { correoCliente } = cliente
   const bodyComunicaciones = {
     destinatario: {

@@ -4,6 +4,7 @@ export const { CONTEXT_VERSION } = process.env
 
 // Comunicaciones.Service
 export const {
+  EMAIL_REMITENTE,
   URL_API_COMUNICACIONES,
   TEMPLATE_API_COMUNICACIONES_SMS,
   TEMPLATE_API_COMUNICACIONES_EMAIL,
