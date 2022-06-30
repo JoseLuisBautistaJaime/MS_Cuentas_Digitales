@@ -47,9 +47,14 @@ const enviarOtp = async (req, res) => {
     if (codigoOtp === '') return res.status(500).send()
 
     // Termiancion del proceso...
-    LOG.info('CTRL: Ending enviarOtp method')
+    LOG.debugJSON('CTRL: Ending enviarOtp method', codigoOtp)
+    LOG.debug('CTRL: Endig enviarOtp-RETURN_200')
+    //  const retX = res.status(200)
+    // LOG.debugJSON('CTRL: Endig removerCliente-retX', retX)
+    // return retX
     return res.status(200).send({ codigoOtp })
   } catch (err) {
+    LOG.info('CTRL: Endig removerCliente-ERRORo')
     LOG.error(err)
     return handleError(res, err)
   }

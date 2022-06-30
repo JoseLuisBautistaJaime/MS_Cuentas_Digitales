@@ -8,7 +8,7 @@ import { ClienteDAO } from '../dao/Cliente.DAO'
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
 const OTP_DIGITS = 4
-const OTP_PERIOD = 120
+const OTP_PERIOD = 300
 
 function TOTP(idCliente, idDevice) {
   const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`

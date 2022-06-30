@@ -1,6 +1,19 @@
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ActivacionService } from './Activacion.Service'
+// import { OAuthService } from './OAuth.Service'
+
+/**
+ * Obtiene el cliente con el idCliente especificado en los parametros del query.
+ * @param {*} idCliente El número del idCliente.
+ * @returns Retorna todo el contenido de documento cliente.
+ */
+const removerCliente = async idCliente => {
+  LOG.debugJSON('SERV[removerCliente]-idCliente', idCliente)
+  await ClienteDAO.remover(idCliente)
+  LOG.info(`SERV: Ending removerCliente method ${idCliente}`)
+  return true
+}
 
 /**
  * Obtiene el cliente con el idCliente especificado en los parametros del query.
@@ -10,6 +23,8 @@ import { ActivacionService } from './Activacion.Service'
 const obtenerCliente = async idCliente => {
   LOG.info(`SERV: Starting obtenerCliente ${idCliente}`)
   LOG.debugJSON('SERV[obtenerCliente]-idCliente', idCliente)
+  // const token = await OAuthService.getOAuthToken()
+  // LOG.debugJSON('SERV[obtenerCliente]-token', token)
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   LOG.debugJSON('SERV[obtenerCliente]-cliente', cliente)
   LOG.info(`SERV: Ending obtenerCliente method ${cliente}`)
@@ -58,5 +73,6 @@ const actualizarCliente = async body => {
 
 export const ClienteService = {
   actualizarCliente,
-  obtenerCliente
+  obtenerCliente,
+  removerCliente
 }

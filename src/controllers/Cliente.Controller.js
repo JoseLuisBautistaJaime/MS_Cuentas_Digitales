@@ -43,9 +43,24 @@ const obtenerCliente = async (req, res) => {
   }
 }
 
+const removerCliente = async (req, res) => {
+  LOG.info('CTRL: Starting removerCliente')
+  try {
+    await Util.validateHeaderOAG(req)
+    const { idCliente } = req.query
+    await ClienteService.removerCliente(idCliente)
+    LOG.info('CTRL: Endig removerCliente')
+    return Response.Ok(res)
+  } catch (err) {
+    LOG.error(err)
+    return handleError(res, err)
+  }
+}
+
 export const ClienteController = {
   healthCheck,
   obtenerCliente,
+  removerCliente,
   actualizarCliente
 }
 export default ClienteController

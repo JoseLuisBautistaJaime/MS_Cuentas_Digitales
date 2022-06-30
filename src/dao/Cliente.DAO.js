@@ -14,6 +14,11 @@ const countIdCliente = async idCliente => {
 const save = async cliente => {
   return Cliente.create(cliente)
 }
+const remover = async idCliente => {
+  return Cliente.remove({
+    idCliente
+  })
+}
 
 const findOneAndUpdate = async (idCliente, cliente) => {
   return Cliente.findOneAndUpdate(
@@ -41,6 +46,7 @@ const findOneAndUpdate = async (idCliente, cliente) => {
 export const ClienteDAO = {
   findByIdCliente,
   countIdCliente,
+  remover,
   save,
   findOneAndUpdate
 }

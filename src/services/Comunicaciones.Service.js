@@ -42,6 +42,123 @@ const createHeaderComunicaciones = async req => {
   }
 }
 
+const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
+  LOG.debug('SERV: Ejecutando internalEnviarEmail')
+  try {
+    const header = await createHeaderComunicaciones(req)
+
+    LOG.debugJSON('SERV: enviarActivacionEMAIL-body', bodyComunicaciones)
+    LOG.debugJSON('SERV: enviarActivacionEMAIL-header', header)
+    const HttpComunicaciones = {
+      url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
+      method: HttpMethod.POST,
+      headers: header,
+      body: bodyComunicaciones
+    }
+
+    const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
+
+    LOG.debugJSON('SERV: Terminando internalEnviarEmail', bodyResp)
+    return bodyResp
+  } catch (error) {
+    LOG.error(error)
+    return handlerError(res, error)
+  }
+}
+
+/**
+ * enviarCodigoSMS: Permite generar el envió de SMS utilizando el servicio de Comunicaciones.
+ * @param req Headers: Se recupera la información del request para validar la autenticación.
+ * @param destinatario Teléfono al cual se enviá el SMS.
+ * @param codigo Código de validación.
+ * @returns {Promise<*>} La información de la respuesta obtenida.
+ */
+const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
+  LOG.debug('SERV: Iniciando enviarCodigoSMS')
+  const bodyComunicaciones = {
+    destinatario: {
+      telefonos: [destinatario]
+    },
+    tipoMensaje: 'SMS',
+    template: {
+      id: TEMPLATE_API_COMUNICACIONES_SMS,
+      metadata: {
+        codigo: codigoOtp
+      }
+    }
+  }
+  const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
+  LOG.debugJSON('SERV: Terminando enviarCodigoSMS', bodyResp)
+  return bodyResp
+}
+
+/**
+ * enviarCodigoEMAIL: Permite generar el envió de SMS utilizando el servicio de Comunicaciones.
+ * @param req Headers: Se recupera la información del request para validar la autenticación.
+ * @param destinatario Email al que se envia el correo.
+ * @param codigo Código de validación.
+ * @returns {Promise<*>} La información de la respuesta obtenida.
+ */
+const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
+  LOG.debug('SERV: Ejecutando enviarCodigoEMAIL')
+  const bodyComunicaciones = {
+    destinatario: {
+      email: destinatario
+    },
+    remitente: {
+      email: EMAIL_REMITENTE
+    },
+    tipoMensaje: 'EMAIL',
+    template: {
+      id: TEMPLATE_API_COMUNICACIONES_EMAIL,
+      metadata: {
+        codigo: codigoOtp
+      }
+    },
+    datosEmail: {
+      asunto: 'Código de Verificación'
+    }
+  }
+  const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
+  LOG.debugJSON('SERV: Terminando enviarCodigoEMAIL', bodyResp)
+  return bodyResp
+}
+
+/**
+ * enviarCodigoEMAIL: Permite generar el envió de SMS utilizando el servicio de Comunicaciones.
+ * @param req Headers: Se recupera la información del request para validar la autenticación.
+ * @param destinatario Email al que se envia el correo.
+ * @param codigo Código de validación.
+ * @returns {Promise<*>} La información de la respuesta obtenida.
+ */
+const enviarActivacionEMAIL = async (req, res, cliente) => {
+  LOG.debug('SERV: Ejecutando enviarActivacionEMAIL')
+  const clienteFullName = cliente.nombreCliente + ' ' + cliente.apellidoPaterno + ' ' + cliente.apellidoMaterno
+  const { correoCliente } = cliente
+  const bodyComunicaciones = {
+    destinatario: {
+      email: correoCliente
+    },
+    remitente: {
+      email: EMAIL_REMITENTE
+    },
+    tipoMensaje: 'EMAIL',
+    template: {
+      id: TEMPLATE_API_COMUNICACIONES_EMAIL_ACTIVACION,
+      metadata: {
+        cliente: clienteFullName,
+        linkActivacion: 'http://www.montepiedad.com.mx/'
+      }
+    },
+    datosEmail: {
+      asunto: 'Activación de Cuente'
+    }
+  }
+  const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
+  LOG.debugJSON('SERV: Terminando enviarActivacionEMAIL', bodyResp)
+  return bodyResp
+}
+
 /**
  * sendOtpToComunicaciones: Envia el codigoOtp por el medio apropiado, validando el codigoOtp y el modoEnvio
  * @param req Headers: Se recupera la información del request para validar la autenticación.
@@ -74,185 +191,31 @@ async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, codigoOtp) 
     return res.status(400).send({ controlExcepcion })
   }
 
+  let statusEnvio
   // envio de otp por email o sms
-  if (modoEnvio === 'email') {
-    const statusEmail = await enviarCodigoEMAIL(
-      req,
-      res,
-      correoCliente,
-      codigoOtp
-    )
-    if (statusEmail.statusRequest !== 201) {
-      LOG.debugJSON('email', statusEmail)
-      const controlExcepcion = {
-        code: CODE_INTERNAL_SERVER_ERROR,
-        message: `Internal Server Error - ${statusEmail.descripcionError}`
-      }
-      return res.status(500).send({ controlExcepcion })
-    }
-  }
+  if (modoEnvio === 'email')
+    statusEnvio = await enviarCodigoEMAIL(req, res, correoCliente, codigoOtp)
+  if (modoEnvio === 'sms')
+    statusEnvio = await enviarCodigoSMS(req, res, celularCliente, codigoOtp)
 
-  // envio de otp por sms
-  if (modoEnvio === 'sms') {
-    const statusSMS = await enviarCodigoSMS(req, res, celularCliente, codigoOtp)
-    if (statusSMS.statusRequest !== 201) {
-      const controlExcepcion = {
-        code: CODE_INTERNAL_SERVER_ERROR,
-        message: `Internal Server Error - ${statusSMS.descripcionError}`
-      }
-      return res.status(500).send({ controlExcepcion })
+  // verificar si existe alguna excepcion
+  if (statusEnvio.statusRequest !== 201) {
+    LOG.debugJSON('SERV: sendOtpToComunicaciones-statusEnvio', statusEnvio)
+    const controlExcepcion = {
+      code: CODE_INTERNAL_SERVER_ERROR,
+      message: `Internal Server Error - ${statusEnvio.descripcionError}`
     }
+    return res.status(500).send({ controlExcepcion })
   }
   LOG.debug('SERV: Terminando sendOtpToComunicaciones')
   return true
 }
 
-/**
- * enviarCodigoSMS: Permite generar el envió de SMS utilizando el servicio de Comunicaciones.
- * @param req Headers: Se recupera la información del request para validar la autenticación.
- * @param destinatario Teléfono al cual se enviá el SMS.
- * @param codigo Código de validación.
- * @returns {Promise<*>} La información de la respuesta obtenida.
- */
-const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
-  LOG.debug('SERV: Iniciando enviarCodigoSMS')
-  try {
-    const header = await createHeaderComunicaciones(req)
-
-    const bodyComunicaciones = {
-      destinatario: {
-        telefonos: [destinatario]
-      },
-      tipoMensaje: 'SMS',
-      template: {
-        id: TEMPLATE_API_COMUNICACIONES_SMS,
-        metadata: {
-          codigo: codigoOtp
-        }
-      }
-    }
-
-    const HttpComunicaciones = {
-      url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
-      method: HttpMethod.POST,
-      headers: header,
-      body: bodyComunicaciones
-    }
-
-    const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
-
-    LOG.debugJSON('SERV: Terminando enviarCodigoSMS', bodyResp)
-    return bodyResp
-  } catch (error) {
-    LOG.error(error)
-    return handlerError(res, error)
-  }
-}
-
-/**
- * enviarCodigoEMAIL: Permite generar el envió de SMS utilizando el servicio de Comunicaciones.
- * @param req Headers: Se recupera la información del request para validar la autenticación.
- * @param destinatario Email al que se envia el correo.
- * @param codigo Código de validación.
- * @returns {Promise<*>} La información de la respuesta obtenida.
- */
-const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
-  LOG.debug('SERV: Ejecutando enviarCodigoEMAIL')
-  try {
-    const header = await createHeaderComunicaciones(req)
-    const bodyComunicaciones = {
-      destinatario: {
-        email: destinatario
-      },
-      remitente: {
-        email: EMAIL_REMITENTE
-      },
-      tipoMensaje: 'EMAIL',
-      template: {
-        id: TEMPLATE_API_COMUNICACIONES_EMAIL,
-        metadata: {
-          codigo: codigoOtp
-        }
-      },
-      datosEmail: {
-        asunto: 'Código de Verificación'
-      }
-    }
-
-    const HttpComunicaciones = {
-      url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
-      method: HttpMethod.POST,
-      headers: header,
-      body: bodyComunicaciones
-    }
-
-    const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
-
-    LOG.debugJSON('SERV: Terminando enviarCodigoEMAIL', bodyResp)
-    return bodyResp
-  } catch (error) {
-    LOG.error(error)
-    return handlerError(res, error)
-  }
-}
-
-/**
- * enviarCodigoEMAIL: Permite generar el envió de SMS utilizando el servicio de Comunicaciones.
- * @param req Headers: Se recupera la información del request para validar la autenticación.
- * @param destinatario Email al que se envia el correo.
- * @param codigo Código de validación.
- * @returns {Promise<*>} La información de la respuesta obtenida.
- */
-const enviarActivacionEMAIL = async (req, res, cliente) => {
-  LOG.debug('SERV: Ejecutando enviarActivacionEMAIL')
-  const clienteFullName = cliente.nombreCliente + ' ' + cliente.apellidoPaterno + ' ' + cliente.apellidoMaterno
-  const { correoCliente } = cliente
-  try {
-    const header = await createHeaderComunicaciones(req)
-    const bodyComunicaciones = {
-      destinatario: {
-        email: correoCliente
-      },
-      remitente: {
-        email: EMAIL_REMITENTE
-      },
-      tipoMensaje: 'EMAIL',
-      template: {
-        id: TEMPLATE_API_COMUNICACIONES_EMAIL_ACTIVACION,
-        metadata: {
-          cliente: clienteFullName,
-          linkActivacion: 'http://www.montepiedad.com.mx/'
-        }
-      },
-      datosEmail: {
-        asunto: 'Activación de Cuente'
-      }
-    }
-
-    // LOG.debugJSON('SERV: enviarActivacionEMAIL-body', bodyComunicaciones)
-    // LOG.debugJSON('SERV: enviarActivacionEMAIL-header', header)
-    const HttpComunicaciones = {
-      url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
-      method: HttpMethod.POST,
-      headers: header,
-      body: bodyComunicaciones
-    }
-
-    const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
-
-    LOG.debugJSON('SERV: Terminando enviarActivacionEMAIL', bodyResp)
-    return bodyResp
-  } catch (error) {
-    LOG.error(error)
-    return handlerError(res, error)
-  }
-}
-
 export const ComunicacionesService = {
   enviarCodigoSMS,
   enviarCodigoEMAIL,
-  sendOtpToComunicaciones,
-  enviarActivacionEMAIL
+  enviarActivacionEMAIL,
+  sendOtpToComunicaciones
 }
 
 export default ComunicacionesService

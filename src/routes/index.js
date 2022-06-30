@@ -8,6 +8,7 @@ router.route('/').get(ClienteController.healthCheck)
 
 router.route('/actualizarCliente').post(ClienteController.actualizarCliente)
 router.route('/obtenerCliente').get(ClienteController.obtenerCliente)
+router.route('/removerCliente').post(ClienteController.removerCliente)
 router
   .route('/obtenerEstatusActivacion')
   .get(ActivacionController.obtenerEstatusActivacion)
