@@ -4,7 +4,7 @@ import { Util, Response } from '../commons'
 import { ActivacionService } from '../services/Activacion.Service'
 
 const obtenerEstatusActivacion = async (req, res) => {
-  LOG.info('CTRL: Iniciando obtenerEstatusActivacion')
+  LOG.info('CTRL: Starting obtenerEstatusActivacion')
   try {
     await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
@@ -18,7 +18,7 @@ const obtenerEstatusActivacion = async (req, res) => {
 }
 
 const establecerEstatusActivacion = async (req, res) => {
-  LOG.info('CTRL: Iniciando establecerEstatusActivacion')
+  LOG.info('CTRL: Starting establecerEstatusActivacion')
   try {
     await Util.validateHeaderOAG(req)
 
@@ -36,7 +36,7 @@ const establecerEstatusActivacion = async (req, res) => {
 }
 
 const enviarOtp = async (req, res) => {
-  LOG.info('CTRL: Iniciando enviarOtp method')
+  LOG.info('CTRL: Starting enviarOtp method')
   try {
     // validaciones y carga de parametros
     await Util.validateHeaderOAG(req)
@@ -47,37 +47,34 @@ const enviarOtp = async (req, res) => {
     if (codigoOtp === '') return res.status(500).send()
 
     // Termiancion del proceso...
-    LOG.debugJSON('enviarOtp-codigoOtp', codigoOtp)
-    LOG.info('CTRL: Terminando enviarOtp')
+    LOG.debugJSON('CTRL: Ending enviarOtp method', codigoOtp)
+    LOG.debug('CTRL: Endig enviarOtp-RETURN_200')
     //  const retX = res.status(200)
     // LOG.debugJSON('CTRL: Endig removerCliente-retX', retX)
     // return retX
     return res.status(200).send({ codigoOtp })
   } catch (err) {
-    // LOG.info('CTRL: Endig removerCliente-ERRORo')
+    LOG.info('CTRL: Endig removerCliente-ERRORo')
     LOG.error(err)
     return handleError(res, err)
   }
 }
 
 const verificarOtp = async (req, res) => {
-  LOG.info('CTRL: Iniciando verificarOtp method')
+  LOG.info('CTRL: Starting verificarOtp method')
   try {
     // validaciones y carga de parametros
     await Util.validateHeaderOAG(req)
 
     const { idCliente, codigoOtp } = req.body
-    let { enviarEmail } = req.body
-    if (enviarEmail === undefined || enviarEmail === null) enviarEmail = true
     const esValidoOtp = await ActivacionService.verificarOtp(
       req,
       res,
       idCliente,
-      codigoOtp,
-      enviarEmail
+      codigoOtp
     )
 
-    LOG.info('CTRL: Terminando verificarOtp')
+    LOG.info('CTRL: Ending verificarOtp method')
     return res.status(200).send({ esValidoOtp })
   } catch (err) {
     LOG.error(err)

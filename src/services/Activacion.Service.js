@@ -12,7 +12,7 @@ const OTP_PERIOD = 300
 
 function TOTP(idCliente, idDevice) {
   const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`
-  LOG.debug(`TOTP-fullSecret ${fullSecret}`)
+  LOG.info(`paso 6. fullSecret ${fullSecret}`)
   const hashSecret = String(md5(fullSecret)).toUpperCase()
   return new OTPAuth.TOTP({
     issuer: 'ACME',
@@ -35,9 +35,9 @@ async function obtenerEstatusActivacion(idCliente) {
  * @param {*} estatusActivacion El número del estatus de Activacion.
  */
 async function establecerEstatusActivacion(idCliente, estatusActivacion) {
-  LOG.info('SERV: Iniciando establecerEstatusActivacion')
+  LOG.info('SERV: Starting establecerEstatusActivacion')
   await ActivacionDAO.establecerEstatusActivacion(idCliente, estatusActivacion)
-  LOG.info('SERV: Terminando establecerEstatusActivacion')
+  LOG.info('SERV: Starting establecerEstatusActivacion')
 }
 
 /**
@@ -47,7 +47,7 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion) {
  * @param {*} idCliente el número idCliente.
  */
 const enviarOtp = async (req, res, idCliente) => {
-  LOG.info('SERV: Iniciando enviarOtp method')
+  LOG.info('SERV: Starting enviarOtp method')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   const codigoOtp = new TOTP(idCliente, cliente.idDevice).generate()
   try {
@@ -62,7 +62,7 @@ const enviarOtp = async (req, res, idCliente) => {
     return ''
   }
   await establecerEstatusActivacion(idCliente, 3)
-  LOG.info('SERV: Terminando enviarOtp method')
+  LOG.info('SERV: Ending enviarOtp method')
   return codigoOtp
 }
 
@@ -72,13 +72,13 @@ const enviarOtp = async (req, res, idCliente) => {
  * @param {*} res response del Controller (requerido para el proceso de comunicaciones)
  * @param {*} idCliente el número idCliente.
  */
-const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
-  LOG.info('SERV: Iniciando verificarOtp method')
+const verificarOtp = async (req, res, idCliente, codigoOtp) => {
+  LOG.info('Service: Starting validateOTP method')
   // validaciones y carga de parametros
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
 
-  LOG.debug(`prms-usuario: usuario ${idCliente}`)
-  LOG.debug(`prms-tokenOtp: tokenOtp ${codigoOtp}`)
+  LOG.info(`prms-usuario: usuario ${idCliente}`)
+  LOG.info(`prms-tokenOtp: tokenOtp ${codigoOtp}`)
 
   // ejecición del proceso principal.
   const delta = new TOTP(idCliente, cliente.idDevice).validate({
@@ -89,11 +89,10 @@ const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
   let esValidoOtp = false
   if (delta === 0) esValidoOtp = true
   if (esValidoOtp) await establecerEstatusActivacion(idCliente, 4)
-  LOG.debugJSON('prms-enviarEmail', enviarEmail)
-  if (esValidoOtp === true && enviarEmail === 'true')
+  if (esValidoOtp)
     await ComunicacionesService.enviarActivacionEMAIL(req, res, cliente)
-  LOG.debugJSON('prms-isValidOtp', esValidoOtp)
-  LOG.info('SERV: Terminando verificarOtp method')
+
+  LOG.debugJSON('proceso-eval isValidOtp', esValidoOtp)
   return esValidoOtp
 }
 

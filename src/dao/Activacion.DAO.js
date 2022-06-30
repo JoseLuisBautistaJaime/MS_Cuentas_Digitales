@@ -46,7 +46,7 @@ function obtenerEstatusActivacionNombre(estatusActivacion) {
  * @returns Objeto Cliente
  */
 async function establecerEstatusActivacion(idCliente, estatusActivacion) {
-  LOG.info('DAO: Iniciando establecerEstatusActivacion')
+  LOG.info('DAO: Starting establecerEstatusActivacion')
   const estatusActivacionNombre =
     obtenerEstatusActivacionNombre(estatusActivacion)
   const result = await Cliente.findOneAndUpdate(
@@ -66,7 +66,7 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion) {
       new: true
     }
   )
-  LOG.debugJSON('idCliente', idCliente)
+  LOG.debugJSON('DAO[establecerEstatusActivacion]-idCliente', idCliente)
   await Cliente.updateOne(
     {
       idCliente
@@ -80,7 +80,7 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion) {
       }
     }
   )
-  LOG.info('DAO: Terminando establecerEstatusActivacion')
+  LOG.info('DAO: Starting establecerEstatusActivacion')
   return result
 }
 
