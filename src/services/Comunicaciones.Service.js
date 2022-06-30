@@ -43,12 +43,10 @@ const createHeaderComunicaciones = async req => {
 }
 
 const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
-  LOG.debug('SERV: Ejecutando internalEnviarEmail')
+  LOG.info('SERV: Iniciando internalEnviarMensaje')
   try {
     const header = await createHeaderComunicaciones(req)
-
-    LOG.debugJSON('SERV: enviarActivacionEMAIL-body', bodyComunicaciones)
-    LOG.debugJSON('SERV: enviarActivacionEMAIL-header', header)
+    LOG.debugJSON('internalEnviarMensaje-header', header)
     const HttpComunicaciones = {
       url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
       method: HttpMethod.POST,
@@ -57,8 +55,8 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
     }
 
     const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
-
-    LOG.debugJSON('SERV: Terminando internalEnviarEmail', bodyResp)
+    LOG.debugJSON('internalEnviarMensaje-bodyResp', bodyResp)
+    LOG.info('SERV: Terminando internalEnviarEmail')
     return bodyResp
   } catch (error) {
     LOG.error(error)
@@ -74,7 +72,7 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
-  LOG.debug('SERV: Iniciando enviarCodigoSMS')
+  LOG.info('SERV: Iniciando enviarCodigoSMS')
   const bodyComunicaciones = {
     destinatario: {
       telefonos: [destinatario]
@@ -88,7 +86,7 @@ const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
     }
   }
   const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
-  LOG.debugJSON('SERV: Terminando enviarCodigoSMS', bodyResp)
+  LOG.info('SERV: Terminando enviarCodigoSMS', bodyResp)
   return bodyResp
 }
 
@@ -100,7 +98,7 @@ const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
-  LOG.debug('SERV: Ejecutando enviarCodigoEMAIL')
+  LOG.info('SERV: Iniciando enviarCodigoEMAIL')
   const bodyComunicaciones = {
     destinatario: {
       email: destinatario
@@ -120,7 +118,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
     }
   }
   const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
-  LOG.debugJSON('SERV: Terminando enviarCodigoEMAIL', bodyResp)
+  LOG.info('SERV: Terminado enviarCodigoEMAIL')
   return bodyResp
 }
 
@@ -132,7 +130,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const enviarActivacionEMAIL = async (req, res, cliente) => {
-  LOG.debug('SERV: Ejecutando enviarActivacionEMAIL')
+  LOG.info('SERV: Iniciando enviarActivacionEMAIL')
   const clienteFullName = `${cliente.nombreCliente} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`
   const { correoCliente } = cliente
   const bodyComunicaciones = {
@@ -155,7 +153,7 @@ const enviarActivacionEMAIL = async (req, res, cliente) => {
     }
   }
   const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
-  LOG.debugJSON('SERV: Terminando enviarActivacionEMAIL', bodyResp)
+  LOG.info('SERV: Terminando enviarActivacionEMAIL', bodyResp)
   return bodyResp
 }
 
@@ -169,7 +167,7 @@ const enviarActivacionEMAIL = async (req, res, cliente) => {
  * @returns Retorna true, si la ejecución fue exitosa. O desencadena excepción, en caso de existir alguna.
  */
 async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, codigoOtp) {
-  LOG.debug('SERV: Iniciando sendOtpToComunicaciones')
+  LOG.info('SERV: Iniciando sendOtpToComunicaciones')
   const correoCliente = String(cliente.correoCliente)
   const celularCliente = String(cliente.celularCliente)
 
@@ -200,14 +198,14 @@ async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, codigoOtp) 
 
   // verificar si existe alguna excepcion
   if (statusEnvio.statusRequest !== 201) {
-    LOG.debugJSON('SERV: sendOtpToComunicaciones-statusEnvio', statusEnvio)
+    LOG.debugJSON('sendOtpToComunicaciones-statusEnvio', statusEnvio)
     const controlExcepcion = {
       code: CODE_INTERNAL_SERVER_ERROR,
       message: `Internal Server Error - ${statusEnvio.descripcionError}`
     }
     return res.status(500).send({ controlExcepcion })
   }
-  LOG.debug('SERV: Terminando sendOtpToComunicaciones')
+  LOG.info('SERV: Terminando sendOtpToComunicaciones')
   return true
 }
 
