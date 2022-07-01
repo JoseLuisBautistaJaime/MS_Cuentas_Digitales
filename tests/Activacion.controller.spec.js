@@ -36,10 +36,10 @@ describe('Comuinicaciones', () => {
 
 
   /** TEST #1-Remover cliente en caso de que exista */
-  it('Enviar OTP por SMS', done => {
-      nock('https://iamdr.montepiedad.com.mx:4444')
-      .post('/api/comunicacion/v1/solicitud/mensaje',{})  
-      .reply(200, { codigoOtp : '1234' })
+  it('Enviar OTP por EMAIL', done => {
+    nock(URL_API_COMUNICACIONES)
+      .post('/api/comunicacion/v1/solicitud/mensaje')
+      .reply(201, {})
     chai
       .request(app)
       .post(`/${context}/${version}/enviarOtp`)
