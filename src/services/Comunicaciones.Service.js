@@ -48,7 +48,7 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
   try {
     const header = await createHeaderComunicaciones(req)
     LOG.debugJSON('internalEnviarMensaje-header', header)
-    LOG.debugJSON('internalEnviarMensaje-body', body)
+    LOG.debugJSON('internalEnviarMensaje-body', bodyComunicaciones)
     const HttpComunicaciones = {
       url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
       method: HttpMethod.POST,
@@ -75,6 +75,7 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
  */
 const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
   LOG.info('SERV: Iniciando enviarCodigoSMS')
+
   const bodyComunicaciones = {
     destinatario: {
       telefonos: [destinatario]
@@ -101,6 +102,7 @@ const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
  */
 const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
   LOG.info('SERV: Iniciando enviarCodigoEMAIL')
+  
   const bodyComunicaciones = {
     destinatario: {
       email: destinatario
@@ -119,6 +121,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
       asunto: 'Código de Verificación'
     }
   }
+
   const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
   LOG.info('SERV: Terminado enviarCodigoEMAIL')
   return bodyResp
@@ -131,13 +134,14 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
-const enviarActivacionEMAIL = async (req, res, cliente) => {
+ const enviarActivacionEMAIL = async (req, res, cliente) => {
   LOG.info('SERV: Iniciando enviarActivacionEMAIL')
+  const destinatario = cliente.correoCliente
   const clienteFullName = `${cliente.nombreCliente} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`
-  const { correoCliente } = cliente
+
   const bodyComunicaciones = {
     destinatario: {
-      email: correoCliente
+      email: destinatario
     },
     remitente: {
       email: EMAIL_REMITENTE
@@ -154,68 +158,16 @@ const enviarActivacionEMAIL = async (req, res, cliente) => {
       asunto: 'Activación de Cuente'
     }
   }
+
   const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
   LOG.info('SERV: Terminando enviarActivacionEMAIL', bodyResp)
   return bodyResp
 }
 
-/**
- * sendOtpToComunicaciones: Envia el codigoOtp por el medio apropiado, validando el codigoOtp y el modoEnvio
- * @param req Headers: Se recupera la información del request para validar la autenticación.
- * @param {*} res Response del proceso padre.
- * @param modoEnvio Modo de envio del codigo email o sms
- * @param cliente Objeto cliente, obtenido directamente del modelo cliente_model
- * @param codigoOtp Codigo OTP a enviar
- * @returns Retorna true, si la ejecución fue exitosa. O desencadena excepción, en caso de existir alguna.
- */
-async function sendOtpToComunicaciones(req, res, modoEnvio, cliente, codigoOtp) {
-  LOG.info('SERV: Iniciando sendOtpToComunicaciones')
-  const correoCliente = String(cliente.correoCliente)
-  const celularCliente = String(cliente.celularCliente)
-
-  // Validación del Token Otp..
-  if (codigoOtp === null || codigoOtp === '') {
-    const controlExcepcion = {
-      code: CODE_BAD_REQUEST,
-      message: 'BadRequest - Token no generado correctamente.'
-    }
-    return res.status(400).send({ controlExcepcion })
-  }
-
-  // Modo de envio de sms..
-  if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
-    const controlExcepcion = {
-      code: CODE_BAD_REQUEST,
-      message: `BadRequest - El parametro en body 'modoEnvio' debe ser 'sms' o 'email'`
-    }
-    return res.status(400).send({ controlExcepcion })
-  }
-
-  let statusEnvio
-  // envio de otp por email o sms
-  if (modoEnvio === 'email')
-    statusEnvio = await enviarCodigoEMAIL(req, res, correoCliente, codigoOtp)
-  if (modoEnvio === 'sms')
-    statusEnvio = await enviarCodigoSMS(req, res, celularCliente, codigoOtp)
-
-  // verificar si existe alguna excepcion
-  if (statusEnvio.statusRequest !== 201) {
-    LOG.debugJSON('sendOtpToComunicaciones-statusEnvio', statusEnvio)
-    const controlExcepcion = {
-      code: CODE_INTERNAL_SERVER_ERROR,
-      message: `Internal Server Error - ${statusEnvio.descripcionError}`
-    }
-    return res.status(500).send({ controlExcepcion })
-  }
-  LOG.info('SERV: Terminando sendOtpToComunicaciones')
-  return true
-}
-
 export const ComunicacionesService = {
   enviarCodigoSMS,
   enviarCodigoEMAIL,
-  enviarActivacionEMAIL,
-  sendOtpToComunicaciones
+  enviarActivacionEMAIL
 }
 
 export default ComunicacionesService
