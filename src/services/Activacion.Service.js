@@ -11,10 +11,11 @@ import {
 
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
+const OTP_DURACION_SEGUNDOS = 120
 const OTP_OPTIONS = {
   digits: 4,
   algorithm: 'sha1',
-  step: 120,
+  step: OTP_DURACION_SEGUNDOS,
   window: 2
 }
 function generateHashSecret(idCliente, idDevice) {
@@ -55,6 +56,12 @@ const enviarOtp = async (req, res, idCliente) => {
   LOG.debugJSON('OPTIONLS:', OTP_OPTIONS)
   const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
   const codigoOtp = totp.generate(hashSecret)
+  const expiraCodigoOtp = Date.now() + OTP_DURACION_SEGUNDOS * 1000
+  const expiraCodigoOtpISO = new Date(expiraCodigoOtp).toISOString()
+
+  // const expiraCodigoOtp = new Date(
+  //   dateNow.getTime() + OTP_DURACION_SEGUNDOS * 1000
+  // )
 
   /** envio del codigoOtp por sms o email */
   try {
@@ -62,7 +69,9 @@ const enviarOtp = async (req, res, idCliente) => {
     const celularCliente = String(cliente.celularCliente)
     const modoEnvio = String(req.body.modoEnvio).toLowerCase()
 
-    LOG.debug(`MARK: #1 codigoOtp: ${codigoOtp}; modoenvio ${modoEnvio}; correocliente:${correoCliente}; celularCliente:${celularCliente}`)
+    LOG.debug(
+      `MARK: #1 codigoOtp: ${codigoOtp}; modoenvio ${modoEnvio}; correocliente:${correoCliente}; celularCliente:${celularCliente}`
+    )
     // Validación del Token Otp..
     if (codigoOtp === null || codigoOtp === '') {
       const controlExcepcion = {
@@ -102,7 +111,7 @@ const enviarOtp = async (req, res, idCliente) => {
   }
   await establecerEstatusActivacion(idCliente, 3)
   LOG.info('SERV: Terminando enviarOtp method')
-  return codigoOtp
+  return { codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO }
 }
 
 /**
