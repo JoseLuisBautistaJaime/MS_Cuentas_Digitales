@@ -25,6 +25,7 @@ const { HttpMethod } = HttpClientService
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const createHeaderComunicaciones = async req => {
+  LOG.info('SERV: Iniciando createHeaderComunicaciones')
   // await CommonValidator.validateHeaderOAG(req)
   await Util.validateHeaderOAG(req)
   const idConsumidor = req.header(HEADER_ID_CONSUMIDOR)
