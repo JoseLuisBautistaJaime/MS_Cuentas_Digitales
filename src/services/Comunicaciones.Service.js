@@ -47,6 +47,7 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
   try {
     const header = await createHeaderComunicaciones(req)
     LOG.debugJSON('internalEnviarMensaje-header', header)
+    LOG.debugJSON('internalEnviarMensaje-body', body)
     const HttpComunicaciones = {
       url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
       method: HttpMethod.POST,
