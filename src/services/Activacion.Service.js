@@ -1,5 +1,5 @@
 import md5 from 'md5'
-import * as OTPAuth from 'otpauth'
+import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
 import LOG from '../commons/LOG'
 import { ActivacionDAO } from '../dao/Activacion.DAO'
@@ -11,21 +11,17 @@ import {
 
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
-const OTP_DIGITS = 4
-const OTP_PERIOD = 300
-
-function TOTP(idCliente, idDevice) {
+const OTP_OPTIONS = {
+  digits: 4,
+  algorithm: 'sha1',
+  step: 120,
+  window: 2
+}
+function generateHashSecret(idCliente, idDevice) {
   const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`
   LOG.debug(`TOTP-fullSecret ${fullSecret}`)
   const hashSecret = String(md5(fullSecret)).toUpperCase()
-  return new OTPAuth.TOTP({
-    issuer: 'ACME',
-    label: 'AzureDiamond',
-    algorithm: 'SHA1',
-    digits: OTP_DIGITS,
-    period: OTP_PERIOD,
-    secret: OTPAuth.Secret.fromUTF8(hashSecret)
-  })
+  return hashSecret
 }
 
 // ** Inicio: getEstatusActivacion
@@ -53,13 +49,20 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion) {
 const enviarOtp = async (req, res, idCliente) => {
   LOG.info('SERV: Iniciando enviarOtp method')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
-  const codigoOtp = new TOTP(idCliente, cliente.idDevice).generate()
+
+  /** generacion del Token */
+  totp.options = OTP_OPTIONS
+  LOG.debugJSON('OPTIONLS:', OTP_OPTIONS)
+  const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
+  const codigoOtp = totp.generate(hashSecret)
+
+  /** envio del codigoOtp por sms o email */
   try {
     const correoCliente = String(cliente.correoCliente)
     const celularCliente = String(cliente.celularCliente)
     const modoEnvio = String(req.body.modoEnvio).toLowerCase()
 
-    LOG.debug(`MARK: #1 modoenvio ${modoEnvio}; correocliente:${correoCliente}; celularCliente:${celularCliente}`)
+    LOG.debug(`MARK: #1 codigoOtp: ${codigoOtp}; modoenvio ${modoEnvio}; correocliente:${correoCliente}; celularCliente:${celularCliente}`)
     // Validación del Token Otp..
     if (codigoOtp === null || codigoOtp === '') {
       const controlExcepcion = {
@@ -94,7 +97,6 @@ const enviarOtp = async (req, res, idCliente) => {
       }
       return res.status(500).send({ controlExcepcion })
     }
-
   } catch (err) {
     return ''
   }
@@ -102,8 +104,6 @@ const enviarOtp = async (req, res, idCliente) => {
   LOG.info('SERV: Terminando enviarOtp method')
   return codigoOtp
 }
-
-
 
 /**
  * SERV: verificacion del OTP
@@ -119,14 +119,10 @@ const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
   LOG.debug(`prms-usuario: usuario ${idCliente}`)
   LOG.debug(`prms-tokenOtp: tokenOtp ${codigoOtp}`)
 
-  // ejecición del proceso principal.
-  const delta = new TOTP(idCliente, cliente.idDevice).validate({
-    token: codigoOtp,
-    window: 1
-  })
-  // LOG.debugJSON('proceso-eval delta', delta)
-  let esValidoOtp = false
-  if (delta === 0) esValidoOtp = true
+  totp.options = OTP_OPTIONS
+  const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
+  const esValidoOtp = totp.check(codigoOtp, hashSecret)
+
   if (esValidoOtp) await establecerEstatusActivacion(idCliente, 4)
   LOG.debugJSON('prms-enviarEmail', enviarEmail)
   if (esValidoOtp === true && enviarEmail === 'true')

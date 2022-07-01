@@ -102,7 +102,6 @@ const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
  */
 const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
   LOG.info('SERV: Iniciando enviarCodigoEMAIL')
-  
   const bodyComunicaciones = {
     destinatario: {
       email: destinatario
