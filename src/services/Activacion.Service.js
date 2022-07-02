@@ -56,8 +56,11 @@ const enviarOtp = async (req, res, idCliente) => {
   LOG.debugJSON('OPTIONLS:', OTP_OPTIONS)
   const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
   const codigoOtp = totp.generate(hashSecret)
-  const expiraCodigoOtp = Date.now() + OTP_DURACION_SEGUNDOS * 1000
-  const expiraCodigoOtpISO = new Date(expiraCodigoOtp).toISOString()
+  const expiraCodigoOtp = parseInt(
+    (Date.now() + OTP_DURACION_SEGUNDOS * 1000) / 1000,
+    10
+  )
+  const expiraCodigoOtpISO = new Date(expiraCodigoOtp * 1000).toISOString()
 
   // const expiraCodigoOtp = new Date(
   //   dateNow.getTime() + OTP_DURACION_SEGUNDOS * 1000
