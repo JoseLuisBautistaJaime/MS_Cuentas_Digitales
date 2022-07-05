@@ -2,6 +2,8 @@
 import cfenv from 'cfenv'
 import mongoose from 'mongoose'
 import LOG from './LOG'
+import { ACTIVACION_EVENTOS_TIMETOLIVE } from './constants'
+import { toInteger } from 'lodash'
 
 const appEnv = cfenv.getAppEnv()
 const { services } = appEnv
@@ -10,9 +12,7 @@ const sslInsecure = process.env.SSL_SELF_SIGNED
 
 export const createConnection = async () => {
   const credentials =
-    mongoServices && mongoServices.length && mongoServices[0].credentials
-      ? mongoServices[0].credentials
-      : null
+    mongoServices && mongoServices.length && mongoServices[0].credentials ? mongoServices[0].credentials : null
 
   let uri = ''
 
@@ -42,12 +42,7 @@ export const createConnection = async () => {
         ...options,
         ssl: true,
         sslValidate: true,
-        sslCA: [
-          Buffer.from(
-            credentials.connection.mongodb.certificate.certificate_base64,
-            'base64'
-          )
-        ]
+        sslCA: [Buffer.from(credentials.connection.mongodb.certificate.certificate_base64, 'base64')]
       }
     : options
 
@@ -56,7 +51,10 @@ export const createConnection = async () => {
 
   db.on('error', console.error.bind(console, 'connection error: '))
   db.once('open', () => LOG.info('Connection Successful'))
-
+  db.collection('activacioneventos').createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: toInteger(ACTIVACION_EVENTOS_TIMETOLIVE) }
+  )
   return instance
 }
 

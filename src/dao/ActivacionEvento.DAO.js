@@ -1,22 +1,38 @@
 import Mongoose from 'mongoose'
 import LOG from '../commons/LOG'
-import { activacionEventoSchema } from '../models/ActivacionEvento.model'
+import { activacionEventoSchema } from '../models/activacionEvento.model'
 
 const activacionEvento = Mongoose.model('ActivacionEvento', activacionEventoSchema)
 
-async function agregar(activacion) {
-  LOG.info(`DAO: Ejecutando ActivacionEventoDAO.obtenerActivacionEventos`)
+async function agregarEvento(activacion) {
+  LOG.info(`DAO: Ejecutando ActivacionEventoDAO.agregar`)
   return activacionEvento.create(activacion)
 }
 
-async function obtenerActivacionEventos(idCliente) {
-  LOG.info(`DAO: Ejecutando ActivacionEventoDAO.obtenerActivacionEventos ${idCliente}`)
-  return activacionEvento.find({ idCliente })
+async function listarEventos(idCliente, estatusActivacion) {
+  LOG.info(`DAO: Iniciando ActivacionEventoDAO.listarEventos ${idCliente}, ${estatusActivacion}`)
+  let filter
+  if (estatusActivacion === undefined) filter = { idCliente }
+  else filter = { $and: [{ idCliente }, { estatusActivacion }] }
+  const toReturn = await activacionEvento.find(filter)
+  LOG.info(`DAO: Terminando ActivacionEventoDAO.listarEventos`)
+  return toReturn
+}
+
+async function removerEventos(idCliente, estatusActivacion) {
+  LOG.info(`DAO: Iniciando ActivacionEventoDAO.removerEventos`)
+  let filter
+  if (estatusActivacion === undefined) filter = { idCliente }
+  else filter = { $and: [{ idCliente }, { estatusActivacion }] }
+  const toReturn = await activacionEvento.remove(filter)
+  LOG.info(`DAO: Terminando ActivacionEventoDAO.removerEventos ${toReturn}`)
+  return toReturn
 }
 
 export const ActivacionEventoDAO = {
-  agregar,
-  obtenerActivacionEventos
+  agregarEvento,
+  listarEventos,
+  removerEventos
 }
 
 export default ActivacionEventoDAO

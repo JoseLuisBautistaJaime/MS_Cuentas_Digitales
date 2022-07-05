@@ -11,16 +11,13 @@ const enviarOtp = async (req, res) => {
 
     // proceso principal
     const idCliente = String(req.body.idCliente)
-    const codigoOtp = await AuthOtpService.enviarOtp(req, res, idCliente)
-    if (codigoOtp === '') return res.status(500).send()
+    const result = await AuthOtpService.enviarOtp(req, res, idCliente)
+    if (result === '') return res.status(500).send()
 
     // Termiancion del proceso...
-    LOG.debugJSON('enviarOtp-codigoOtp', codigoOtp)
+    LOG.debugJSON('enviarOtp-codigoOtp', result)
     LOG.info('CTRL: Terminando enviarOtp')
-    //  const retX = res.status(200)
-    // LOG.debugJSON('CTRL: Endig removerCliente-retX', retX)
-    // return retX
-    return res.status(200).send({ codigoOtp })
+    return res.status(result.code).send(result)
   } catch (err) {
     // LOG.info('CTRL: Endig removerCliente-ERRORo')
     LOG.error(err)

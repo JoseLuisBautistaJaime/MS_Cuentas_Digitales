@@ -18,6 +18,7 @@ router.route('/establecerEstatusActivacion').post(clienteActivacionController.es
 router.route('/enviarOtp').post(AuthOtpController.enviarOtp)
 router.route('/verificarOtp').post(AuthOtpController.verificarOtp)
 
-router.route('/obtenerActivacionEventos').get(ActivacionEventoController.obtenerActivacionEventos)
+router.route('/activacionEvento/eventos').get(ActivacionEventoController.listarEventos)
+router.route('/activacionEvento/eventos').delete(ActivacionEventoController.removerEventos)
 
 export default router

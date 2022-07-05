@@ -1,20 +1,23 @@
-// import Mongoose from 'mongoose'
-
-// import Mongoose from 'mongoose'
-// import LOG from '../commons/LOG'
+import LOG from '../commons/LOG'
 // import { clienteSchema } from '../models/cliente.model'
 // import { bloqueoActivacionEventoSchema } from '../models/bloqueoActivacionEvento.model'
 import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
 
-// const Cliente = Mongoose.model('cliente', bloqueoActivacionEventosSchema)
-async function obtenerActivacionEventos(idCliente) {
-  // activacion.idCliente = idCliente
-  // LOG.debugJSON('ActivacionEventoDAO.agregar:', activacion)
-  return ActivacionEventoDAO.obtenerActivacionEventos(idCliente)
-  // return `test:obtenerActivacionEventos: ${idCliente}`
+async function listarEventos(idCliente, estatusActivacion, soloContar) {
+  LOG.info(`SERV: Iniciando ActivacionEventoService.listarEventos`)
+  let toReturn = await ActivacionEventoDAO.listarEventos(idCliente, estatusActivacion)
+  if (soloContar !== undefined && soloContar) toReturn = toReturn.length
+  LOG.info(`SERV: Terminando ActivacionEventoService.listarEventos`)
+  return toReturn
+}
+
+async function removerEventos(idCliente, estatusActivacion) {
+  await ActivacionEventoDAO.removerEventos(idCliente, estatusActivacion)
+  LOG.debug(`ActivacionEventoService.removerEventos`)
 }
 
 export const ActivacionEventoService = {
-  obtenerActivacionEventos
+  listarEventos,
+  removerEventos
 }
 export default ActivacionEventoService

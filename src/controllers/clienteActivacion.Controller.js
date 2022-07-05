@@ -21,7 +21,6 @@ const establecerEstatusActivacion = async (req, res) => {
   LOG.info('CTRL: Iniciando establecerEstatusActivacion')
   try {
     await Util.validateHeaderOAG(req)
-
     const { idCliente, estatusActivacion } = req.body
     await clienteActivacionService.establecerEstatusActivacion(idCliente, estatusActivacion)
     LOG.info('CTRL: Terminado establecerEstatusActivacion')

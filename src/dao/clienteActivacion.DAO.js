@@ -14,6 +14,7 @@ const Cliente = Mongoose.model('cliente', clienteSchema)
  */
 async function establecerEstatusActivacion(idCliente, activacion) {
   LOG.info('DAO: Iniciando establecerEstatusActivacion')
+  LOG.debugJSON('ActivacionDAO.establecerEstatusActivacion', activacion)
   const result = await Cliente.findOneAndUpdate(
     {
       idCliente
@@ -28,7 +29,7 @@ async function establecerEstatusActivacion(idCliente, activacion) {
     }
   )
   LOG.debugJSON('idCliente', idCliente)
-  await ActivacionEventoDAO.agregar(activacion)
+  await ActivacionEventoDAO.agregarEvento(activacion)
   LOG.info('DAO: Terminando establecerEstatusActivacion')
   return result
 }
@@ -41,11 +42,14 @@ async function establecerEstatusActivacion(idCliente, activacion) {
 async function obtenerEstatusActivacion(idCliente) {
   let estatusActivacion = 1
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  let activacion
   if (cliente !== null) {
+    activacion = cliente.activacion
     estatusActivacion = cliente.activacion.estatusActivacion
     if (estatusActivacion === '' || estatusActivacion === undefined) estatusActivacion = 2
+    activacion.estatusActivacion = estatusActivacion
   }
-  return { estatusActivacion }
+  return activacion
 }
 
 export const ActivacionDAO = {
