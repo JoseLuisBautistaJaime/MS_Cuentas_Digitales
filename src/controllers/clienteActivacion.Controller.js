@@ -10,7 +10,7 @@ const obtenerEstatusActivacion = async (req, res) => {
     const { idCliente } = req.query
     const result = await clienteActivacionService.obtenerEstatusActivacion(idCliente)
     LOG.info(`CTRL: Terminado obtenerEstatusActivacion`)
-    return res.status(200).send(result)
+    return res.status(result.code).send(result)
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)
@@ -22,9 +22,9 @@ const establecerEstatusActivacion = async (req, res) => {
   try {
     await Util.validateHeaderOAG(req)
     const { idCliente, estatusActivacion } = req.body
-    await clienteActivacionService.establecerEstatusActivacion(idCliente, estatusActivacion)
+    const result = await clienteActivacionService.establecerEstatusActivacion(idCliente, estatusActivacion)
     LOG.info('CTRL: Terminado establecerEstatusActivacion')
-    return Response.Ok(res)
+    return res.status(result.code).send(result)
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)

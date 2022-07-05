@@ -1,3 +1,4 @@
+import { toInteger } from 'lodash'
 import LOG from './LOG'
 import { BadRequestException, createMessageError } from './exceptions'
 import {
@@ -8,6 +9,12 @@ import {
   HEADER_OAUTH,
   HEADER_USUARIO
 } from './constants'
+
+const unixTimeStamp = (fecha, addSeconds) => {
+  // eslint-disable-next-line no-param-reassign
+  if (addSeconds === undefined) addSeconds = 0
+  return toInteger(fecha.getTime() / 1000, 10) + toInteger(addSeconds)
+}
 
 const validateIfPositiveNumber = async number => {
   LOG.info('Util validateIfPositiveNumber method')
@@ -66,7 +73,8 @@ export const Util = {
   validateIfPositiveNumber,
   changeToCollectionStandard,
   validarHeader,
-  validateHeaderOAG
+  validateHeaderOAG,
+  unixTimeStamp
 }
 
 export default null
