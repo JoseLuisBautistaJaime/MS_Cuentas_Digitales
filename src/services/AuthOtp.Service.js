@@ -1,13 +1,10 @@
 import md5 from 'md5'
 import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
+import { clienteActivacionService } from './clienteActivacion.Service'
 import LOG from '../commons/LOG'
-import { ActivacionDAO } from '../dao/Activacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import {
-  CODE_BAD_REQUEST,
-  CODE_INTERNAL_SERVER_ERROR
-} from '../commons/constants'
+import { CODE_BAD_REQUEST, CODE_INTERNAL_SERVER_ERROR } from '../commons/constants'
 
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
@@ -25,22 +22,6 @@ function generateHashSecret(idCliente, idDevice) {
   return hashSecret
 }
 
-// ** Inicio: getEstatusActivacion
-async function obtenerEstatusActivacion(idCliente) {
-  return ActivacionDAO.obtenerEstatusActivacion(idCliente)
-}
-
-/**
- * SERV: Establece el estatus de actuvacion.
- * @param {*} idCliente el número idCliente.
- * @param {*} estatusActivacion El número del estatus de Activacion.
- */
-async function establecerEstatusActivacion(idCliente, estatusActivacion) {
-  LOG.info('SERV: Iniciando establecerEstatusActivacion')
-  await ActivacionDAO.establecerEstatusActivacion(idCliente, estatusActivacion)
-  LOG.info('SERV: Terminando establecerEstatusActivacion')
-}
-
 /**
  * SERV: para el envío del OTP
  * @param {*} req request del Controller (requerido para el proceso de comunicaciones)
@@ -56,10 +37,7 @@ const enviarOtp = async (req, res, idCliente) => {
   LOG.debugJSON('OPTIONLS:', OTP_OPTIONS)
   const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
   const codigoOtp = totp.generate(hashSecret)
-  const expiraCodigoOtp = parseInt(
-    (Date.now() + OTP_DURACION_SEGUNDOS * 1000) / 1000,
-    10
-  )
+  const expiraCodigoOtp = parseInt((Date.now() + OTP_DURACION_SEGUNDOS * 1000) / 1000, 10)
   const expiraCodigoOtpISO = new Date(expiraCodigoOtp * 1000).toISOString()
 
   // const expiraCodigoOtp = new Date(
@@ -112,7 +90,7 @@ const enviarOtp = async (req, res, idCliente) => {
   } catch (err) {
     return ''
   }
-  await establecerEstatusActivacion(idCliente, 3)
+  await clienteActivacionService.establecerEstatusActivacion(idCliente, 3)
   LOG.info('SERV: Terminando enviarOtp method')
   return { codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO }
 }
@@ -135,7 +113,7 @@ const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
   const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
   const esValidoOtp = totp.check(codigoOtp, hashSecret)
 
-  if (esValidoOtp) await establecerEstatusActivacion(idCliente, 4)
+  if (esValidoOtp) await clienteActivacionService.establecerEstatusActivacion(idCliente, 4)
   LOG.debugJSON('prms-enviarEmail', enviarEmail)
   if (esValidoOtp === true && enviarEmail === 'true')
     await ComunicacionesService.enviarActivacionEMAIL(req, res, cliente)
@@ -144,10 +122,8 @@ const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
   return esValidoOtp
 }
 
-export const ActivacionService = {
-  obtenerEstatusActivacion,
-  establecerEstatusActivacion,
+export const AuthOtpService = {
   enviarOtp,
   verificarOtp
 }
-export default ActivacionService
+export default AuthOtpService

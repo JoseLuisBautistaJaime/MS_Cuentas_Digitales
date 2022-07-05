@@ -1,6 +1,7 @@
 import Mongoose from 'mongoose'
 import { clienteSchema } from '../models/cliente.model'
 
+
 const Cliente = Mongoose.model('cliente', clienteSchema)
 
 const findByIdCliente = async idCliente => {

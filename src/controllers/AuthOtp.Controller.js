@@ -1,39 +1,7 @@
 import LOG from '../commons/LOG'
 import handleError from '../validator/handler-error'
 import { Util, Response } from '../commons'
-import { ActivacionService } from '../services/Activacion.Service'
-
-const obtenerEstatusActivacion = async (req, res) => {
-  LOG.info('CTRL: Iniciando obtenerEstatusActivacion')
-  try {
-    await Util.validateHeaderOAG(req)
-    const { idCliente } = req.query
-    const result = await ActivacionService.obtenerEstatusActivacion(idCliente)
-    LOG.info(`CTRL: Terminado obtenerEstatusActivacion`)
-    return res.status(200).send(result)
-  } catch (err) {
-    LOG.error(err)
-    return handleError(res, err)
-  }
-}
-
-const establecerEstatusActivacion = async (req, res) => {
-  LOG.info('CTRL: Iniciando establecerEstatusActivacion')
-  try {
-    await Util.validateHeaderOAG(req)
-
-    const { idCliente, estatusActivacion } = req.body
-    await ActivacionService.establecerEstatusActivacion(
-      idCliente,
-      estatusActivacion
-    )
-    LOG.info('CTRL: Terminado establecerEstatusActivacion')
-    return Response.Ok(res)
-  } catch (err) {
-    LOG.error(err)
-    return handleError(res, err)
-  }
-}
+import { AuthOtpService } from '../services/AuthOtp.Service'
 
 const enviarOtp = async (req, res) => {
   LOG.info('CTRL: Iniciando enviarOtp method')
@@ -43,7 +11,7 @@ const enviarOtp = async (req, res) => {
 
     // proceso principal
     const idCliente = String(req.body.idCliente)
-    const codigoOtp = await ActivacionService.enviarOtp(req, res, idCliente)
+    const codigoOtp = await AuthOtpService.enviarOtp(req, res, idCliente)
     if (codigoOtp === '') return res.status(500).send()
 
     // Termiancion del proceso...
@@ -69,13 +37,7 @@ const verificarOtp = async (req, res) => {
     const { idCliente, codigoOtp } = req.body
     let { enviarEmail } = req.body
     if (enviarEmail === undefined || enviarEmail === null) enviarEmail = true
-    const esValidoOtp = await ActivacionService.verificarOtp(
-      req,
-      res,
-      idCliente,
-      codigoOtp,
-      enviarEmail
-    )
+    const esValidoOtp = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
 
     LOG.info('CTRL: Terminando verificarOtp')
     return res.status(200).send({ esValidoOtp })
@@ -85,9 +47,7 @@ const verificarOtp = async (req, res) => {
   }
 }
 
-export const ActivacionController = {
-  obtenerEstatusActivacion,
-  establecerEstatusActivacion,
+export const AuthOtpController = {
   enviarOtp,
   verificarOtp
 }

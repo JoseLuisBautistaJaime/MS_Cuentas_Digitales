@@ -1,6 +1,6 @@
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { ActivacionService } from './Activacion.Service'
+import { clienteActivacionService } from './clienteActivacion.Service'
 // import { OAuthService } from './OAuth.Service'
 
 /**
@@ -53,7 +53,7 @@ const actualizarCliente = async body => {
       celularCliente: body.celularCliente
     }
     resultSave = await ClienteDAO.save(clienteToAdd)
-    ActivacionService.establecerEstatusActivacion(idCliente, 2)
+    clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
     LOG.debug(`actualizarCliente-Cliente guardado ${idCliente}`)
   } else {
     const clienteUpdate = {

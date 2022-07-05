@@ -1,19 +1,5 @@
 import mongoose from 'mongoose'
-
-export const clienteActivacionLogEventsSchema = new mongoose.Schema({
-  createdAt: { type: Date, default: Date.now },
-  estatusActivacion: Number,
-  estatusActivacionNombre: String,
-  codigoOtp: String
-})
-
-export const clienteActivacionSchema = new mongoose.Schema({
-  estatusActivacion: Number,
-  estatusActivacionNombre: String,
-  codigoOtp: String,
-  ultimaActualizacion: { type: Date, default: Date.now },
-  fechaActivacion: { type: Date, default: null }
-})
+import { clienteActivacionSchema } from './clienteActivacion.model'
 
 export const clienteSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
@@ -26,6 +12,6 @@ export const clienteSchema = new mongoose.Schema({
   nombreCompleto: String,
   correoCliente: String,
   celularCliente: String,
-  activacion: clienteActivacionSchema,
-  activacionLogEvents: [clienteActivacionLogEventsSchema]
+  activacion: clienteActivacionSchema
+  // activacionLogEvents: [clienteActivacionLogEventsSchema]
 })

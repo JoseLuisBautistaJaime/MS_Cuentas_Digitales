@@ -14,10 +14,7 @@ const actualizarCliente = async (req, res) => {
   LOG.info('CTRL: Starting actualizarCliente method')
   try {
     await Util.validateHeaderOAG(req)
-    const validator = ClienteValidator.ValidatorSchema.validate(
-      req.body,
-      ClienteValidator.clienteRequest
-    )
+    const validator = ClienteValidator.ValidatorSchema.validate(req.body, ClienteValidator.clienteRequest)
     if (validator.errors.length) handlerErrorValidation(validator)
     const resultSave = await ClienteService.actualizarCliente(req.body)
     LOG.info(`CTRL: Cliente Actualizado ${resultSave}`)
