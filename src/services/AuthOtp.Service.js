@@ -3,15 +3,10 @@ import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
 import { clienteActivacionService } from './clienteActivacion.Service'
 import { ActivacionEventoService } from './ActivacionEvento.Service'
-import { ActivacionDAO } from '../dao/clienteActivacion.DAO'
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import {
-  ACTIVACION_BLOQUEO_REINTENTOS,
-  ACTIVACION_EVENTOS_TIMETOLIVE,
-  CODE_BAD_REQUEST,
-  CODE_INTERNAL_SERVER_ERROR
-} from '../commons/constants'
+import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
+import { ACTIVACION_BLOQUEO_REINTENTOS, CODE_BAD_REQUEST, CODE_INTERNAL_SERVER_ERROR } from '../commons/constants'
 
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
@@ -38,36 +33,20 @@ const evaluarBloqueo = async (idCliente, estatusActivacion) => {
   const bloquearCliente = reintentosDisponibles <= 0
 
   // evaluacion del estatus actual y cambiar el estatus a bloquado cuando no lo este
-  let activacion = await ActivacionDAO.obtenerEstatusActivacion(idCliente)
+  let activacion = await clienteActivacionService.obtenerEstatusActivacion(idCliente, false)
   LOG.debugJSON('AuthOtp.evaluarBloqueo: activacion', activacion)
 
-  const toReturn = { code: 200 }
-
   // evalua el desbloqueo de cuenta..
-  if (activacion.estatusActivacion === 5 && bloquearCliente === false) {
-    await clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
-    activacion = await ActivacionDAO.obtenerEstatusActivacion(idCliente)
-  }
+  if (activacion.estatusActivacion === 5 && bloquearCliente === false) 
+    activacion = await clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
 
   // procedimientos cuando la cuenta necesita bloearse o se debe de encontrar debidamente bloqueada
-  if (bloquearCliente) {
-    if (activacion.estatusActivacion !== 5) await clienteActivacionService.establecerEstatusActivacion(idCliente, 5)
-    activacion = await ActivacionDAO.obtenerEstatusActivacion(idCliente)
-    toReturn.code = 215
-
-    toReturn.expiraBloqueo = parseInt(
-      (activacion.ultimaActualizacion.getTime() + ACTIVACION_EVENTOS_TIMETOLIVE * 1000) / 1000,
-      10
-    )
-    toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
-  }
-
-  toReturn.estatusActivacion = activacion.estatusActivacion
-  toReturn.estatusActivacionNombre = activacion.estatusActivacionNombre
+  if (bloquearCliente && activacion.estatusActivacion !== 5) 
+    activacion = await clienteActivacionService.establecerEstatusActivacion(idCliente, 5)
 
   // preparanto resultados a Retornar
   LOG.info('SERV: Terminando AuthOtp.evaluarBloqueo')
-  return toReturn
+  return activacion
 }
 
 /**
@@ -80,14 +59,10 @@ const enviarOtp = async (req, res, idCliente) => {
   LOG.info('SERV: Iniciando enviarOtp method')
   /** EVALUACION DE BLOQUEOS */
   const bloquearCliente = await evaluarBloqueo(idCliente, 3)
-  LOG.debugJSON('enviarOtp, #1', bloquearCliente)
   if (bloquearCliente.code === 215) return bloquearCliente
 
   /** PROCESANDO CUENTA SIN BLOQUEAR */
-  LOG.debugJSON('enviarOtp, #2')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
-
-  LOG.debugJSON('enviarOtp, #3')
 
   /** generacion del Token */
   totp.options = OTP_OPTIONS
@@ -103,9 +78,6 @@ const enviarOtp = async (req, res, idCliente) => {
     const celularCliente = String(cliente.celularCliente)
     const modoEnvio = String(req.body.modoEnvio).toLowerCase()
 
-    LOG.debug(
-      `MARK: #1 codigoOtp: ${codigoOtp}; modoenvio ${modoEnvio}; correocliente:${correoCliente}; celularCliente:${celularCliente}`
-    )
     // Validación del Token Otp..
     if (codigoOtp === null || codigoOtp === '') {
       const controlExcepcion = {
@@ -126,10 +98,8 @@ const enviarOtp = async (req, res, idCliente) => {
 
     let statusEnvio
     // envio de otp por email o sms
-    if (modoEnvio === 'email')
-      statusEnvio = await ComunicacionesService.enviarCodigoEMAIL(req, res, correoCliente, codigoOtp)
-    if (modoEnvio === 'sms')
-      statusEnvio = await ComunicacionesService.enviarCodigoSMS(req, res, celularCliente, codigoOtp)
+    if (modoEnvio === 'email') statusEnvio = await ComunicacionesService.enviarCodigoEMAIL(req, res, correoCliente, codigoOtp)
+    if (modoEnvio === 'sms') statusEnvio = await ComunicacionesService.enviarCodigoSMS(req, res, celularCliente, codigoOtp)
 
     // verificar si existe alguna excepcion
     if (statusEnvio.statusRequest !== 201) {
@@ -143,11 +113,10 @@ const enviarOtp = async (req, res, idCliente) => {
   } catch (err) {
     return ''
   }
-  await clienteActivacionService.establecerEstatusActivacion(idCliente, 3)
+  await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)
   LOG.info('SERV: Terminando enviarOtp method')
 
-  const reintentosDisponibles =
-    ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
+  const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
 
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
 }
@@ -160,23 +129,38 @@ const enviarOtp = async (req, res, idCliente) => {
  */
 const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
   LOG.info('SERV: Iniciando verificarOtp method')
-  // validaciones y carga de parametros
-  const cliente = await ClienteDAO.findByIdCliente(idCliente)
 
-  LOG.debug(`prms-usuario: usuario ${idCliente}`)
-  LOG.debug(`prms-tokenOtp: tokenOtp ${codigoOtp}`)
+  // evaluacion si existe o se requiere de establecer algun bloqueo por algun abuso
+  const bloquearCliente = await evaluarBloqueo(idCliente, 5)
+  if (bloquearCliente.code === 215) return bloquearCliente
 
-  totp.options = OTP_OPTIONS
-  const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
-  const esValidoOtp = totp.check(codigoOtp, hashSecret)
+  // verificacion si existe el estatus apropiado para evaluar el codigo otp.
+  const toReturn = { code: 200, esValidoOtp: false, estaExpiradoOtp: false }
+  const estatus = await clienteActivacionService.obtenerEstatusActivacion(idCliente, false)
+  if (estatus.estatusActivacion === 5) return estatus
+  if (estatus.estatusActivacion !== 3) {
+    toReturn.mensaje = 'No existe o no se ha enviado un Codigo OTP al cliente'
+    toReturn.code = 214
+    ActivacionEventoDAO.agregarEventoError(idCliente, toReturn.mensaje)
+  }
 
-  if (esValidoOtp) await clienteActivacionService.establecerEstatusActivacion(idCliente, 4)
-  LOG.debugJSON('prms-enviarEmail', enviarEmail)
-  if (esValidoOtp === true && enviarEmail === 'true')
-    await ComunicacionesService.enviarActivacionEMAIL(req, res, cliente)
-  LOG.debugJSON('prms-isValidOtp', esValidoOtp)
-  LOG.info('SERV: Terminando verificarOtp method')
-  return esValidoOtp
+  // evaluacion del OTP, en las condiciones correctas de estatus.
+  if (estatus.codigoOtp !== codigoOtp) {
+    toReturn.mensaje = `Codigo OTP no es el correcto. ${estatus.codigoOtp}`
+    toReturn.code = 200
+    ActivacionEventoDAO.agregarEventoError(idCliente, toReturn.mensaje)
+  } else {
+    // validaciones y carga de parametros
+    const cliente = await ClienteDAO.findByIdCliente(idCliente)
+    totp.options = OTP_OPTIONS
+    const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
+    toReturn.esValidoOtp = totp.check(codigoOtp, hashSecret)
+    if (toReturn.esValidoOtp) await clienteActivacionService.establecerEstatusActivacion(idCliente, 4)
+    if (toReturn.esValidoOtp === true && enviarEmail === 'true') await ComunicacionesService.enviarActivacionEMAIL(req, res, cliente)
+    LOG.info('SERV: Terminando verificarOtp method')
+    toReturn.estaExpiradoOtp = !toReturn.esValidoOtp
+  }
+  return toReturn
 }
 
 export const AuthOtpService = {

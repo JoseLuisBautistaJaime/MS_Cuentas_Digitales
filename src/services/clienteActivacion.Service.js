@@ -9,7 +9,7 @@ import { Util } from '../commons/utils'
  * @param {*} idCliente el número idCliente.
  * @param {*} estatusActivacion El número del estatus de Activacion.
  */
-async function establecerEstatusActivacion(idCliente, estatusActivacion) {
+async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoOtp) {
   LOG.info('SERV: Iniciando establecerEstatusActivacion')
   const activacion = {
     idCliente,
@@ -17,6 +17,7 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion) {
     estatusActivacionNombre: ActivacionDAO.convertirEstatusActivacionNombre(estatusActivacion),
     ultimaActualizacion: Date.now()
   }
+  if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
   await ActivacionDAO.establecerEstatusActivacion(idCliente, activacion)
   LOG.info('SERV: Terminando establecerEstatusActivacion')
   // eslint-disable-next-line no-use-before-define
@@ -52,6 +53,7 @@ async function obtenerEstatusActivacion(idCliente, evaluarDesbloqueo) {
     toReturn.expiraBloqueo = Util.unixTimeStamp(toReturn.ultimaActualizacion, ACTIVACION_EVENTOS_TIMETOLIVE)
     toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
   }
+  if (toReturn.estatusActivacion === 3) toReturn.codigoOtp = activacion.codigoOtp
   LOG.info(`SERV: Terminando obtenerEstatusActivacion ${toReturn.code}`)
   return toReturn
 }

@@ -51,10 +51,7 @@ export const createConnection = async () => {
 
   db.on('error', console.error.bind(console, 'connection error: '))
   db.once('open', () => LOG.info('Connection Successful'))
-  db.collection('activacioneventos').createIndex(
-    { createdAt: 1 },
-    { expireAfterSeconds: toInteger(ACTIVACION_EVENTOS_TIMETOLIVE) }
-  )
+  // db.collection('activacioneventos').createIndexes({ createdAt: 1 }, { expireAfterSeconds: toInteger(ACTIVACION_EVENTOS_TIMETOLIVE) })
   return instance
 }
 

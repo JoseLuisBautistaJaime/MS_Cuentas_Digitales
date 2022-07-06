@@ -4,7 +4,10 @@ import { Util, Response } from '../commons'
 import { AuthOtpService } from '../services/AuthOtp.Service'
 
 const enviarOtp = async (req, res) => {
+  LOG.info('******************************************************************')
+  LOG.info('******************************************************************')
   LOG.info('CTRL: Iniciando enviarOtp method')
+
   try {
     // validaciones y carga de parametros
     await Util.validateHeaderOAG(req)
@@ -34,10 +37,10 @@ const verificarOtp = async (req, res) => {
     const { idCliente, codigoOtp } = req.body
     let { enviarEmail } = req.body
     if (enviarEmail === undefined || enviarEmail === null) enviarEmail = true
-    const esValidoOtp = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
+    const result = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
 
     LOG.info('CTRL: Terminando verificarOtp')
-    return res.status(200).send({ esValidoOtp })
+    return res.status(result.code).send(result)
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)

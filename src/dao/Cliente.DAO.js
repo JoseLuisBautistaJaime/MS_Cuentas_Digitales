@@ -15,6 +15,7 @@ const countIdCliente = async idCliente => {
 const save = async cliente => {
   return Cliente.create(cliente)
 }
+
 const remover = async idCliente => {
   return Cliente.remove({
     idCliente

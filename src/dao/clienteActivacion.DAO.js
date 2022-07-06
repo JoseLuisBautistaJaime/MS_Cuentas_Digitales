@@ -76,8 +76,10 @@ async function establecerEstatusActivacion(idCliente, activacion) {
 async function obtenerEstatusActivacion(idCliente) {
   let estatusActivacion = 1
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
-  let activacion
-  if (cliente !== null) {
+  let activacion = {}
+  if (cliente === null || cliente === undefined) {
+    activacion.estatusActivacion = 1
+  } else {
     activacion = cliente.activacion
     estatusActivacion = cliente.activacion.estatusActivacion
     if (estatusActivacion === '' || estatusActivacion === undefined) estatusActivacion = 2

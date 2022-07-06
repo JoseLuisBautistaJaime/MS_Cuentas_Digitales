@@ -8,6 +8,11 @@ async function agregarEvento(activacion) {
   LOG.info(`DAO: Ejecutando ActivacionEventoDAO.agregar`)
   return activacionEvento.create(activacion)
 }
+async function agregarEventoError(idCliente, mensaje) {
+  LOG.info(`DAO: Ejecutando ActivacionEventoDAO.agregar`)
+  const eventoError = { idCliente, estatusActivacion: 5, mensaje }
+  return activacionEvento.create(eventoError)
+}
 
 async function listarEventos(idCliente, estatusActivacion) {
   LOG.info(`DAO: Iniciando ActivacionEventoDAO.listarEventos ${idCliente}, ${estatusActivacion}`)
@@ -31,6 +36,7 @@ async function removerEventos(idCliente, estatusActivacion) {
 
 export const ActivacionEventoDAO = {
   agregarEvento,
+  agregarEventoError,
   listarEventos,
   removerEventos
 }
