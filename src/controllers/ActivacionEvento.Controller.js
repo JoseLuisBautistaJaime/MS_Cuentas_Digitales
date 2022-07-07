@@ -1,13 +1,13 @@
 import LOG from '../commons/LOG'
 import handleError from '../validator/handler-error'
-import { Util } from '../commons'
+import { Response } from '../commons'
 // import { ActivacionService } from '../services/Activacion.Service'
 import { ActivacionEventoService } from '../services/ActivacionEvento.Service'
 
 const listarEventos = async (req, res) => {
   LOG.info('CTRL: Iniciando obtenerActivacionEventos')
   try {
-    await Util.validateHeaderOAG(req)
+    // await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
     const { estatusActivacion } = req.query
     const result = await ActivacionEventoService.listarEventos(idCliente, estatusActivacion)
@@ -22,12 +22,13 @@ const listarEventos = async (req, res) => {
 const removerEventos = async (req, res) => {
   LOG.info('CTRL: Iniciando removerEventos')
   try {
-    await Util.validateHeaderOAG(req)
+    // await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
     const { estatusActivacion } = req.query
     await ActivacionEventoService.removerEventos(idCliente, estatusActivacion)
     LOG.info(`CTRL: Terminado removerEventos ${idCliente}`)
-    return res.status(200).send()
+    return Response.Ok(res)
+    // return res.status(200).send()
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)

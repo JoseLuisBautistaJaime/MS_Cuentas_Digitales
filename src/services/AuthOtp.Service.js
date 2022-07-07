@@ -59,7 +59,7 @@ const enviarOtp = async (req, res, idCliente) => {
   LOG.info('SERV: Iniciando enviarOtp method')
   /** EVALUACION DE BLOQUEOS */
   const bloquearCliente = await evaluarBloqueo(idCliente, 3)
-  if (bloquearCliente.code === 215) return bloquearCliente
+  if (bloquearCliente.code !== 200) return bloquearCliente
 
   /** PROCESANDO CUENTA SIN BLOQUEAR */
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
@@ -132,7 +132,7 @@ const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
 
   // evaluacion si existe o se requiere de establecer algun bloqueo por algun abuso
   const bloquearCliente = await evaluarBloqueo(idCliente, 5)
-  if (bloquearCliente.code === 215) return bloquearCliente
+  if (bloquearCliente.code !== 200) return bloquearCliente
 
   // verificacion si existe el estatus apropiado para evaluar el codigo otp.
   const toReturn = { code: 200, esValidoOtp: false, estaExpiradoOtp: false }

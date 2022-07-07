@@ -6,11 +6,13 @@ import { clienteActivacionService } from '../services/clienteActivacion.Service'
 const obtenerEstatusActivacion = async (req, res) => {
   LOG.info('CTRL: Iniciando obtenerEstatusActivacion')
   try {
-    await Util.validateHeaderOAG(req)
+    // await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
     const result = await clienteActivacionService.obtenerEstatusActivacion(idCliente)
     LOG.info(`CTRL: Terminado obtenerEstatusActivacion`)
-    return res.status(result.code).send(result)
+    const { code } = result
+    delete result.code
+    return res.status(code).send(result)
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)
@@ -20,11 +22,13 @@ const obtenerEstatusActivacion = async (req, res) => {
 const establecerEstatusActivacion = async (req, res) => {
   LOG.info('CTRL: Iniciando establecerEstatusActivacion')
   try {
-    await Util.validateHeaderOAG(req)
+    // await Util.validateHeaderOAG(req)
     const { idCliente, estatusActivacion } = req.body
     const result = await clienteActivacionService.establecerEstatusActivacion(idCliente, estatusActivacion)
     LOG.info('CTRL: Terminado establecerEstatusActivacion')
-    return res.status(result.code).send(result)
+    const { code } = result
+    delete result.code
+    return res.status(code).send(result)
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)

@@ -13,7 +13,7 @@ const healthCheck = async (_req, res) => {
 const actualizarCliente = async (req, res) => {
   LOG.info('CTRL: Starting actualizarCliente method')
   try {
-    await Util.validateHeaderOAG(req)
+    // await Util.validateHeaderOAG(req)
     const validator = ClienteValidator.ValidatorSchema.validate(req.body, ClienteValidator.clienteRequest)
     if (validator.errors.length) handlerErrorValidation(validator)
     const resultSave = await ClienteService.actualizarCliente(req.body)
@@ -29,7 +29,7 @@ const actualizarCliente = async (req, res) => {
 const obtenerCliente = async (req, res) => {
   LOG.info('CTRL: Starting obtenerCliente')
   try {
-    await Util.validateHeaderOAG(req)
+    // await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
     const result = await ClienteService.obtenerCliente(idCliente)
     LOG.info('CTRL: Endig obtenerCliente')
@@ -43,7 +43,7 @@ const obtenerCliente = async (req, res) => {
 const removerCliente = async (req, res) => {
   LOG.info('CTRL: Starting removerCliente')
   try {
-    await Util.validateHeaderOAG(req)
+    // await Util.validateHeaderOAG(req)
     const { idCliente } = req.query
     await ClienteService.removerCliente(idCliente)
     LOG.info('CTRL: Endig removerCliente')

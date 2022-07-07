@@ -43,11 +43,14 @@ async function obtenerEstatusActivacion(idCliente, evaluarDesbloqueo) {
     }
   }
 
-  // Conversion de valores
+  // Conversion de valores generales
   const toReturn = {}
   toReturn.code = activacion.estatusActivacion === 5 ? 215 : 200
+  toReturn.code = activacion.estatusActivacion === 1 ? 400 : toReturn.code
   toReturn.estatusActivacion = activacion.estatusActivacion
   toReturn.estatusActivacionNombre = activacion.estatusActivacionNombre
+
+  //  Conversion de valores especializados
   if (toReturn.estatusActivacion >= 2) toReturn.ultimaActualizacion = activacion.ultimaActualizacion
   if (toReturn.estatusActivacion === 5) {
     toReturn.expiraBloqueo = Util.unixTimeStamp(toReturn.ultimaActualizacion, ACTIVACION_EVENTOS_TIMETOLIVE)

@@ -20,7 +20,9 @@ const enviarOtp = async (req, res) => {
     // Termiancion del proceso...
     LOG.debugJSON('enviarOtp-codigoOtp', result)
     LOG.info('CTRL: Terminando enviarOtp')
-    return res.status(result.code).send(result)
+    const { code } = result
+    delete result.code
+    return res.status(code).send(result)
   } catch (err) {
     // LOG.info('CTRL: Endig removerCliente-ERRORo')
     LOG.error(err)
@@ -40,7 +42,9 @@ const verificarOtp = async (req, res) => {
     const result = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
 
     LOG.info('CTRL: Terminando verificarOtp')
-    return res.status(result.code).send(result)
+    const { code } = result
+    delete result.code
+    return res.status(code).send(result)
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)
