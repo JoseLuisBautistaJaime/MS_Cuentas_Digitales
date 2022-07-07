@@ -45,7 +45,7 @@ async function obtenerEstatusActivacion(idCliente, evaluarDesbloqueo) {
 
   // Conversion de valores generales
   const toReturn = {}
-  toReturn.code = activacion.estatusActivacion === 5 ? 215 : 200
+  toReturn.code = activacion.estatusActivacion === 5 ? 203 : 200
   toReturn.code = activacion.estatusActivacion === 1 ? 400 : toReturn.code
   toReturn.estatusActivacion = activacion.estatusActivacion
   toReturn.estatusActivacionNombre = activacion.estatusActivacionNombre
