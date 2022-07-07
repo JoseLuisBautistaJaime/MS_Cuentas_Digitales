@@ -1,6 +1,6 @@
 import Mongoose from 'mongoose'
 import LOG from '../commons/LOG'
-import { activacionEventoSchema } from '../models/activacionEvento.model'
+import { activacionEventoSchema } from '../models/ActivacionEvento.model'
 
 const activacionEvento = Mongoose.model('ActivacionEvento', activacionEventoSchema)
 
