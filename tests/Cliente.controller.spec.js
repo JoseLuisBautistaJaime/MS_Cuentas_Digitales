@@ -7,7 +7,6 @@
 // import { getMongoConnectionString } from './mongodb'
 // import { createConnection } from '../src/commons/connection'
 
-
 // const context = CONTEXT_NAME
 // const version = CONTEXT_VERSION
 
@@ -15,7 +14,6 @@
 
 // let mongo
 // let server
-
 
 // chai.use(chaiHttp).use(chaiAsPromised).should()
 

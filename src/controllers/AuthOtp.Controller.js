@@ -37,8 +37,6 @@ const verificarOtp = async (req, res) => {
     await Util.validateHeaderOAG(req)
 
     const { idCliente, codigoOtp } = req.body
-    LOG.debugJSON('CTRL: idCliente ', idCliente)
-    LOG.debugJSON('CTRL: codigoOtp ', codigoOtp)
     let { enviarEmail } = req.body
     if (enviarEmail === undefined || enviarEmail === null) enviarEmail = true
     const result = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
