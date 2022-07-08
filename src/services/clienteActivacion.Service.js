@@ -58,7 +58,7 @@ async function obtenerEstatusActivacion(idCliente, evaluarDesbloqueo) {
     toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
   }
   if (toReturn.estatusActivacion === 3) toReturn.codigoOtp = activacion.codigoOtp
-  LOG.info(`SERV: Terminando obtenerEstatusActivacion ${toReturn.code}`)
+  LOG.info(`SERV: Terminando obtenerEstatusActivacion ${toReturn}`)
   return toReturn
 }
 
