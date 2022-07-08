@@ -55,7 +55,7 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
       headers: header,
       body: bodyComunicaciones
     }
-
+    LOG.debugJSON('internalEnviarMensaje-HttpComunicaciones', HttpComunicaciones)
     const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
     LOG.debugJSON('internalEnviarMensaje-bodyResp', bodyResp)
     LOG.info('SERV: Terminando internalEnviarEmail')
