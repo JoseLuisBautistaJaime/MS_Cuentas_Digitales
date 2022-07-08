@@ -17,6 +17,7 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoO
     estatusActivacionNombre: ActivacionDAO.convertirEstatusActivacionNombre(estatusActivacion),
     ultimaActualizacion: Date.now()
   }
+  LOG.debug(`establecerEstatusActivacion: idCliente: ${idCliente} activacion: ${estatusActivacion}, codigoOtp: ${codigoOtp} `)
   if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
   await ActivacionDAO.establecerEstatusActivacion(idCliente, activacion)
   LOG.info('SERV: Terminando establecerEstatusActivacion')
