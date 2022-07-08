@@ -73,51 +73,46 @@ const enviarOtp = async (req, res, idCliente) => {
   const expiraCodigoOtpISO = new Date(expiraCodigoOtp * 1000).toISOString()
 
   /** envio del codigoOtp por sms o email */
-  try {
-    const correoCliente = String(cliente.correoCliente)
-    const celularCliente = String(cliente.celularCliente)
-    const modoEnvio = String(req.body.modoEnvio).toLowerCase()
+  const correoCliente = String(cliente.correoCliente)
+  const celularCliente = String(cliente.celularCliente)
+  const modoEnvio = String(req.body.modoEnvio).toLowerCase()
 
-    // Validación del Token Otp..
-    if (codigoOtp === null || codigoOtp === '') {
-      const controlExcepcion = {
-        code: CODE_BAD_REQUEST,
-        message: 'BadRequest - Token no generado correctamente.'
-      }
-      return res.status(400).send({ controlExcepcion })
+  // Validación del Token Otp..
+  if (codigoOtp === null || codigoOtp === '') {
+    const controlExcepcion = {
+      code: CODE_BAD_REQUEST,
+      message: 'BadRequest - Token no generado correctamente.'
     }
-
-    // Modo de envio de sms..
-    if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
-      const controlExcepcion = {
-        code: CODE_BAD_REQUEST,
-        message: `BadRequest - El parametro en body 'modoEnvio' debe ser 'sms' o 'email'`
-      }
-      return res.status(400).send({ controlExcepcion })
-    }
-
-    let statusEnvio
-    // envio de otp por email o sms
-    if (modoEnvio === 'email') statusEnvio = await ComunicacionesService.enviarCodigoEMAIL(req, res, correoCliente, codigoOtp)
-    if (modoEnvio === 'sms') statusEnvio = await ComunicacionesService.enviarCodigoSMS(req, res, celularCliente, codigoOtp)
-
-    // verificar si existe alguna excepcion
-    if (statusEnvio.statusRequest !== 201) {
-      LOG.debugJSON('sendOtpToComunicaciones-statusEnvio', statusEnvio)
-      const controlExcepcion = {
-        code: CODE_INTERNAL_SERVER_ERROR,
-        message: `Internal Server Error - ${statusEnvio.descripcionError}`
-      }
-      return res.status(500).send({ controlExcepcion })
-    }
-  } catch (err) {
-    return ''
+    return res.status(400).send({ controlExcepcion })
   }
+
+  // Modo de envio de sms..
+  if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
+    const controlExcepcion = {
+      code: CODE_BAD_REQUEST,
+      message: `BadRequest - El parametro en body 'modoEnvio' debe ser 'sms' o 'email'`
+    }
+    return res.status(400).send({ controlExcepcion })
+  }
+
+  let statusEnvio
+  // envio de otp por email o sms
+  if (modoEnvio === 'email') statusEnvio = await ComunicacionesService.enviarCodigoEMAIL(req, res, correoCliente, codigoOtp)
+  if (modoEnvio === 'sms') statusEnvio = await ComunicacionesService.enviarCodigoSMS(req, res, celularCliente, codigoOtp)
+
+  // verificar si existe alguna excepcion
+  if (statusEnvio.statusRequest !== 201) {
+    LOG.debugJSON('sendOtpToComunicaciones-statusEnvio', statusEnvio)
+    const controlExcepcion = {
+      code: CODE_INTERNAL_SERVER_ERROR,
+      message: `Internal Server Error - ${statusEnvio.descripcionError}`
+    }
+    return res.status(500).send({ controlExcepcion })
+  }
+
   await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)
   LOG.info('SERV: Terminando enviarOtp method')
-
   const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
-
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
 }
 
