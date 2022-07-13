@@ -22,11 +22,7 @@ const removerCliente = async idCliente => {
  */
 const obtenerCliente = async idCliente => {
   LOG.info(`SERV: Iniciando obtenerCliente ${idCliente}`)
-  LOG.debugJSON('idCliente', idCliente)
-  // const token = await OAuthService.getOAuthToken()
-  // LOG.debugJSON('SERV[obtenerCliente]-token', token)
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
-  LOG.debugJSON('cliente:', cliente)
   LOG.info(`SERV: Terminando obtenerCliente`)
   return cliente
 }
@@ -40,6 +36,7 @@ const actualizarCliente = async body => {
   LOG.info('SERV: Iniciando actualizarCliente')
   const { idCliente } = body
   const usuarioExist = await ClienteDAO.countIdCliente(idCliente)
+  LOG.debug(`usuarioExist ${usuarioExist}`)
   let resultSave
   if (usuarioExist === 0) {
     const clienteToAdd = {
@@ -67,6 +64,7 @@ const actualizarCliente = async body => {
     }
     resultSave = await ClienteDAO.findOneAndUpdate(idCliente, clienteUpdate)
   }
+  LOG.debug(`resultSave ${resultSave}`)
   LOG.info('SERV: Terminando actualizarCliente')
   return resultSave
 }

@@ -20,4 +20,3 @@ export const ActivacionEventoService = {
   listarEventos,
   removerEventos
 }
-export default ActivacionEventoService

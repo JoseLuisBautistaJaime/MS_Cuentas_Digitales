@@ -85,7 +85,7 @@ async function obtenerEstatusActivacion(idCliente) {
     if (estatusActivacion === '' || estatusActivacion === undefined) estatusActivacion = 2
     activacion.estatusActivacion = estatusActivacion
   }
-  activacion.estatusActivacionNombre = convertirEstatusActivacionNombre(activacion.estatusActivacion)
+  activacion.estatusActivacionNombre = `${convertirEstatusActivacionNombre(activacion.estatusActivacion)} ${idCliente}`
   return activacion
 }
 

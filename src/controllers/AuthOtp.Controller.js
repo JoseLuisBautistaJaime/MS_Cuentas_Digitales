@@ -38,7 +38,7 @@ const verificarOtp = async (req, res) => {
 
     const { idCliente, codigoOtp } = req.body
     let { enviarEmail } = req.body
-    if (enviarEmail === undefined || enviarEmail === null) enviarEmail = true
+    if (enviarEmail === undefined) enviarEmail = true
     const result = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
 
     LOG.info('CTRL: Terminando verificarOtp')
