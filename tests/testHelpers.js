@@ -6,7 +6,11 @@ import { ACTIVACION_BLOQUEO_REINTENTOS } from '../src/commons/constants'
 import { LOG } from '../src/commons'
 
 export const HEADER = {
-  /* PEGAR CONSTANTES */
+  AUTHORIZATION: 'Basic zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz=',
+  IDCONSUMIDOR: 99,
+  IDDESTINO: 99,
+  USUARIO: 'test',
+  AUTHBEARER: 'xxxxxxxxxxxx='
 }
 
 export const TEST_CLIENTE = '9999'
