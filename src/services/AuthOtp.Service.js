@@ -63,6 +63,15 @@ const enviarOtp = async (req, res, idCliente) => {
   const bloquearCliente = await evaluarBloqueo(idCliente, 3)
   if (bloquearCliente.code !== 200) return bloquearCliente
 
+  /** Evaluacion de Modo de Envio */
+  const modoEnvio = String(req.body.modoEnvio).toLowerCase()
+  if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
+    return {
+      code: 400,
+      message: `BadRequest - El parametro en body 'modoEnvio' debe ser 'sms' o 'email'`
+    }
+  }
+
   /** PROCESANDO CUENTA SIN BLOQUEAR */
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
 
@@ -77,25 +86,6 @@ const enviarOtp = async (req, res, idCliente) => {
   /** envio del codigoOtp por sms o email */
   const correoCliente = String(cliente.correoCliente)
   const celularCliente = String(cliente.celularCliente)
-  const modoEnvio = String(req.body.modoEnvio).toLowerCase()
-
-  // Validación del Token Otp..
-  // if (codigoOtp === null || codigoOtp === '') {
-  //   const controlExcepcion = {
-  //     code: CODE_BAD_REQUEST,
-  //     message: 'BadRequest - Token no generado correctamente.'
-  //   }
-  //   return res.status(400).send({ controlExcepcion })
-  // }
-
-  // Modo de envio de sms..
-  if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
-    const controlExcepcion = {
-      code: CODE_BAD_REQUEST,
-      message: `BadRequest - El parametro en body 'modoEnvio' debe ser 'sms' o 'email'`
-    }
-    return res.status(400).send({ controlExcepcion })
-  }
 
   let statusEnvio
   // envio de otp por email o sms
@@ -105,11 +95,11 @@ const enviarOtp = async (req, res, idCliente) => {
   // verificar si existe alguna excepcion
   if (statusEnvio.statusRequest !== 201) {
     LOG.debugJSON('sendOtpToComunicaciones-statusEnvio', statusEnvio)
-    const controlExcepcion = {
-      code: CODE_INTERNAL_SERVER_ERROR,
-      message: `Internal Server Error - ${statusEnvio.descripcionError}`
+    const toReturn = {
+      code: 500,
+      message: `Internal Server Error - MS_COMUNICACIONES: ${statusEnvio.descripcionError}`
     }
-    return res.status(500).send({ controlExcepcion })
+    return toReturn
   }
 
   await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)

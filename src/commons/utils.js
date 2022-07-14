@@ -1,20 +1,15 @@
 import { toInteger } from 'lodash'
 import LOG from './LOG'
 import { BadRequestException, createMessageError } from './exceptions'
-import {
-  CODE_BAD_REQUEST,
-  HEADER_AUTHORIZATION,
-  HEADER_ID_CONSUMIDOR,
-  HEADER_ID_DESTINO,
-  HEADER_OAUTH,
-  HEADER_USUARIO
-} from './constants'
+import { CODE_BAD_REQUEST, HEADER_AUTHORIZATION, HEADER_ID_CONSUMIDOR, HEADER_ID_DESTINO, HEADER_OAUTH, HEADER_USUARIO } from './constants'
 
 const unixTimeStamp = (fecha, addSeconds) => {
   // eslint-disable-next-line no-param-reassign
   if (addSeconds === undefined) addSeconds = 0
   return toInteger(fecha.getTime() / 1000, 10) + toInteger(addSeconds)
 }
+
+
 
 const validateIfPositiveNumber = async number => {
   LOG.info('Util validateIfPositiveNumber method')
@@ -27,11 +22,7 @@ const validateIfPositiveNumber = async number => {
 
 const changeToCollectionStandard = async collection => {
   if (collection) {
-    let standardName = collection
-      .toLowerCase()
-      .trimEnd()
-      .trimStart()
-      .replace(/ /g, '_')
+    let standardName = collection.toLowerCase().trimEnd().trimStart().replace(/ /g, '_')
     standardName = standardName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     return standardName
   }
@@ -69,12 +60,43 @@ const validateHeaderOAG = async req => {
   await validarHeader(req, HEADER_AUTHORIZATION)
 }
 
+const controllerIniciando = async (req, tagName, evalOAG, showBody) => {
+  LOG.info('')
+  LOG.info('*******************************************************************')
+  LOG.info(`*** CTRL: Iniciando Método ${tagName} *****************************`)
+  if (req.header('TestTag')) LOG.info(`*** TestTag: ${req.header('TestTag')}`)
+  LOG.info('-------------------------------------------------------------------')
+  // eslint-disable-next-line no-param-reassign
+  if (showBody === undefined) showBody = true
+  if (showBody) LOG.info(`--Response.BODY: ${JSON.stringify(req.body)}`)
+  LOG.info('-------------------------------------------------------------------')
+  // eslint-disable-next-line no-param-reassign
+  if (evalOAG === undefined) evalOAG = true
+  if (evalOAG) await validateHeaderOAG(req)
+}
+
+const controllerTerminando = async (res, toReturn, tagName) => {
+  LOG.info('-------------------------------------------------------------------')
+  LOG.info(`--Request.BODY: ${JSON.stringify(toReturn)}`)
+  LOG.info('-------------------------------------------------------------------')
+  LOG.info(`*** CTRL: Terminando Método ${tagName} *****************************`)
+  LOG.info('********************************************************************')
+  LOG.info('')
+  const { code } = toReturn
+  // eslint-disable-next-line no-param-reassign
+  delete toReturn.code
+  return res.status(code).send(toReturn)
+}
+
+/** */
 export const Util = {
   validateIfPositiveNumber,
   changeToCollectionStandard,
   validarHeader,
   validateHeaderOAG,
-  unixTimeStamp
+  unixTimeStamp,
+  controllerTerminando,
+  controllerIniciando
 }
 
 export default null

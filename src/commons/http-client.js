@@ -27,13 +27,7 @@ const parseResponse = res => {
   }))
 }
 
-const sendRequest = async ({
-  url,
-  method,
-  body = null,
-  headers,
-  isHttps = true
-}) => {
+const sendRequest = async ({ url, method, body = null, headers, isHttps = true }) => {
   LOG.debug('SERVICE: Starting sendRequest method')
 
   LOG.debug(`url - ${url}`)

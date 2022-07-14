@@ -1,50 +1,32 @@
 import LOG from '../commons/LOG'
 import handleError from '../validator/handler-error'
-import { Util, Response } from '../commons'
+import { Util } from '../commons'
 import { AuthOtpService } from '../services/AuthOtp.Service'
 
 const enviarOtp = async (req, res) => {
-  LOG.info('******************************************************************')
-  LOG.info('******************************************************************')
-  LOG.info('CTRL: Iniciando enviarOtp method')
-
   try {
-    // validaciones y carga de parametros
-    await Util.validateHeaderOAG(req)
-
-    // proceso principal
+    await Util.controllerIniciando(req, 'enviarOtp', true, true)
     const idCliente = String(req.body.idCliente)
-    const result = await AuthOtpService.enviarOtp(req, res, idCliente)
-    if (result === '') return res.status(500).send()
-
-    // Termiancion del proceso...
-    LOG.debugJSON('enviarOtp-codigoOtp', result)
-    LOG.info('CTRL: Terminando enviarOtp')
-    const { code } = result
-    delete result.code
-    return res.status(code).send(result)
+    const toReturn = await AuthOtpService.enviarOtp(req, res, idCliente)
+    return Util.controllerTerminando(res, toReturn, 'enviarOtp')
   } catch (err) {
-    // LOG.info('CTRL: Endig removerCliente-ERRORo')
     LOG.error(err)
     return handleError(res, err)
   }
 }
 
 const verificarOtp = async (req, res) => {
-  LOG.info('CTRL: Iniciando verificarOtp method')
   try {
-    // validaciones y carga de parametros
-    await Util.validateHeaderOAG(req)
-
+    await Util.controllerIniciando(req, 'verificarOtp', true, true)
     const { idCliente, codigoOtp } = req.body
     let { enviarEmail } = req.body
-    if (enviarEmail === undefined) enviarEmail = true
-    const result = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
-
-    LOG.info('CTRL: Terminando verificarOtp')
-    const { code } = result
-    delete result.code
-    return res.status(code).send(result)
+    LOG.debug(`enviarEmail#1: ${enviarEmail}`)
+    if (enviarEmail !== true && enviarEmail !== false) {
+      enviarEmail = true
+    }
+    LOG.debug(`enviarEmail#2: ${enviarEmail}`)
+    const toReturn = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
+    return Util.controllerTerminando(res, toReturn, 'verificarOtp')
   } catch (err) {
     LOG.error(err)
     return handleError(res, err)
