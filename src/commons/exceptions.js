@@ -10,6 +10,28 @@ export class BadRequestException {
   }
 }
 
+export class HeaderRequiredException {
+  constructor(message) {
+    this.name = 'Header Required'
+    this.code = 400
+    this.statusCode = 40001
+    this.message = message.message
+    this.mergeVariables = null
+    this.stack = null
+  }
+}
+
+export class BodyValidationException {
+  constructor(message) {
+    this.name = 'Body Validation'
+    this.code = 400
+    this.statusCode = 40002
+    this.message = message.message
+    this.mergeVariables = null
+    this.stack = null
+  }
+}
+
 export class NotFoundException {
   constructor(message) {
     this.name = 'Not Found'
@@ -98,11 +120,6 @@ export class GatewayTimeoutException {
   }
 }
 
-export const createMessageError = (
-  code,
-  mergeVariables = {},
-  statusCode = null,
-  message = null
-) => {
+export const createMessageError = (code, mergeVariables = {}, statusCode = null, message = null) => {
   return { code, mergeVariables, statusCode, message }
 }

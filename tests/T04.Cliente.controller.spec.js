@@ -44,46 +44,46 @@ describe('T4.Cliente.Controller', () => {
         })
     })
 
-    it('T4A.1-actualizarCliente, cuando el cliente NO EXISTE.', done => {
-      chai
-        .request(app)
-        .post(`/${context}/${version}/actualizarCliente`)
-        .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
-        .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
-        .set('TestTag','T4A.1-actualizarCliente, cuando el cliente NO EXISTE.') 
-        .send(TEST_CLIENTE_DATA)
-        .end((err, res) => {
-          res.should.have.status(200)
-          done()
-        })
-    })
+    // it('T4A.1-actualizarCliente, cuando el cliente NO EXISTE.', done => {
+    //   chai
+    //     .request(app)
+    //     .post(`/${context}/${version}/actualizarCliente`)
+    //     .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
+    //     .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
+    //     .set('TestTag','T4A.1-actualizarCliente, cuando el cliente NO EXISTE.') 
+    //     .send(TEST_CLIENTE_DATA)
+    //     .end((err, res) => {
+    //       res.should.have.status(200)
+    //       done()
+    //     })
+    // })
 
-    it('T4A.2-actualizarCliente, cuando el cliente SI EXISTE.', done => {
-      chai
-        .request(app)
-        .post(`/${context}/${version}/actualizarCliente`)
-        .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
-        .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
-        .set('TestTag','T4A.1-actualizarCliente, cuando el cliente SI EXISTE.') 
-        .send(TEST_CLIENTE_DATA)
-        .end((err, res) => {
-          res.should.have.status(200)
-          done()
-        })
-    })
+    // it('T4A.2-actualizarCliente, cuando el cliente SI EXISTE.', done => {
+    //   chai
+    //     .request(app)
+    //     .post(`/${context}/${version}/actualizarCliente`)
+    //     .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
+    //     .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
+    //     .set('TestTag','T4A.1-actualizarCliente, cuando el cliente SI EXISTE.') 
+    //     .send(TEST_CLIENTE_DATA)
+    //     .end((err, res) => {
+    //       res.should.have.status(200)
+    //       done()
+    //     })
+    // })
 
-    it('T4A.3-obtenerCliente, con parametro valido.', done => {
-      chai
-        .request(app)
-        .get(`/${context}/${version}/obtenerCliente`)
-        .query({idCliente:TEST_CLIENTE})
-        .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
-        .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
-        .set('TestTag','T4A.3-obtenerCliente, cuando el cliente SI EXISTE.') 
-        .end((err, res) => {
-          res.should.have.status(200)
-          done()
-        })
-    })
+    // it('T4A.3-obtenerCliente, con parametro valido.', done => {
+    //   chai
+    //     .request(app)
+    //     .get(`/${context}/${version}/obtenerCliente`)
+    //     .query({idCliente:TEST_CLIENTE})
+    //     .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
+    //     .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
+    //     .set('TestTag','T4A.3-obtenerCliente, cuando el cliente SI EXISTE.') 
+    //     .end((err, res) => {
+    //       res.should.have.status(200)
+    //       done()
+    //     })
+    // })
   })
 })
