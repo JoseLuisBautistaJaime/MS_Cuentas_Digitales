@@ -5,25 +5,16 @@ import { Util } from '../commons/utils'
 import { ClienteService } from '../services/Cliente.Service'
 import { ClienteValidator } from '../validator/cliente.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
+import { UController } from '../commons/UController'
 
 const healthCheck = async (_req, res) => {
   return Response.Ok(res)
 }
 
 const actualizarCliente = async (req, res) => {
-  LOG.info('CTRL: Starting actualizarCliente method')
-  try {
-    // await Util.validateHeaderOAG(req)
-    const validator = ClienteValidator.ValidatorSchema.validate(req.body, ClienteValidator.clienteRequest)
-    if (validator.errors.length) handlerErrorValidation(validator)
-    const resultSave = await ClienteService.actualizarCliente(req.body)
-    LOG.info(`CTRL: Cliente Actualizado ${resultSave}`)
-    LOG.info('CTRL: Endig actualizarCliente method')
-    return Response.Ok(res)
-  } catch (err) {
-    LOG.error(err)
-    return handleError(res, err)
-  }
+  return UController.invoke('actualizarCliente', req, res, true, async reqX => {
+    return ClienteService.actualizarCliente(reqX.body)
+  })
 }
 
 const obtenerCliente = async (req, res) => {
@@ -61,3 +52,4 @@ export const ClienteController = {
   actualizarCliente
 }
 export default ClienteController
+
