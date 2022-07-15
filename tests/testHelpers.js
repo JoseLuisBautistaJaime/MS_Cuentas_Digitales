@@ -46,10 +46,6 @@ const bloquearClienteSinEventos = async tag => {
   await ActivacionEventoService.removerEventos(TEST_CLIENTE)
 }
 
-// const paraEvaluarVerificarOtp = async tag => {
-//   LOG.debug(tag)
-// }
-
 export const testHelpers = {
   reiniciarCliente,
   bloquearClienteConEnviosOtp,

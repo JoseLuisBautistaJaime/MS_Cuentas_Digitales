@@ -47,6 +47,25 @@ const validarHeader = async (req, header) => {
 }
 
 /**
+ * Expresión auxiliar utilizada para validar el parametro de query recibido.
+ *
+ * @param req El request con el Header a validar.
+ * @param paramQuery Parametro de query con el que se valida.
+ * @returns {Promise<void>}
+ */
+const getValidateParamQuery = (req, paramQuery) => {
+  // eslint-disable-next-line prefer-destructuring, dot-notation
+  if (!req.query[paramQuery]) {
+    throw new BadRequestException(
+      createMessageError(CODE_BAD_REQUEST, {
+        message: 'El parametro de Query '.concat(paramQuery, ' es requerido')
+      })
+    )
+  }
+  return req.query[paramQuery]
+}
+
+/**
  * Valida los encabezados necesarios para el OAG
  *
  * @param req El request con el Header a validar.
@@ -59,6 +78,7 @@ const validateHeaderOAG = async req => {
   await validarHeader(req, HEADER_OAUTH)
   await validarHeader(req, HEADER_AUTHORIZATION)
 }
+
 
 const controllerIniciando = async (req, tagName, evalOAG, showBody) => {
   LOG.info('')
@@ -75,16 +95,20 @@ const controllerIniciando = async (req, tagName, evalOAG, showBody) => {
   if (evalOAG) await validateHeaderOAG(req)
 }
 
-const controllerTerminando = async (res, toReturn, tagName) => {
+const controllerTerminando = async (res, toReturn, tagName, defaultCode) => {
   LOG.info('-------------------------------------------------------------------')
   LOG.info(`--Request.BODY: ${JSON.stringify(toReturn)}`)
   LOG.info('-------------------------------------------------------------------')
   LOG.info(`*** CTRL: Terminando Método ${tagName} *****************************`)
   LOG.info('********************************************************************')
   LOG.info('')
-  const { code } = toReturn
-  // eslint-disable-next-line no-param-reassign
-  delete toReturn.code
+  let code
+  if (defaultCode !== undefined) code = defaultCode
+  else {
+    code = toReturn.code
+    // eslint-disable-next-line no-param-reassign
+    delete toReturn.code
+  }
   return res.status(code).send(toReturn)
 }
 
@@ -96,7 +120,8 @@ export const Util = {
   validateHeaderOAG,
   unixTimeStamp,
   controllerTerminando,
-  controllerIniciando
+  controllerIniciando,
+  getValidateParamQuery
 }
 
 export default null
