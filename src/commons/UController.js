@@ -66,11 +66,12 @@ const validateHeaderOAG = async req => {
   await validarHeader(req, HEADER_AUTHORIZATION)
 }
 
-const Iniciando = async (req, tagName, evalOAG, showBody) => {
+const Iniciando = async (req, tagName, evalOAG, showBody, bodyValidatorSchema) => {
   LOG.info('')
   LOG.info('*******************************************************************')
   LOG.info(`*** CTRL: Iniciando Método ${tagName} *****************************`)
   if (req.header('TestTag')) LOG.info(`*** TestTag: ${req.header('TestTag')}`)
+
   LOG.info('-------------------------------------------------------------------')
   // eslint-disable-next-line no-param-reassign
   if (showBody === undefined) showBody = true
@@ -79,6 +80,10 @@ const Iniciando = async (req, tagName, evalOAG, showBody) => {
   // eslint-disable-next-line no-param-reassign
   if (evalOAG === undefined) evalOAG = true
   if (evalOAG) await validateHeaderOAG(req)
+
+  if (bodyValidatorSchema !== undefined) {
+    bodyValidation(req, bodyValidatorSchema)
+  }
 }
 
 const Terminando = async (res, toReturn, tagName, defaultCode) => {
@@ -117,15 +122,16 @@ const CatchError = async (res, err, tagName, defaultCode) => {
   return res.status(code).send(err)
 }
 
-async function invoke(nameMethod, req, res, evalOAG, callback) {
+async function invoke(callback, nameMethod, req, res, evalOAG, bodyValidatorSchema) {
   try {
-    await Iniciando(req, nameMethod, evalOAG, true)
+    await Iniciando(req, nameMethod, evalOAG, true, bodyValidatorSchema)
     const toReturn = await callback(req, res)
     return Terminando(res, toReturn, nameMethod)
   } catch (err) {
     return CatchError(res, err, nameMethod)
   }
 }
+
 
 export const UController = {
   invoke

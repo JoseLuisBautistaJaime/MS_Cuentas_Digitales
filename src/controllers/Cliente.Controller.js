@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import LOG from '../commons/LOG'
 import handleError from '../validator/handler-error'
 import { Response } from '../commons/response'
@@ -11,11 +12,18 @@ const healthCheck = async (_req, res) => {
   return Response.Ok(res)
 }
 
+// const actualizarCliente = async (req, res) => {
+//   return UController.invoke('actualizarCliente', req, res, true, async reqX => {
+//     return ClienteService.actualizarCliente(reqX.body)
+//   })
+// }
+
 const actualizarCliente = async (req, res) => {
-  return UController.invoke('actualizarCliente', req, res, true, async reqX => {
-    return ClienteService.actualizarCliente(reqX.body)
-  })
-}
+  return UController.invoke(
+    async reqX => ClienteService.actualizarCliente(reqX.body), 
+    'actualizarCliente', req, res, 
+    true, ClienteValidator.clienteRequest
+)}
 
 const obtenerCliente = async (req, res) => {
   LOG.info('CTRL: Starting obtenerCliente')
