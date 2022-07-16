@@ -80,7 +80,6 @@ const Iniciando = async (req, tagName, evalOAG, showBody, bodyValidatorSchema) =
   // eslint-disable-next-line no-param-reassign
   if (evalOAG === undefined) evalOAG = true
   if (evalOAG) await validateHeaderOAG(req)
-
   if (bodyValidatorSchema !== undefined) {
     bodyValidation(req, bodyValidatorSchema)
   }
@@ -131,7 +130,6 @@ async function invoke(callback, nameMethod, req, res, evalOAG, bodyValidatorSche
     return CatchError(res, err, nameMethod)
   }
 }
-
 
 export const UController = {
   invoke

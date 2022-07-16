@@ -8,10 +8,6 @@ import { ClienteValidator } from '../validator/cliente.validator'
 import { handlerErrorValidation } from '../validator/message.mapping'
 import { UController } from '../commons/UController'
 
-const healthCheck = async (_req, res) => {
-  return Response.Ok(res)
-}
-
 // const actualizarCliente = async (req, res) => {
 //   return UController.invoke('actualizarCliente', req, res, true, async reqX => {
 //     return ClienteService.actualizarCliente(reqX.body)
@@ -54,7 +50,6 @@ const removerCliente = async (req, res) => {
 }
 
 export const ClienteController = {
-  healthCheck,
   obtenerCliente,
   removerCliente,
   actualizarCliente

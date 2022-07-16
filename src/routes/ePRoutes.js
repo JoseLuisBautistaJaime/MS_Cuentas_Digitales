@@ -364,6 +364,6 @@ const router = Router()
  *            description: Exito en la llamada
  */
 
-router.route('/').get(ClienteController.healthCheck)
+// router.route('/').get(ClienteController.healthCheck)
 
 export { router as ePRoutes }
