@@ -9,8 +9,6 @@ const unixTimeStamp = (fecha, addSeconds) => {
   return toInteger(fecha.getTime() / 1000, 10) + toInteger(addSeconds)
 }
 
-
-
 const validateIfPositiveNumber = async number => {
   LOG.info('Util validateIfPositiveNumber method')
   LOG.info(`Number: ${number}`)

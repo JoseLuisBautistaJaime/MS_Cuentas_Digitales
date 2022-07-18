@@ -31,32 +31,33 @@ describe('T4.Cliente.Controller', () => {
   })
   
   describe('T4. Cliente metodos básicos.', () => {
-    it('T4.0-actualizarCliente, con headers incompletos.', done => {
-      chai
-        .request(app)
-        .post(`/${context}/${version}/actualizarCliente`)
-        .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
-        .set('TestTag','T3A.0-VerificarOTP, con headers incompletos.') 
-        .send({ "idCliente": TEST_CLIENTE, "codigoOtp": '0000', "enviaremail": true })
-        .end((err, res) => {
-          res.should.have.status(400)
-          done()
-        })
-    })
-
-    // it('T4A.1-actualizarCliente, cuando el cliente NO EXISTE.', done => {
+    // it('T4.0-actualizarCliente, con headers incompletos.', done => {
     //   chai
     //     .request(app)
     //     .post(`/${context}/${version}/actualizarCliente`)
     //     .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
-    //     .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
-    //     .set('TestTag','T4A.1-actualizarCliente, cuando el cliente NO EXISTE.') 
+    //     .set('TestTag','T3A.0-VerificarOTP, con headers incompletos.') 
+    //      // .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
     //     .send(TEST_CLIENTE_DATA)
     //     .end((err, res) => {
-    //       res.should.have.status(200)
+    //       res.should.have.status(400)
     //       done()
     //     })
     // })
+
+    it('T4A.1-actualizarCliente, cuando el cliente NO EXISTE.', done => {
+      chai
+        .request(app)
+        .post(`/${context}/${version}/actualizarCliente`)
+        .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)  
+        .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
+        .set('TestTag','T4A.1-actualizarCliente, cuando el cliente NO EXISTE.') 
+        .send(TEST_CLIENTE_DATA)
+        .end((err, res) => {
+          res.should.have.status(200)
+          done()
+        })
+    })
 
     // it('T4A.2-actualizarCliente, cuando el cliente SI EXISTE.', done => {
     //   chai
@@ -86,4 +87,4 @@ describe('T4.Cliente.Controller', () => {
     //     })
     // })
   })
-})
+})  

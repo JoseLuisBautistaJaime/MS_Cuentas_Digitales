@@ -21,7 +21,7 @@ export class HeaderRequiredException {
   }
 }
 
-export class BodyValidationException {
+export class ValdiationBodyException {
   constructor(message) {
     this.name = 'Body Validation'
     this.code = 400
