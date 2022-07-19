@@ -4,11 +4,11 @@ import chaiHttp from 'chai-http'
 import chaiAsPromised from 'chai-as-promised'
 import app from '../src/server'
 import { CONTEXT_NAME, CONTEXT_VERSION } from '../src/commons/constants'
-import { getMongoConnectionString } from './mongodb'
+import { getMongoConnectionString } from './commons/mongodb'
 import { createConnection } from '../src/commons/connection'
 import { ClienteService } from '../src/services/Cliente.Service'
 import { clienteActivacionService } from '../src/services/clienteActivacion.Service'
-import { testHelpers, HEADER, TEST_CLIENTE, TEST_CLIENTE_DATA } from './testHelpers'
+import { testHelpers, HEADER, TEST_CLIENTE, TEST_CLIENTE_DATA } from './commons/testHelpers'
 
 import { ActivacionEventoService } from '../src/services/ActivacionEvento.Service'
 

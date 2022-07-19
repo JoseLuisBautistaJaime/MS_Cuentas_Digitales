@@ -8,12 +8,9 @@ import {
   TEMPLATE_API_COMUNICACIONES_EMAIL,
   TEMPLATE_API_COMUNICACIONES_EMAIL_ACTIVACION,
   TEMPLATE_API_COMUNICACIONES_SMS,
-  URL_API_COMUNICACIONES,
-  CODE_BAD_REQUEST,
-  CODE_INTERNAL_SERVER_ERROR
+  URL_API_COMUNICACIONES
 } from '../commons/constants'
 import { HttpClientService } from '../commons/http-client'
-import handlerError from '../validator/handler-error'
 import LOG from '../commons/LOG'
 import { Util } from '../commons/utils'
 
@@ -43,7 +40,7 @@ const createHeaderComunicaciones = async req => {
   }
 }
 
-const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
+const internalEnviarMensaje = async (req, bodyComunicaciones) => {
   LOG.info('SERV: Iniciando internalEnviarMensaje')
   try {
     const header = await createHeaderComunicaciones(req)
@@ -62,7 +59,7 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
     return bodyResp
   } catch (error) {
     LOG.error(error)
-    return handlerError(res, error)
+    // return handlerError(res, error)
   }
 }
 
@@ -73,7 +70,7 @@ const internalEnviarMensaje = async (req, res, bodyComunicaciones) => {
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
-const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
+const enviarCodigoSMS = async (req, destinatario, codigoOtp) => {
   LOG.info('SERV: Iniciando enviarCodigoSMS')
 
   const bodyComunicaciones = {
@@ -88,7 +85,7 @@ const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
       }
     }
   }
-  const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
+  const bodyResp = await internalEnviarMensaje(req, bodyComunicaciones)
   LOG.info('SERV: Terminando enviarCodigoSMS', bodyResp)
   return bodyResp
 }
@@ -100,7 +97,7 @@ const enviarCodigoSMS = async (req, res, destinatario, codigoOtp) => {
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
-const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
+const enviarCodigoEMAIL = async (req, destinatario, codigoOtp) => {
   LOG.info('SERV: Iniciando enviarCodigoEMAIL')
   const bodyComunicaciones = {
     destinatario: {
@@ -121,7 +118,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
     }
   }
 
-  const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
+  const bodyResp = await internalEnviarMensaje(req, bodyComunicaciones)
   LOG.info('SERV: Terminado enviarCodigoEMAIL')
   return bodyResp
 }
@@ -133,7 +130,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
  * @param codigo Código de validación.
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
- const enviarActivacionEMAIL = async (req, res, cliente) => {
+const enviarActivacionEMAIL = async (req, cliente) => {
   LOG.info('SERV: Iniciando enviarActivacionEMAIL')
   const destinatario = cliente.correoCliente
   const clienteFullName = `${cliente.nombreCliente} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`
@@ -158,7 +155,7 @@ const enviarCodigoEMAIL = async (req, res, destinatario, codigoOtp) => {
     }
   }
 
-  const bodyResp = await internalEnviarMensaje(req, res, bodyComunicaciones)
+  const bodyResp = await internalEnviarMensaje(req, bodyComunicaciones)
   LOG.info('SERV: Terminando enviarActivacionEMAIL', bodyResp)
   return bodyResp
 }

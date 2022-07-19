@@ -6,7 +6,7 @@ import { ActivacionEventoService } from './ActivacionEvento.Service'
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
-import { ACTIVACION_BLOQUEO_REINTENTOS, CODE_BAD_REQUEST, CODE_INTERNAL_SERVER_ERROR } from '../commons/constants'
+import { ACTIVACION_BLOQUEO_REINTENTOS } from '../commons/constants'
 
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'
@@ -39,11 +39,11 @@ const evaluarBloqueo = async idCliente => {
   LOG.debugJSON('AuthOtp.evaluarBloqueo: activacion', activacion)
 
   // evalua el desbloqueo de cuenta..
-  if (activacion.estatusActivacion === 5 && bloquearCliente === false) 
+  if (activacion.estatusActivacion === 5 && bloquearCliente === false)
     activacion = await clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
 
   // procedimientos cuando la cuenta necesita bloearse o se debe de encontrar debidamente bloqueada
-  if (bloquearCliente && activacion.estatusActivacion !== 5) 
+  if (bloquearCliente && activacion.estatusActivacion !== 5)
     activacion = await clienteActivacionService.establecerEstatusActivacion(idCliente, 5)
 
   // preparanto resultados a Retornar
@@ -57,20 +57,13 @@ const evaluarBloqueo = async idCliente => {
  * @param {*} res response del Controller (requerido para el proceso de comunicaciones)
  * @param {*} idCliente el número idCliente.
  */
-const enviarOtp = async (req, res, idCliente) => {
-  LOG.info(`SERV: Iniciando enviarOtp method. idCliente: ${idCliente}`)
+const enviarOtp = async (req, bodySchemaEnviarOtp) => {
+  LOG.info(`SERV: Iniciando enviarOtp method. idCliente.`)
+  const { idCliente, modoEnvio } = bodySchemaEnviarOtp
+
   /** EVALUACION DE BLOQUEOS */
   const bloquearCliente = await evaluarBloqueo(idCliente, 3)
   if (bloquearCliente.code !== 200) return bloquearCliente
-
-  /** Evaluacion de Modo de Envio */
-  const modoEnvio = String(req.body.modoEnvio).toLowerCase()
-  if (modoEnvio !== 'sms' && modoEnvio !== 'email') {
-    return {
-      code: 400,
-      message: `BadRequest - El parametro en body 'modoEnvio' debe ser 'sms' o 'email'`
-    }
-  }
 
   /** PROCESANDO CUENTA SIN BLOQUEAR */
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
@@ -89,8 +82,8 @@ const enviarOtp = async (req, res, idCliente) => {
 
   let statusEnvio
   // envio de otp por email o sms
-  if (modoEnvio === 'email') statusEnvio = await ComunicacionesService.enviarCodigoEMAIL(req, res, correoCliente, codigoOtp)
-  if (modoEnvio === 'sms') statusEnvio = await ComunicacionesService.enviarCodigoSMS(req, res, celularCliente, codigoOtp)
+  if (modoEnvio === 'email') statusEnvio = await ComunicacionesService.enviarCodigoEMAIL(req, correoCliente, codigoOtp)
+  if (modoEnvio === 'sms') statusEnvio = await ComunicacionesService.enviarCodigoSMS(req, celularCliente, codigoOtp)
 
   // verificar si existe alguna excepcion
   if (statusEnvio.statusRequest !== 201) {
@@ -114,8 +107,11 @@ const enviarOtp = async (req, res, idCliente) => {
  * @param {*} res response del Controller (requerido para el proceso de comunicaciones)
  * @param {*} idCliente el número idCliente.
  */
-const verificarOtp = async (req, res, idCliente, codigoOtp, enviarEmail) => {
+const verificarOtp = async (req, bodySchemaEnviarOtp) => {
   LOG.info('SERV: Iniciando verificarOtp method')
+  const { idCliente, codigoOtp } = bodySchemaEnviarOtp
+  let { enviarEmail } = bodySchemaEnviarOtp
+  if (enviarEmail === undefined) enviarEmail = true
 
   // evaluacion si existe o se requiere de establecer algun bloqueo por algun abuso
   const bloquearCliente = await evaluarBloqueo(idCliente)

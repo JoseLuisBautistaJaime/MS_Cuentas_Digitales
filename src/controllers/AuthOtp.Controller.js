@@ -1,37 +1,27 @@
-import LOG from '../commons/LOG'
-import handleError from '../validator/handler-error'
-import { Util } from '../commons'
+/* eslint-disable prettier/prettier */
 import { AuthOtpService } from '../services/AuthOtp.Service'
+import { UController } from '../commons/UController'
 
-const enviarOtp = async (req, res) => {
-  try {
-    await Util.controllerIniciando(req, 'enviarOtp', true, true)
-    const idCliente = String(req.body.idCliente)
-    const toReturn = await AuthOtpService.enviarOtp(req, res, idCliente)
-    return Util.controllerTerminando(res, toReturn, 'enviarOtp')
-  } catch (err) {
-    LOG.error(err)
-    return handleError(res, err)
-  }
-}
+const validationBodySchemaEnviarOtp = {properties: { 
+    idCliente: { type: 'string', required: true },
+    modoEnvio: { type: 'string', enum: ['sms','email'], required: true },
+  }, additionalProperties : false }
 
-const verificarOtp = async (req, res) => {
-  try {
-    await Util.controllerIniciando(req, 'verificarOtp', true, true)
-    const { idCliente, codigoOtp } = req.body
-    let { enviarEmail } = req.body
-    LOG.debug(`enviarEmail#1: ${enviarEmail}`)
-    if (enviarEmail !== true && enviarEmail !== false) {
-      enviarEmail = true
-    }
-    LOG.debug(`enviarEmail#2: ${enviarEmail}`)
-    const toReturn = await AuthOtpService.verificarOtp(req, res, idCliente, codigoOtp, enviarEmail)
-    return Util.controllerTerminando(res, toReturn, 'verificarOtp')
-  } catch (err) {
-    LOG.error(err)
-    return handleError(res, err)
-  }
-}
+const validationBodySchemaVerificarOtp = {properties: { 
+    idCliente: { type: 'string', required: true },
+    codigoOtp: { type: 'string', required: true },
+    enviarEmail: { type: 'boolean', required: false },
+  }, additionalProperties : false }
+
+const enviarOtp = async (req, res) => UController.invoke(
+  'enviarOtp', 201, req, res, 
+  true, undefined, validationBodySchemaEnviarOtp,
+  async reqX => AuthOtpService.enviarOtp(reqX, reqX.body))
+
+  const verificarOtp = async (req, res) => UController.invoke(
+    'verificarOtp', 201, req, res, 
+    true, undefined, validationBodySchemaVerificarOtp,
+    async reqX => AuthOtpService.verificarOtp(reqX, reqX.body))
 
 export const AuthOtpController = {
   enviarOtp,

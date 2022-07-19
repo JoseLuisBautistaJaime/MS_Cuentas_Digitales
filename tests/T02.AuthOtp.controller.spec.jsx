@@ -5,11 +5,11 @@ import chaiAsPromised from 'chai-as-promised'
 import nock from 'nock'
 import app from '../src/server'
 import { CONTEXT_NAME, CONTEXT_VERSION, URL_API_COMUNICACIONES } from '../src/commons/constants'
-import { getMongoConnectionString } from './mongodb'
+import { getMongoConnectionString } from './commons/mongodb'
 import { createConnection } from '../src/commons/connection'
 import { ClienteService } from '../src/services/Cliente.Service'
 // import { clienteActivacionService } from '../src/services/clienteActivacion.Service'
-import {testHelpers, HEADER, TEST_CLIENTE_DATA, TEST_CLIENTE } from './testHelpers'
+import {testHelpers, HEADER, TEST_CLIENTE_DATA, TEST_CLIENTE } from './commons/testHelpers'
 import { ActivacionEventoService } from '../src/services/ActivacionEvento.Service'
 
 const context = CONTEXT_NAME

@@ -5,10 +5,10 @@ import chaiAsPromised from 'chai-as-promised'
 import nock from 'nock'
 import app from '../src/server'
 import { CONTEXT_NAME, CONTEXT_VERSION, URL_API_COMUNICACIONES } from '../src/commons/constants'
-import { getMongoConnectionString } from './mongodb'
+import { getMongoConnectionString } from './commons/mongodb'
 import { createConnection } from '../src/commons/connection'
 import { ClienteService } from '../src/services/Cliente.Service'
-import { HEADER, TEST_CLIENTE_DATA, TEST_CLIENTE } from './testHelpers'
+import { HEADER, TEST_CLIENTE_DATA, TEST_CLIENTE } from './commons/testHelpers'
 import { LOG } from '../src/commons'
 import { ActivacionEventoService } from '../src/services/ActivacionEvento.Service'
 
@@ -48,7 +48,7 @@ describe('AuthOtp.ControllerAuthOtp.Controller', () => {
         .set('TestTag','T1.1-Enviar OTP por "email" de forma Exitosa.') 
         .send({ idCliente : TEST_CLIENTE, "modoEnvio": "email" })
         .end((err, res) => {
-          res.should.have.status(200)
+          res.should.have.status(201)
           codigoOtp = res.body.codigoOtp
           LOG.debug(codigoOtp)
           done()
@@ -67,7 +67,7 @@ describe('AuthOtp.ControllerAuthOtp.Controller', () => {
         .set('TestTag','T1.2-Enviar OTP por SMS de forma exitosa.') 
         .send({ idCliente : TEST_CLIENTE, "modoEnvio": "sms" })
         .end((err, res) => {
-          res.should.have.status(200)
+          res.should.have.status(201)
           codigoOtp = res.body.codigoOtp
           LOG.debug(codigoOtp)
           done()
@@ -84,10 +84,10 @@ describe('AuthOtp.ControllerAuthOtp.Controller', () => {
         .send({
           "idCliente": TEST_CLIENTE,
           "codigoOtp": '0000',
-          "enviaremail": true
+          "enviarEmail": true
         })
         .end((err, res) => {
-          res.should.have.status(200)
+          res.should.have.status(201)
           done()
         })
     })
@@ -104,10 +104,10 @@ describe('AuthOtp.ControllerAuthOtp.Controller', () => {
         .send({
           "idCliente": TEST_CLIENTE,
           "codigoOtp": codigoOtp,
-          "enviaremail": true
+          "enviarEmail": true
         })
         .end((err, res) => {
-          res.should.have.status(200)
+          res.should.have.status(201)
           LOG.debug(`TEST: codigoOtp: ${codigoOtp}`)
           LOG.debug(`TEST: esValidoOtp: ${res.body.esValidoOtp}`)
           done()

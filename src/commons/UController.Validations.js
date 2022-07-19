@@ -1,6 +1,5 @@
 import { Validator } from 'jsonschema'
 import { HEADER_AUTHORIZATION, HEADER_ID_CONSUMIDOR, HEADER_ID_DESTINO, HEADER_OAUTH, HEADER_USUARIO } from './constants'
-import LOG from './LOG'
 import { ValidationHeaderException, ValidationQueryException, ValidationBodyException } from './UController.Exceptions'
 
 const NO_TIPO = 'is not of a type(s)'
@@ -32,9 +31,8 @@ const validate_getMessages = errors => {
     message = message.replace(PATTERN, PATTERN_MSG)
 
     const field = error.property.replace(INSTANCE, '')
-    errorsFinal += `El campo ${field} ${message}`
+    errorsFinal += `El campo ${field} ${message}. `
   })
-
   return errorsFinal
 }
 
@@ -48,7 +46,7 @@ export const validateBody = (body, validationBodySchema) => {
 
 export const validateQuery = (query, validationQuerySchema) => {
   const VALIDATOR = new Validator()
-  LOG.debug(`qry  ${JSON.stringify(query)}`)
+  // LOG.debug(`qry  ${JSON.stringify(query)}`)
   // ${JSON.stringify(req.body)}
   const validationErrors = VALIDATOR.validate(query, validationQuerySchema)
   if (!validationErrors.errors.length) return
@@ -61,6 +59,7 @@ export const validateHeader = async (req, header) => {
     throw new ValidationHeaderException({ message: 'El header '.concat(header, ' es requerido. ') })
   }
 }
+export const validateSchemaEMPTY = { properties: {}, additionalProperties: false }
 
 export const validateHeaderOAG = async req => {
   await validateHeader(req, HEADER_ID_CONSUMIDOR)
@@ -72,5 +71,6 @@ export const validateHeaderOAG = async req => {
 
 export const UControllerValidation = {
   validateBody,
-  validateHeaderOAG
+  validateHeaderOAG,
+  validateSchemaEMPTY
 }

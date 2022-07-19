@@ -1,9 +1,10 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
-import { ActivacionEventoService } from '../src/services/ActivacionEvento.Service'
-import { clienteActivacionService } from '../src/services/clienteActivacion.Service'
-import { ClienteService } from '../src/services/Cliente.Service'
-import { ACTIVACION_BLOQUEO_REINTENTOS } from '../src/commons/constants'
-import { LOG } from '../src/commons'
+import { ActivacionEventoService } from '../../src/services/ActivacionEvento.Service'
+import { clienteActivacionService } from '../../src/services/clienteActivacion.Service'
+import { ClienteService } from '../../src/services/Cliente.Service'
+import { ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
+import { LOG } from '../../src/commons'
 
 export const HEADER = {
   AUTHORIZATION: 'Basic zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz=',
