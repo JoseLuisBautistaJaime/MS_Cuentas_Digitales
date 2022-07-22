@@ -29,15 +29,32 @@ log4JS.configure({
   }
 })
 
-const LOG = log4JS.getLogger('cuentasdigitales')
-LOG.level = process.env.LOG_LEVEL || 'info'
+export const LOG = log4JS.getLogger('cuentasdigitales')
+// LOG.level = process.env.LOG_LEVEL || 'info'
+LOG.level = 'debug'
 LOG.debugJSON = (message, json) => {
   LOG.debug(`${message}: ${JSON.stringify(json)}`)
 }
 
-LOG.reFatal = (message, json) => LOG.debug(`\x1b[30m\x1b[41m${message}: ${JSON.stringify(json)}\x1b[0m`)
-LOG.reWarn = (message, json) => LOG.debug(`\x1b[30m\x1b[43m${message}: ${JSON.stringify(json)}\x1b[0m`)
-LOG.reMark = (message, json) => LOG.debug(`\x1b[37m\x1b[44m${message}: ${JSON.stringify(json)}\x1b[0m`)
+LOG.reFatal = (message, json) => LOG.fatal(`\x1b[30m\x1b[41m${message}: ${JSON.stringify(json)}\x1b[0m`)
+LOG.reWarn = (message, json) => {
+  if (json === undefined) {
+    LOG.warn(`\x1b[30m\x1b[43m${message}`)
+  } else {
+    LOG.warn(`\x1b[30m\x1b[43m${message}: ${JSON.stringify(json)}\x1b[0m`)
+  }
+}
+const colorReMark = '\x1b[37m\x1b[44m'
+
+LOG.reMark = (message, json) => {
+  if (typeof json === 'undefined') {
+    LOG.mark(`${colorReMark}${message}\x1b[0m`)
+  } else {
+    LOG.mark(`${colorReMark}${message}: ${JSON.stringify(json)}\x1b[0m`)
+  }
+}
+
+// LOG.reMark = (message, json) => LOG.mark(`\x1b[37m\x1b[44m${message}: ${JSON.stringify(json)}\x1b[0m`)
 
 LOG.test = (message, json) => {
   LOG.debug(`\x1b[30m\x1b[41m${message}: ${JSON.stringify(json)}\x1b[0m`)
