@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { AuthOtpService } from '../services/AuthOtp.Service'
-import { UController } from '../commons/UController'
+import { invokeController } from '../commons/pi8-controller'
 
 const validationBodySchemaEnviarOtp = {properties: { 
     idCliente: { type: 'string', required: true },
@@ -13,12 +13,12 @@ const validationBodySchemaVerificarOtp = {properties: {
     enviarEmail: { type: 'boolean', required: false },
   }, additionalProperties : false }
 
-const enviarOtp = async (req, res) => UController.invoke(
+const enviarOtp = async (req, res) => invokeController(
   'enviarOtp', 201, req, res, 
   true, undefined, validationBodySchemaEnviarOtp,
   async reqX => AuthOtpService.enviarOtp(reqX, reqX.body))
 
-  const verificarOtp = async (req, res) => UController.invoke(
+  const verificarOtp = async (req, res) => invokeController(
     'verificarOtp', 201, req, res, 
     true, undefined, validationBodySchemaVerificarOtp,
     async reqX => AuthOtpService.verificarOtp(reqX, reqX.body))

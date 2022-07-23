@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ClienteService } from '../services/Cliente.Service'
-import { UController } from '../commons/UController'
+import { invokeController } from '../commons/pi8-controller'
 
 const validationBodySchemaCliente = {properties: { 
     idCliente: { type: 'string', required: true },
@@ -17,17 +17,17 @@ const validationQuerySchemaCliente = { properties: {
     idCliente: { type: 'string', required: true },
   }, additionalProperties : false}
 
-const actualizarCliente = async (req, res) => UController.invoke(
+const actualizarCliente = async (req, res) => invokeController(
   'actualizarCliente', 201, req, res, 
   true, undefined, validationBodySchemaCliente,
   async reqX => ClienteService.actualizarCliente(reqX.body))
 
-const obtenerCliente = async (req, res) => UController.invoke(
+const obtenerCliente = async (req, res) => invokeController(
   'obtenerCliente', 200, req, res, 
   true, validationQuerySchemaCliente, undefined,
   async reqX => ClienteService.obtenerCliente(reqX.query.idCliente))
 
-const removerCliente = async (req, res) => UController.invoke(
+const removerCliente = async (req, res) => invokeController(
   'removerCliente', 201, req, res, 
   true, validationQuerySchemaCliente, null,
   async reqX => ClienteService.removerCliente(reqX.query.idCliente))

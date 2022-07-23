@@ -6,7 +6,3 @@ export const propGetDelete = (item, nameProp, defaultValue) => {
   }
   return toReturn
 }
-
-export const UCommon = {
-  propGetDelete
-}
