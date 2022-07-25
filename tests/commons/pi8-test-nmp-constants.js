@@ -16,3 +16,11 @@ export const HEADER = {
   USUARIO: 'test',
   AUTHBEARER: 'xxxxxxxxxxxx='
 }
+
+export const TEST_LISTHEADER_OAG = [
+  { name: 'Authorization', value: HEADER.AUTHORIZATION },
+  { name: 'oauth.bearer', value: HEADER.AUTHBEARER },
+  { name: 'idConsumidor', value: HEADER.IDCONSUMIDOR },
+  { name: 'idDestino', value: HEADER.IDDESTINO },
+  { name: 'usuario', value: HEADER.USUARIO }
+]

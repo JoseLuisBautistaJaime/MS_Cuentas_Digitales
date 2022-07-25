@@ -7,9 +7,8 @@ import { CONTEXT_NAME, CONTEXT_VERSION } from '../src/commons/constants'
 import { suiteTestAfterMongoDB, suiteTestBeforeMongoDB } from './commons/pi8-test-nmp-actions-mongodb'
 
 // mocha-test
-import { SuiteTEST } from './commons/pi8-test'
-import { itPOST } from './commons/pi8-test-nmp'
-import { TEST_CLIENTE_DATA, TEST_CLIENTE } from './commons/testHelpers'
+import { SuiteTEST, itPOST } from './commons/pi8-test'
+import { TEST_LISTHEADER_OAG, TEST_CLIENTE_DATA, TEST_CLIENTE } from './commons/pi8-test-nmp-constants'
 
 // services
 import { ClienteService } from '../src/services/Cliente.Service'
@@ -29,15 +28,15 @@ SuiteTEST('T4','actualizarCliente',
       repiteBODY: TEST_CLIENTE_DATA, 
       shouldHaveStatus: 400, 
       oag: false 
-    })
+    }, undefined)
    
     itPOST('T4A.1','actualizarCliente, cuando el cliente NO EXISTE.', {
       repiteBODY: TEST_CLIENTE_DATA, 
       shouldHaveStatus: 201, 
-      repiteOAG: true
-    })
+      repiteOAG: false
+    }, TEST_LISTHEADER_OAG)
     
     itPOST('T4A.2','actualizarCliente, cuando el cliente SI EXISTE.', {
       shouldHaveStatus: 201
-    })
+    }, TEST_LISTHEADER_OAG)
 }) 
