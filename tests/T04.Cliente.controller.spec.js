@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import nock from 'nock'
 import { actionCliente, TEST, MongoDB, CONTEXT } from './commons/pi8-test-nmp'
-import { SuiteTEST, itPOST } from './commons/pi8-test'
+import { SuiteTEST, IT } from './commons/pi8-test'
 
 SuiteTEST('T4A','actualizarCliente', 
   { // Default Options
@@ -20,9 +20,9 @@ SuiteTEST('T4A','actualizarCliente',
       MongoDB.disconnect()
     },
     tests: async () => { // seccion de TESTS
-      itPOST('T4A.0','actualizarCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: []})
-      itPOST('T4A.1','actualizarCliente, cuando el cliente NO EXISTE.', { testIgnore: false })
-      itPOST('T4A.2','actualizarCliente, cuando el cliente SI EXISTE.', { testIgnore: false })
+      IT.Post('T4A.0','actualizarCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: []})
+      IT.Post('T4A.1','actualizarCliente, cuando el cliente NO EXISTE.', { testIgnore: false })
+      IT.Post('T4A.2','actualizarCliente, cuando el cliente SI EXISTE.', { testIgnore: false })
     }
   }
 ) 
