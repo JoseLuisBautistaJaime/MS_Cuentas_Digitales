@@ -1,42 +1,53 @@
-/* eslint-disable mocha/no-setup-in-describe */
 /* eslint-disable prettier/prettier */
 import nock from 'nock'
-import { CONTEXT_NAME, CONTEXT_VERSION } from '../src/commons/constants'
-
-// mocha-test-nmp-actions
-import { suiteTestAfterMongoDB, suiteTestBeforeMongoDB } from './commons/pi8-test-nmp-actions-mongodb'
+import { actionClienteEliminar, TEST, MongoDB, CONTEXT } from './commons/pi8-test-nmp'
 
 // mocha-test
 import { SuiteTEST, itPOST } from './commons/pi8-test'
-import { TEST_LISTHEADER_OAG, TEST_CLIENTE_DATA, TEST_CLIENTE } from './commons/pi8-test-nmp-constants'
 
-// services
-import { ClienteService } from '../src/services/Cliente.Service'
-import { ActivacionEventoService } from '../src/services/ActivacionEvento.Service'
-
-
-SuiteTEST('T4','actualizarCliente',
+SuiteTEST('T4A','actualizarCliente', 
+ // Opciones a default
+  {
+    defaultListHeaders : TEST.LISTHEADER_OAG,
+    defaultUrl: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/actualizarCliente`,
+    defaultBody: TEST.CLIENTE_BODY,
+    defaultShouldHaveStatus: 201
+  }, 
+  
   async () => { // seccion de BEFORE
-    await suiteTestBeforeMongoDB()
-    await ClienteService.removerCliente(TEST_CLIENTE)
-    await ActivacionEventoService.removerEventos(TEST_CLIENTE)
-  }, suiteTestAfterMongoDB,
-
+    await MongoDB.connect()
+    await actionClienteEliminar(TEST.CLIENTE)
+  }, 
+  
+  async () => { // seccion de AFTER_SuiteTEST
+    // await MongoDB.disconnect()
+  }, 
+  
   async () => { // seccion de TESTS
-    itPOST('T4A.0','actualizarCliente, sin OAG.', {
-      repiteURL: `/${CONTEXT_NAME}/${CONTEXT_VERSION}/actualizarCliente`,
-      repiteBODY: TEST_CLIENTE_DATA, 
-      shouldHaveStatus: 400, 
-      oag: false 
-    }, undefined)
-   
-    itPOST('T4A.1','actualizarCliente, cuando el cliente NO EXISTE.', {
-      repiteBODY: TEST_CLIENTE_DATA, 
-      shouldHaveStatus: 201, 
-      repiteOAG: false
-    }, TEST_LISTHEADER_OAG)
-    
-    itPOST('T4A.2','actualizarCliente, cuando el cliente SI EXISTE.', {
-      shouldHaveStatus: 201
-    }, TEST_LISTHEADER_OAG)
+    itPOST('T4A.0','actualizarCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: []})
+    itPOST('T4A.1','actualizarCliente, cuando el cliente NO EXISTE.')
+    itPOST('T4A.2','actualizarCliente, cuando el cliente SI EXISTE.')
 }) 
+
+// SuiteTEST('T4B','obtenerCliente', 
+//   { // Opciones a default
+//     defaultListHeaders : TEST.LISTHEADER_OAG,
+//     defaultUrl: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/obtenerCliente`,
+//     defaultQuery: {idCliente:TEST.CLIENTE},
+//     defaultShouldHaveStatus: 200
+//   }, 
+  
+//   async () => { // seccion de BEFORE
+//     await MongoDB.connect()
+//     await actionClienteEliminar(TEST.CLIENTE)
+//   }, 
+  
+//   async () => { // seccion de AFTER_SuiteTEST
+//     await MongoDB.disconnect()
+//   }, 
+  
+//   async () => { // seccion de TESTS
+//     itGET('T4A.0','obtenerCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: []})
+//     itGET('T4A.1','obtenerCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404 })
+//     itGET('T4A.2','obtenerCliente, cuando el cliente SI EXISTE.')
+// }) 

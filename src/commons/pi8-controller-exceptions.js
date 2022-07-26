@@ -31,3 +31,14 @@ export class ValidationQueryException {
     this.stack = null
   }
 }
+
+export class NotFoundCliente {
+  constructor(message) {
+    this.name = 'Not Found - Cliente'
+    this.statusCode = 404
+    this.exceptionCode = 40404
+    this.message = message.message
+    this.mergeVariables = null
+    this.stack = null
+  }
+}
