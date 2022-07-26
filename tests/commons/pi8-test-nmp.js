@@ -26,8 +26,8 @@ export const MongoDB = {
     mongo = await createConnection()
   },
   disconnect: async () => {
-    // mongo.close()
-    // server.stop()
+    await mongo.disconnect()
+    await server.stop()
   }
 }
 
@@ -62,6 +62,8 @@ export const actionCliente = {
   },
   reiniciar: async idCliente => {
     actionCliente.eliminar(idCliente)
+    // await ClienteService.removerCliente(TEST.idCliente)
+    // await ActivacionEventoService.removerEventos(idCliente)
     await ClienteService.actualizarCliente(TEST.CLIENTE_BODY)
   }
 }
