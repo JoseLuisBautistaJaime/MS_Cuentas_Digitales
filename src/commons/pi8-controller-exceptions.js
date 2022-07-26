@@ -34,7 +34,7 @@ export class ValidationQueryException {
 
 export class NotFoundCliente {
   constructor(message) {
-    this.name = 'Not Found - Cliente'
+    this.name = 'Not Found'
     this.statusCode = 404
     this.exceptionCode = 40404
     this.message = message.message

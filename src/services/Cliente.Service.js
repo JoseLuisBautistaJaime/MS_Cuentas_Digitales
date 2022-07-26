@@ -1,6 +1,7 @@
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { clienteActivacionService } from './clienteActivacion.Service'
+import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
 // import { OAuthService } from './OAuth.Service'
 
 /**
@@ -23,6 +24,7 @@ const removerCliente = async idCliente => {
 const obtenerCliente = async idCliente => {
   LOG.info(`SERV: Iniciando obtenerCliente ${idCliente}`)
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}`})
   LOG.info(`SERV: Terminando obtenerCliente`)
   return cliente
 }
