@@ -1,33 +1,31 @@
 /* eslint-disable prettier/prettier */
 import nock from 'nock'
 import { actionCliente, TEST, MongoDB, CONTEXT } from './commons/pi8-test-nmp'
-
-// mocha-test
 import { SuiteTEST, itPOST } from './commons/pi8-test'
 
 SuiteTEST('T4A','actualizarCliente', 
- // Opciones a default
-  {
-    defaultListHeaders : TEST.LISTHEADER_OAG,
-    defaultUrl: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/actualizarCliente`,
-    defaultBody: TEST.CLIENTE_BODY,
-    defaultShouldHaveStatus: 201
-  }, 
-  
-  async () => { // seccion de BEFORE
-    await MongoDB.connect()
-    await actionCliente.eliminar(TEST.CLIENTE)
-  }, 
-  
-  async () => { // seccion de AFTER_SuiteTEST
-    await MongoDB.disconnect()
-  }, 
-  
-  async () => { // seccion de TESTS
-    itPOST('T4A.0','actualizarCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: []})
-    itPOST('T4A.1','actualizarCliente, cuando el cliente NO EXISTE.')
-    itPOST('T4A.2','actualizarCliente, cuando el cliente SI EXISTE.')
-}) 
+  { // Default Options
+    listHeaders: TEST.LISTHEADER_OAG,
+    url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/actualizarCliente`,
+    body: TEST.CLIENTE_BODY,
+    shoulHaveStatus: 201,
+    testIgnore: false
+  },
+  { // callbakcs
+    after: async () => { 
+      await MongoDB.connect()
+      await actionCliente.eliminar(TEST.CLIENTE)
+    }, 
+    before: () => { 
+      MongoDB.disconnect()
+    },
+    tests: async () => { // seccion de TESTS
+      itPOST('T4A.0','actualizarCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: []})
+      itPOST('T4A.1','actualizarCliente, cuando el cliente NO EXISTE.', { testIgnore: false })
+      itPOST('T4A.2','actualizarCliente, cuando el cliente SI EXISTE.', { testIgnore: false })
+    }
+  }
+) 
 
 // SuiteTEST('T4B','obtenerCliente', 
 //   { // Opciones a default

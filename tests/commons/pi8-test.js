@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable mocha/no-setup-in-describe */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-param-reassign */
@@ -10,33 +11,26 @@ import { log } from './pi8-test-log'
 
 /** SECCION DE FUNCIONES DE TESTING */
 chai.use(chaiHttp).use(chaiAsPromised).should()
-let defaultUrl
-let defaultBody
-let defaultListHeaders
-let defaultShouldHaveStatus
+let DefaultOptions = {}
 
-export const SuiteTEST = async (key, title, defaultOptions, callbackBEFORE, callbackAFTER, callbakTESTS) => {
-  if (typeof defaultOptions === 'undefined') return
-  if (defaultOptions.defaultUrl !== undefined) defaultUrl = defaultOptions.defaultUrl
-  if (defaultOptions.defaultBody !== undefined) defaultBody = defaultOptions.defaultBody
-  if (defaultOptions.defaultListHeaders !== undefined) defaultListHeaders = defaultOptions.defaultListHeaders
-  if (defaultOptions.defaultShouldHaveStatus !== undefined) defaultShouldHaveStatus = defaultOptions.defaultShouldHaveStatus
+export const SuiteTEST = async (key, title, defaultOptions, callbacks) => {
+  DefaultOptions = typeof defaultOptions === 'undefined' ? {} : defaultOptions
   describe(title, () => {
     // eslint-disable-next-line mocha/no-hooks-for-single-case
     before(async () => {
       log.reMark(`Iniciando-SuiteTEST`, title)
       log.reMark('Iniciando-SuiteTest-BEFORE')
-      await callbackBEFORE()
+      await callbacks.before()
       log.reMark('Terminando-SuiteTest-BEFORE')
     })
     // eslint-disable-next-line mocha/no-hooks-for-single-case
     after(async () => {
       log.reMark(`Iniciando-SuiteTEST`, title)
       log.reMark('Iniciando-SuiteTest-AFTER')
-      await callbackAFTER()
+      await callbacks.after()
       log.reMark('Terminando-SuiteTest-AFTER')
     })
-    callbakTESTS()
+    callbacks.tests()
   })
 }
 
@@ -45,11 +39,18 @@ export const createIT = (testKey, testTitle, options, requestMethod) => {
   // LECTURA DE LAS OPCIONES
 
   options = typeof options === 'undefined' ? {} : options
+ 
+  if (DefaultOptions.testIgnore !== undefined && options.testIgnore === undefined) options.testIgnore = DefaultOptions.testIgnore
+  if (DefaultOptions.url !== undefined && options.url === undefined) options.url = DefaultOptions.url
+  if (DefaultOptions.body !== undefined && options.body === undefined) options.body = DefaultOptions.body
+  if (DefaultOptions.listHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = DefaultOptions.listHeaders
+  if (DefaultOptions.shouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = DefaultOptions.shouldHaveStatus
 
-  if (defaultUrl !== undefined && options.url === undefined) options.url = defaultUrl
-  if (defaultBody !== undefined && options.body === undefined) options.body = defaultBody
-  if (defaultListHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = defaultListHeaders
-  if (defaultShouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = defaultShouldHaveStatus
+  if (options.testIgnore) {
+    log.reMark(`Test Ignored: ${testDesc}`)
+    return
+  }
+  
 
   // LECTURA..
   it(testDesc, done => {

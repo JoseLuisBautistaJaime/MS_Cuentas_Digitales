@@ -8,28 +8,17 @@ log4JS.configure({
         type: 'pattern',
         pattern: '[%d{ISO8601}][%[%-5.5p%]]-[%[%-10.10c%]] %m'
       }
-    },
-    controller: {
-      type: 'dateFile',
-      pattern: 'yyyy.MM.dd',
-      alwaysIncludePattern: true,
-      keepFileExt: true,
-      filename: './logs/api.catalogos.log',
-      layout: {
-        type: 'pattern',
-        pattern: '[%d{ISO8601}][%[%-5.5p%]]-[%[%-10.10c%]] %m'
-      }
     }
   },
   categories: {
     default: {
-      appenders: ['out', 'controller'],
+      appenders: ['out'],
       level: process.env.LOG_LEVEL || 'info'
     }
   }
 })
 
-export const LOG = log4JS.getLogger('controller')
+export const LOG = log4JS.getLogger('tests')
 // LOG.level = process.env.LOG_LEVEL || 'info'
 LOG.level = 'debug'
 LOG.debugJSON = (message, json) => {
