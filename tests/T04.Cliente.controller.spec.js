@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import nock from 'nock'
-import { actionClienteEliminar, TEST, MongoDB, CONTEXT } from './commons/pi8-test-nmp'
+import { actionCliente, TEST, MongoDB, CONTEXT } from './commons/pi8-test-nmp'
 
 // mocha-test
 import { SuiteTEST, itPOST } from './commons/pi8-test'
@@ -16,11 +16,11 @@ SuiteTEST('T4A','actualizarCliente',
   
   async () => { // seccion de BEFORE
     await MongoDB.connect()
-    await actionClienteEliminar(TEST.CLIENTE)
+    await actionCliente.eliminar(TEST.CLIENTE)
   }, 
   
   async () => { // seccion de AFTER_SuiteTEST
-    // await MongoDB.disconnect()
+    await MongoDB.disconnect()
   }, 
   
   async () => { // seccion de TESTS

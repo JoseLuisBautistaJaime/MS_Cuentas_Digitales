@@ -15,56 +15,12 @@ let defaultBody
 let defaultListHeaders
 let defaultShouldHaveStatus
 
-const setterDefaultOptions = defaultOptions => {
+export const SuiteTEST = async (key, title, defaultOptions, callbackBEFORE, callbackAFTER, callbakTESTS) => {
   if (typeof defaultOptions === 'undefined') return
   if (defaultOptions.defaultUrl !== undefined) defaultUrl = defaultOptions.defaultUrl
   if (defaultOptions.defaultBody !== undefined) defaultBody = defaultOptions.defaultBody
   if (defaultOptions.defaultListHeaders !== undefined) defaultListHeaders = defaultOptions.defaultListHeaders
   if (defaultOptions.defaultShouldHaveStatus !== undefined) defaultShouldHaveStatus = defaultOptions.defaultShouldHaveStatus
-}
-
-// eslint-disable-next-line camelcase
-const createIT_createCHAI = (url, requestMethod) => {
-  let testChai = chai.request(app)
-  switch (requestMethod) {
-    case 'post':
-      testChai = testChai.post(url)
-      break
-    case 'get':
-      testChai = testChai.get(url)
-      break
-    default:
-  }
-  return testChai
-}
-
-export const createIT = (testKey, testTitle, options, requestMethod) => {
-  const testDesc = `${testKey}-${testTitle}`
-  // LECTURA DE LAS OPCIONES
-
-  options = typeof options === 'undefined' ? {} : options
-
-  if (defaultUrl !== undefined && options.url === undefined) options.url = defaultUrl
-  if (defaultBody !== undefined && options.body === undefined) options.body = defaultBody
-  if (defaultListHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = defaultListHeaders
-  if (defaultShouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = defaultShouldHaveStatus
-
-  // LECTURA..
-  it(testDesc, done => {
-    const testChai = createIT_createCHAI(options.url, requestMethod)
-    log.reMark(JSON.stringify(options.listHeaders))
-    if (typeof options.listHeaders !== 'undefined') options.listHeaders.forEach(header => testChai.set(header.name, header.value))
-    if (testTitle !== undefined) testChai.set('testTitle', testTitle)
-    testChai.send(options.body)
-    testChai.end((err, res) => {
-      if (options.shouldHaveStatus !== undefined) res.should.have.status(options.shouldHaveStatus)
-      done()
-    })
-  })
-}
-
-export const SuiteTEST = async (key, title, defaultOptions, callbackBEFORE, callbackAFTER, callbakTESTS) => {
-  setterDefaultOptions(defaultOptions)
   describe(title, () => {
     // eslint-disable-next-line mocha/no-hooks-for-single-case
     before(async () => {
@@ -81,6 +37,32 @@ export const SuiteTEST = async (key, title, defaultOptions, callbackBEFORE, call
       log.reMark('Terminando-SuiteTest-AFTER')
     })
     callbakTESTS()
+  })
+}
+
+export const createIT = (testKey, testTitle, options, requestMethod) => {
+  const testDesc = `${testKey}-${testTitle}`
+  // LECTURA DE LAS OPCIONES
+
+  options = typeof options === 'undefined' ? {} : options
+
+  if (defaultUrl !== undefined && options.url === undefined) options.url = defaultUrl
+  if (defaultBody !== undefined && options.body === undefined) options.body = defaultBody
+  if (defaultListHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = defaultListHeaders
+  if (defaultShouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = defaultShouldHaveStatus
+
+  // LECTURA..
+  it(testDesc, done => {
+    let testChai = chai.request(app)
+    if (requestMethod === 'post') testChai = testChai.post(options.url)
+    if (requestMethod === 'get') testChai = testChai.get(options.url)
+    if (typeof options.listHeaders !== 'undefined') options.listHeaders.forEach(header => testChai.set(header.name, header.value))
+    if (testTitle !== undefined) testChai.set('testTitle', testTitle)
+    testChai.send(options.body)
+    testChai.end((err, res) => {
+      if (options.shouldHaveStatus !== undefined) res.should.have.status(options.shouldHaveStatus)
+      done()
+    })
   })
 }
 

@@ -18,21 +18,17 @@ export const CONTEXT = {
 let mongo
 let server
 
-export const disconectMongoDB = async () => {
-  mongo.disconnect()
-  server.stop()
-}
-
-export const conectMongoDB = async () => {
-  server = new MongodbMemoryServer()
-  process.env.URI = await server.getConnectionString()
-  console.log(`Instancia de BD: ${process.env.URI}`)
-  mongo = await createConnection()
-}
-
 export const MongoDB = {
-  connect: () => conectMongoDB(),
-  disconnect: () => disconectMongoDB()
+  connect: async () => {
+    server = new MongodbMemoryServer()
+    process.env.URI = await server.getConnectionString()
+    console.log(`Instancia de BD: ${process.env.URI}`)
+    mongo = await createConnection()
+  },
+  disconnect: async () => {
+    await mongo.disconnect()
+    await server.stop()
+  }
 }
 
 // SECCION 2. CONSTANTES PARA TEST
@@ -59,16 +55,17 @@ export const TEST = {
 }
 
 // Acciones de CLIENTE
-export const actionClienteEliminar = async idCliente => {
-  await ClienteService.removerCliente(idCliente)
-  await ActivacionEventoService.removerEventos(idCliente)
-}
-
-export const reiniciarCliente = async tag => {
-  LOG.debug(tag)
-  await ClienteService.removerCliente(TEST.CLIENTE)
-  await ActivacionEventoService.removerEventos(TEST.CLIENTE)
-  await ClienteService.actualizarCliente(TEST.CLIENTE_BODY)
+export const actionCliente = {
+  eliminar: async idCliente => {
+    await ClienteService.removerCliente(idCliente)
+    await ActivacionEventoService.removerEventos(idCliente)
+  },
+  reiniciar: async idCliente => {
+    actionCliente.eliminar(idCliente)
+    // await ClienteService.removerCliente(TEST.idCliente)
+    // await ActivacionEventoService.removerEventos(idCliente)
+    await ClienteService.actualizarCliente(TEST.CLIENTE_BODY)
+  }
 }
 
 export const bloquearClienteConEnviosOtp = async tag => {
@@ -86,8 +83,6 @@ export const bloquearClienteSinEventos = async tag => {
 }
 
 export const actionsCliente = {
-  actionClienteEliminar,
-  reiniciarCliente,
   bloquearClienteConEnviosOtp,
   bloquearClienteSinEventos
 }
