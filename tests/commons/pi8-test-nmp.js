@@ -26,8 +26,8 @@ export const MongoDB = {
     mongo = await createConnection()
   },
   disconnect: async () => {
-    await mongo.disconnect()
-    await server.stop()
+    // await mongo.disconnect()
+    // await server.stop()
   }
 }
 

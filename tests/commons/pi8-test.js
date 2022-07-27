@@ -56,41 +56,66 @@ export const SuiteTEST = async (key, title, defaultOptions, callbacks) => {
     // eslint-disable-next-line mocha/no-hooks-for-single-case
     before(async () => {
       log.reMark(`Iniciando-SuiteTEST`, title)
-      log.reMark('Iniciando-SuiteTest-BEFORE')
-      await callbacks.before()
-      log.reMark('Terminando-SuiteTest-BEFORE')
+      if(typeof callbacks !=='undefined' && typeof callbacks.before !== 'undefined')  {
+        log.reMark('Iniciando-SuiteTest-BEFORE')
+        await callbacks.before()
+        log.reMark('Terminando-SuiteTest-BEFORE')
+      }
     })
     // eslint-disable-next-line mocha/no-hooks-for-single-case
     after(async () => {
       log.reMark(`Iniciando-SuiteTEST`, title)
-      log.reMark('Iniciando-SuiteTest-AFTER')
-      await callbacks.after()
-      log.reMark('Terminando-SuiteTest-AFTER')
+      if(typeof callbacks !=='undefined' && typeof callbacks.after !== 'undefined')  {
+        log.reMark('Iniciando-SuiteTest-AFTER')
+        await callbacks.after()
+        log.reMark('Terminando-SuiteTest-AFTER')
+      }
     })
     callbacks.tests()
   })
 }
 
-export const itREQUEST = (method, testKey, testTitle, options) => {
+export const itREQUEST = (method, testKey, testTitle, options, callbacks) => {
   const testDesc = `${testKey}-${testTitle}`
   // LECTURA DE LAS OPCIONES
 
   options = typeof options === 'undefined' ? {} : options
  
-  if (DefaultOptions.testIgnore !== undefined && options.testIgnore === undefined) options.testIgnore = DefaultOptions.testIgnore
-  if (DefaultOptions.url !== undefined && options.url === undefined) options.url = DefaultOptions.url
-  if (DefaultOptions.body !== undefined && options.body === undefined) options.body = DefaultOptions.body
-  if (DefaultOptions.listHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = DefaultOptions.listHeaders
-  if (DefaultOptions.shouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = DefaultOptions.shouldHaveStatus
+  
+
 
   if (options.testIgnore) {
-    log.reMark(`Test Ignored: ${testDesc}`)
+    log.reWarn(`Test Ignored: ${testDesc}`)
     return
   }
+  
   
 
   // LECTURA..
   it(testDesc, done => {
+    after(async () => {
+      if(typeof callbacks !=='undefined' && typeof callbacks.after !== 'undefined')  {
+        log.reMark('Iniciando-IT-AFTER')
+        callbacks.after()  
+        log.reMark('Terminando-IT-AFTER')
+      }})
+    before(async () => {
+      if(typeof callbacks !=='undefined' && typeof callbacks.before !== 'undefined')  {
+        log.reMark('Iniciando-IT-BEFORE')
+        callbacks.before()  
+        log.reMark('Terminando-IT-BEFORE')
+      }})
+
+    if (DefaultOptions.testIgnore !== undefined && options.testIgnore === undefined) options.testIgnore = DefaultOptions.testIgnore
+    if (DefaultOptions.url !== undefined && options.url === undefined) options.url = DefaultOptions.url
+    if (DefaultOptions.query !== undefined && options.query === undefined) options.query = DefaultOptions.query
+    if (DefaultOptions.body !== undefined && options.body === undefined) options.body = DefaultOptions.body
+    if (DefaultOptions.listHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = DefaultOptions.listHeaders
+    if (DefaultOptions.shouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = DefaultOptions.shouldHaveStatus
+
+    log.reWarn(`${testDesc}-DefaultOptions.ShouldHaveStatus:`, DefaultOptions.shouldHaveStatus)
+    log.reWarn(`${testDesc}-ShouldHaveStatus:`, options.shouldHaveStatus)
+
     let testChai = chai.request(app)
     if (method === 'post') testChai = testChai.post(options.url)
     if (method === 'get') testChai = testChai.get(options.url)
@@ -104,6 +129,7 @@ export const itREQUEST = (method, testKey, testTitle, options) => {
   })
 }
 export const IT = {
-  Post: (testKey, testTitle, options) => itREQUEST('post', testKey, testTitle, options)
+  Post: async (testKey, testTitle, options, callbacks) => itREQUEST('post', testKey, testTitle, options, callbacks),
+  Get: async (testKey, testTitle, options, callbacks) => itREQUEST('get', testKey, testTitle, options, callbacks)
 }
 // export const itPOST = (testKey, testTitle, options) => itCOMMON(testKey, testTitle, options, 'post')
