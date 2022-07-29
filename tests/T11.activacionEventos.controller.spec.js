@@ -1,6 +1,5 @@
 /* eslint-disable mocha/no-setup-in-describe */
 /* eslint-disable prettier/prettier */
-import nock from 'nock'
 import { TEST, MongoDB, CONTEXT, actionCliente } from './commons/pi8-test-nmp'
 import { SuiteTEST, IT } from './commons/pi8-test'
 

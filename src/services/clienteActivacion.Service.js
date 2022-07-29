@@ -1,6 +1,6 @@
 import { toInteger } from 'lodash'
 import LOG from '../commons/LOG'
-import { ActivacionDAO } from '../dao/clienteActivacion.DAO'
+import { ActivacionDAO } from '../dao/ClienteActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ACTIVACION_EVENTOS_TIMETOLIVE } from '../commons/constants'
 import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
@@ -57,9 +57,9 @@ async function obtenerEstatusActivacion(idCliente) {
   return toReturn
 }
 
-
-export const clienteActivacionService = {
+export const ClienteActivacionService = {
   obtenerEstatusActivacion,
   establecerEstatusActivacion
 }
-export default clienteActivacionService
+
+export default ClienteActivacionService

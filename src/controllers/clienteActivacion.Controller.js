@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { clienteActivacionService } from '../services/clienteActivacion.Service'
+import { ClienteActivacionService } from '../services/ClienteActivacion.Service'
 import { invokeController } from '../commons/pi8-controller'
 
 
@@ -15,14 +15,14 @@ const validationBodySchemaEstatusActivacion = {properties: {
 const obtenerEstatusActivacion = async (req, res) => invokeController(
   'obtenerEstatusActivacion', 200, req, res, 
   true, validationQuerySchemaCliente, undefined,
-  async reqX => clienteActivacionService.obtenerEstatusActivacion(reqX.query.idCliente))
+  async reqX => ClienteActivacionService.obtenerEstatusActivacion(reqX.query.idCliente))
 
 const establecerEstatusActivacion = async (req, res) => invokeController(
     'establecerEstatusActivacion', 201, req, res, 
     true, undefined, validationBodySchemaEstatusActivacion,
-    async reqX => clienteActivacionService.establecerEstatusActivacion(reqX.body.idCliente,reqX.body.estatusActivacion))
+    async reqX => ClienteActivacionService.establecerEstatusActivacion(reqX.body.idCliente,reqX.body.estatusActivacion))
 
-export const clienteActivacionController = {
+export const ClienteActivacionController = {
   obtenerEstatusActivacion,
   establecerEstatusActivacion
 }

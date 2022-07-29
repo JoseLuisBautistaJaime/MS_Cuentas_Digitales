@@ -1,6 +1,6 @@
 import { log } from '../commons/pi8-controller-log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { clienteActivacionService } from './clienteActivacion.Service'
+import { ClienteActivacionService } from './ClienteActivacion.Service'
 import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
 // import { OAuthService } from './OAuth.Service'
 
@@ -55,7 +55,7 @@ const actualizarCliente = async body => {
       celularCliente: body.celularCliente
     }
     resultSave = await ClienteDAO.save(clienteToAdd)
-    await clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
+    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2)
     log.debug(`actualizarCliente-Cliente guardado ${idCliente}`)
   } else {
     const clienteUpdate = {

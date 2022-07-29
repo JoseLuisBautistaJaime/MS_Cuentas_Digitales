@@ -5,7 +5,7 @@ import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
 import { LOG } from '../../src/commons'
 import { ActivacionEventoService } from '../../src/services/ActivacionEvento.Service'
-import { clienteActivacionService } from '../../src/services/clienteActivacion.Service'
+import { ClienteActivacionService } from '../../src/services/ClienteActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
 
 // SECCION 1. CONSTAONTES DE CONTEXTO
@@ -69,7 +69,7 @@ export const actionCliente = {
     body.idCliente = idCliente
     await ClienteService.actualizarCliente(body)
     await ActivacionEventoService.removerEventos(idCliente)
-    await clienteActivacionService.establecerEstatusActivacion(idCliente, 2, '0000')
+    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2, '0000')
     LOG.fatal('terminando-reiniciarCliente')
   },
   actualizar: async idCliente => {
@@ -80,22 +80,17 @@ export const actionCliente = {
   bloquearConEnvios: async idCliente => {
     await ActivacionEventoService.removerEventos(idCliente)
     for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
-      await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, '0000')
+      await ClienteActivacionService.establecerEstatusActivacion(idCliente, 3, '0000')
     }
   },
   bloquearSinEventos: async idCliente => {
     await ActivacionEventoService.removerEventos(idCliente)
-    await clienteActivacionService.establecerEstatusActivacion(idCliente, 5)
+    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 5)
   }
 }
 
 export const bloquearClienteSinEventos = async tag => {
   LOG.debug(tag)
-  await clienteActivacionService.establecerEstatusActivacion(TEST.CLIENTE, 5)
+  await ClienteActivacionService.establecerEstatusActivacion(TEST.CLIENTE, 5)
   await ActivacionEventoService.removerEventos(TEST.CLIENTE)
 }
-
-// export const actionsCliente = {
-//   bloquearClienteConEnviosOtp,
-//   bloquearClienteSinEventos
-// }

@@ -57,17 +57,12 @@ SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
 
       IT.Post('T21B.1','Verificar un OTP al cliente, con codigo INVALIDO.', { testIgnore: false, shouldHaveStatus: 201,
         body: { "idCliente": TEST.CLIENTE, "codigoOtp": "0000" }})
-  
-        
-      
+
       IT.Post('T21B.1','Verificar un OTP al cliente, sin haberlo enviado.', { testIgnore: false, shouldHaveStatus: 214,
         body: { "idCliente": TEST.CLIENTE_EXTRA, "codigoOtp": "1234", "enviarEmail": true }})
       
       IT.Post('T21C.2','Verificar un OTP al cliente, con codigo VALIDO. ', { testIgnore: false, shouldHaveStatus: 201 }
         ,{ send: () => { return {"idCliente": TEST.CLIENTE, "codigoOtp": codigoOtp, "enviarEmail": true } }})
-
-      
-
 
       // Excepciones con BLOQUEO
       IT.Post('T21C.1','Enviar OTP, por email, pero con cliente bloqueado por exceso de envios.', { testIgnore: false, 
@@ -90,45 +85,4 @@ SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
         url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/verificarOtp`,
         body: { "idCliente": TEST.CLIENTE_EXTRA, "codigoOtp": "0000", "enviarEmail": true }},
         { before: async () => actionCliente.bloquearSinEventos(TEST.CLIENTE_EXTRA)})
-
-            
-
-          // IT.Post('T21B.1','Verificar un OTP, pero con cliente bloqueado.', { testIgnore: false, 
-          //   shouldHaveStatus: 201,
-          //   listHeaders: TEST.LISTHEADER_OAG,
-          //   url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/verificarOtp`,
-          //   body: { "idCliente": TEST.CLIENTE_EXTRA, "codigoOtp": "0000", "enviarEmail": true }},
-          //   { before: async () => actionCliente.bloquearSinEventos(TEST.CLIENTE_EXTRA)})
-
-      // IT.Post('T21A.3','Enviar OTP, por email, pero con cliente bloqueado por exceso de envios.', { shouldHaveStatus: 203 },
-        // { before: async () => actionCliente.bloquearConEnvios(TEST.CLIENTE_EXTRA) })
-
-      // IT.Post('T21A.3','Enviar OTP, por email, pero con cliente bloqueado por exceso de envios.', { shouldHaveStatus: 203 },
-      //   { before: async () => actionCliente.reiniciar() })
-
-        
-        
 }})
-
-//     // it('T1.4-VerificarOTP de forma Exitosa.', done => {
-//     //   nock(URL_API_COMUNICACIONES)
-//     //     .post('/solicitud/mensaje')
-//     //     .reply(201, {})
-//     //   chai
-//     //     .request(app)
-//     //     .post(`/${CONTEXT_NAME}/${CONTEXT_VERSION}/verificarOtp`)
-//     //     .set('Authorization', HEADER.AUTHORIZATION).set('oauth.bearer', HEADER.AUTHBEARER)
-//     //     .set('idConsumidor', HEADER.IDCONSUMIDOR).set('idDestino', HEADER.IDDESTINO).set('usuario', HEADER.USUARIO)
-//     //     .set('TestTag','T1.4-VerificarOTP de forma Exitosa.') 
-//     //     .send({
-//     //       "idCliente": TEST_CLIENTE,
-//     //       "codigoOtp": codigoOtp,
-//     //       "enviarEmail": true
-//     //     })
-//     //     .end((err, res) => {
-//     //       res.should.have.status(201)
-//     //       LOG.debug(`TEST: codigoOtp: ${codigoOtp}`)
-//     //       LOG.debug(`TEST: esValidoOtp: ${res.body.esValidoOtp}`)
-//     //       done()
-//     //     })
-//     // })

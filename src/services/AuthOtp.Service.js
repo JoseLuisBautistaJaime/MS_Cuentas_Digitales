@@ -1,11 +1,11 @@
 import md5 from 'md5'
 import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
-import { clienteActivacionService } from './clienteActivacion.Service'
+import { ClienteActivacionService } from './ClienteActivacion.Service'
 import { ActivacionEventoService } from './ActivacionEvento.Service'
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { activacionEventoDAO } from '../dao/activacionEvento.DAO'
+import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
 import { ACTIVACION_BLOQUEO_REINTENTOS } from '../commons/constants'
 import { NotFoundCliente, CuentaBloqueadaException, VerificarOtpError } from '../commons/pi8-controller-exceptions'
 
@@ -36,15 +36,15 @@ const evaluarBloqueo = async idCliente => {
 
   // evaluacion del estatus actual y cambiar el estatus a bloquado cuando no lo este
   LOG.debugJSON('AuthOtp.evaluarBloqueo: idCliente', idCliente)
-  let activacion = await clienteActivacionService.obtenerEstatusActivacion(idCliente, false)
+  let activacion = await ClienteActivacionService.obtenerEstatusActivacion(idCliente, false)
   LOG.debugJSON('AuthOtp.evaluarBloqueo: activacion', activacion)
 
   // evalua el desbloqueo de cuenta..
   if (activacion.estatusActivacion === 5 && bloquearCliente === false)
-    activacion = await clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
+    activacion = await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2)
 
   // procedimientos cuando la cuenta necesita bloearse o se debe de encontrar debidamente bloqueada
-  if (bloquearCliente && activacion.estatusActivacion !== 5) activacion = await clienteActivacionService.establecerEstatusActivacion(idCliente, 5)
+  if (bloquearCliente && activacion.estatusActivacion !== 5) activacion = await ClienteActivacionService.establecerEstatusActivacion(idCliente, 5)
 
   // preparanto resultados a Retornar
   LOG.info('SERV: Terminando AuthOtp.evaluarBloqueo')
@@ -84,7 +84,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
   if (modoEnvio === 'email') await ComunicacionesService.enviarCodigoEMAIL(req, correoCliente, codigoOtp)
   if (modoEnvio === 'sms') await ComunicacionesService.enviarCodigoSMS(req, celularCliente, codigoOtp)
 
-  await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)
+  await ClienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)
   LOG.info('SERV: Terminando enviarOtp method')
   const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
@@ -113,10 +113,10 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
 
   // verificacion si existe el estatus apropiado para evaluar el codigo otp.
   const toReturn = { code: 201, esValidoOtp: false, estaExpiradoOtp: false }
-  const estatus = await clienteActivacionService.obtenerEstatusActivacion(idCliente, false)
+  const estatus = await ClienteActivacionService.obtenerEstatusActivacion(idCliente, false)
 
   if (estatus.estatusActivacion !== 3) {
-    activacionEventoDAO.agregarEventoError(idCliente, 'No existe o no se ha enviado un Codigo OTP al cliente')
+    ActivacionEventoDAO.agregarEventoError(idCliente, 'No existe o no se ha enviado un Codigo OTP al cliente')
     throw new VerificarOtpError()
   }
 
@@ -124,7 +124,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
   if (estatus.codigoOtp !== codigoOtp) {
     toReturn.mensaje = `Codigo OTP no es el correcto. ${estatus.codigoOtp}`
     toReturn.code = 201
-    activacionEventoDAO.agregarEventoError(idCliente, toReturn.mensaje)
+    ActivacionEventoDAO.agregarEventoError(idCliente, toReturn.mensaje)
   } else {
     // validaciones y carga de parametros
     totp.options = OTP_OPTIONS
@@ -135,7 +135,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
     toReturn.estaExpiradoOtp = !toReturn.esValidoOtp
   }
   if (toReturn.esValidoOtp === true) {
-    await clienteActivacionService.establecerEstatusActivacion(idCliente, 4)
+    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 4)
   }
   if (toReturn.esValidoOtp && enviarEmail) await ComunicacionesService.enviarActivacionEMAIL(req, cliente)
   return toReturn
