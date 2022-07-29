@@ -39,11 +39,11 @@ const evaluarBloqueo = async idCliente => {
   log.debugJSON('AuthOtp.evaluarBloqueo: activacion', activacion)
 
   // evalua el desbloqueo de cuenta..
-  if (activacion.estatusActivacion === 5 && bloquearCliente === false)
+  if (activacion.estadoActivacion === 5 && bloquearCliente === false)
     activacion = await ClienteActivacionService.setEstadoActivacion(idCliente, 2)
 
   // procedimientos cuando la cuenta necesita bloearse o se debe de encontrar debidamente bloqueada
-  if (bloquearCliente && activacion.estatusActivacion !== 5) activacion = await ClienteActivacionService.setEstadoActivacion(idCliente, 5)
+  if (bloquearCliente && activacion.estadoActivacion !== 5) activacion = await ClienteActivacionService.setEstadoActivacion(idCliente, 5)
 
   // preparanto resultados a Retornar
   log.info('SERV: Terminando AuthOtp.evaluarBloqueo')
@@ -64,7 +64,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
 
   /** EVALUACION DE BLOQUEOS */
   const bloquearCliente = await evaluarBloqueo(idCliente)
-  if (bloquearCliente.estatusActivacion === 5) throw new CuentaBloqueadaException({ exceptionCode: 20301, message: JSON.stringify(bloquearCliente) })
+  if (bloquearCliente.estadoActivacion === 5) throw new CuentaBloqueadaException({ exceptionCode: 20301, message: JSON.stringify(bloquearCliente) })
 
   /** PROCESANDO CUENTA SIN BLOQUEAR */
   /** generacion del Token */
@@ -108,13 +108,13 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
 
   /** EVALUACION DE BLOQUEOS */
   const bloquearCliente = await evaluarBloqueo(idCliente)
-  if (bloquearCliente.estatusActivacion === 5) throw new CuentaBloqueadaException({ exceptionCode: 20302, message: JSON.stringify(bloquearCliente) })
+  if (bloquearCliente.estadoActivacion === 5) throw new CuentaBloqueadaException({ exceptionCode: 20302, message: JSON.stringify(bloquearCliente) })
 
   // verificacion si existe el estatus apropiado para evaluar el codigo otp.
   const toReturn = { code: 201, esValidoOtp: false, estaExpiradoOtp: false }
   const estatus = await ClienteActivacionService.getEstadoActivacion(idCliente)
 
-  if (estatus.estatusActivacion !== 3) {
+  if (estatus.estadoActivacion !== 3) {
     ActivacionEventoDAO.agregarEventoError(idCliente, 'No existe o no se ha enviado un Codigo OTP al cliente')
     throw new VerificarOtpError()
   }

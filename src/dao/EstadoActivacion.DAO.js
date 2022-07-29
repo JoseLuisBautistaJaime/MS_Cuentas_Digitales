@@ -7,13 +7,13 @@ import { ActivacionEventoDAO } from './EventosEstadoActivacion.DAO'
 const Cliente = Mongoose.model('cliente', clienteSchema)
 
 /**
- * Convierte de un número de EstatusActivacion a un String que contiene el estatus activacion nombre.
- * @param {*} estatusActivacion El número del estatus de activacion.
+ * Convierte de un número de EstadoActivacion a un String que contiene el estatus activacion nombre.
+ * @param {*} estadoActivacion El número del estatus de activacion.
  * @returns Nombre del estatus de activacion.
  */
-export function convertirEstatusActivacionNombre(estatusActivacion) {
+export function convertirEstadoActivacionNombre(estadoActivacion) {
   let result
-  const strStatusActivacion = String(estatusActivacion)
+  const strStatusActivacion = String(estadoActivacion)
   switch (strStatusActivacion) {
     case '1':
       result = 'NoExisteCliente_Activacion'
@@ -38,7 +38,7 @@ export function convertirEstatusActivacionNombre(estatusActivacion) {
 /**
  * Establece un estatus de activacion a un cliente especifico. Además es aqui donde se actualiza el activacionlogEvents.
  * @param {*} idCliente El Id del Cliente de cuentas digitales.
- * @param {*} estatusActivacion El número del estatus de activacion.
+ * @param {*} estadoActivacion El número del estatus de activacion.
  * @returns Objeto Cliente
  */
 async function setEstadoActivacion(idCliente, activacion) {
@@ -72,19 +72,19 @@ async function getEstadoActivacion(idCliente) {
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   let activacion = {}
   if (cliente === null || cliente === undefined) {
-    activacion.estatusActivacion = 1
+    activacion.estadoActivacion = 1
   } else {
     activacion = cliente.activacion
-    activacion.estatusActivacion = cliente.activacion.estatusActivacion
+    activacion.estadoActivacion = cliente.activacion.estadoActivacion
   }
-  activacion.estatusActivacionNombre = `${convertirEstatusActivacionNombre(activacion.estatusActivacion)} ${idCliente}`
+  activacion.estadoActivacionNombre = `${convertirEstadoActivacionNombre(activacion.estadoActivacion)} ${idCliente}`
   return activacion
 }
 
 export const ActivacionDAO = {
   setEstadoActivacion,
   getEstadoActivacion,
-  convertirEstatusActivacionNombre
+  convertirEstadoActivacionNombre
 }
 
 export default ActivacionDAO

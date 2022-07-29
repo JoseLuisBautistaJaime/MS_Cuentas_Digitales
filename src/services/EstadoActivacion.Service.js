@@ -8,19 +8,19 @@ import { NotFoundCliente } from '../commons/exceptions'
 /**
  * SERV: Establece el estatus de actuvacion.
  * @param {*} idCliente el número idCliente.
- * @param {*} estatusActivacion El número del estatus de Activacion.
+ * @param {*} estadoActivacion El número del estatus de Activacion.
  */
-async function setEstadoActivacion(idCliente, estatusActivacion, codigoOtp) {
+async function setEstadoActivacion(idCliente, estadoActivacion, codigoOtp) {
   log.info('SERV: Iniciando setEstadoActivacion')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
   const activacion = {
     idCliente,
-    estatusActivacion,
-    estatusActivacionNombre: ActivacionDAO.convertirEstatusActivacionNombre(estatusActivacion),
+    estadoActivacion,
+    estadoActivacionNombre: ActivacionDAO.convertirEstadoActivacionNombre(estadoActivacion),
     ultimaActualizacion: Date.now()
   }
-  log.debug(`setEstadoActivacion: idCliente: ${idCliente} activacion: ${estatusActivacion}, codigoOtp: ${codigoOtp} `)
+  log.debug(`setEstadoActivacion: idCliente: ${idCliente} activacion: ${estadoActivacion}, codigoOtp: ${codigoOtp} `)
   if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
   await ActivacionDAO.setEstadoActivacion(idCliente, activacion)
   log.info('SERV: Terminando setEstadoActivacion')
@@ -37,20 +37,20 @@ async function getEstadoActivacion(idCliente) {
   const activacion = await ActivacionDAO.getEstadoActivacion(idCliente)
 
   // evaluar desbloqueo de cuenta, en caso de estar bloqueada
-  log.debug(`estatusActivacion ${activacion.estatusActivacion}`)
+  log.debug(`estadoActivacion ${activacion.estadoActivacion}`)
 
   // Conversion de valores generales
   const toReturn = {}
-  toReturn.estatusActivacion = activacion.estatusActivacion
-  toReturn.estatusActivacionNombre = activacion.estatusActivacionNombre
+  toReturn.estadoActivacion = activacion.estadoActivacion
+  toReturn.estadoActivacionNombre = activacion.estadoActivacionNombre
 
   //  Conversion de valores especializados
-  if (toReturn.estatusActivacion >= 2) toReturn.ultimaActualizacion = activacion.ultimaActualizacion
-  if (toReturn.estatusActivacion === 5) {
+  if (toReturn.estadoActivacion >= 2) toReturn.ultimaActualizacion = activacion.ultimaActualizacion
+  if (toReturn.estadoActivacion === 5) {
     toReturn.expiraBloqueo = unixTimeStamp(toReturn.ultimaActualizacion, ACTIVACION_EVENTOS_TIMETOLIVE)
     toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
   }
-  if (toReturn.estatusActivacion === 3) toReturn.codigoOtp = activacion.codigoOtp
+  if (toReturn.estadoActivacion === 3) toReturn.codigoOtp = activacion.codigoOtp
   log.info(`SERV: Terminando getEstadoActivacion ${toReturn}`)
   return toReturn
 }

@@ -10,25 +10,25 @@ async function agregarEvento(activacion) {
 }
 async function agregarEventoError(idCliente, mensaje) {
   log.info(`DAO: Ejecutando ActivacionEventoDAO.agregar`)
-  const eventoError = { idCliente, estatusActivacion: 6, mensaje }
+  const eventoError = { idCliente, estadoActivacion: 6, mensaje }
   return activacionEvento.create(eventoError)
 }
 
-async function listarEventos(idCliente, estatusActivacion) {
-  log.info(`DAO: Iniciando ActivacionEventoDAO.listarEventos ${idCliente}, ${estatusActivacion}`)
+async function listarEventos(idCliente, estadoActivacion) {
+  log.info(`DAO: Iniciando ActivacionEventoDAO.listarEventos ${idCliente}, ${estadoActivacion}`)
   let filter
-  if (estatusActivacion === undefined) filter = { idCliente }
-  else filter = { $and: [{ idCliente }, { estatusActivacion }] }
+  if (estadoActivacion === undefined) filter = { idCliente }
+  else filter = { $and: [{ idCliente }, { estadoActivacion }] }
   const toReturn = await activacionEvento.find(filter)
   log.info(`DAO: Terminando ActivacionEventoDAO.listarEventos`)
   return toReturn
 }
 
-async function removerEventos(idCliente, estatusActivacion) {
+async function removerEventos(idCliente, estadoActivacion) {
   log.info(`DAO: Iniciando ActivacionEventoDAO.removerEventos`)
   let filter
-  if (estatusActivacion === undefined) filter = { idCliente }
-  else filter = { $and: [{ idCliente }, { estatusActivacion }] }
+  if (estadoActivacion === undefined) filter = { idCliente }
+  else filter = { $and: [{ idCliente }, { estadoActivacion }] }
   const toReturn = await activacionEvento.remove(filter)
   log.info(`DAO: Terminando ActivacionEventoDAO.removerEventos ${toReturn}`)
   return toReturn
