@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { ClienteActivacionService } from '../services/EstadoActivacion.Service'
+import { EstadoActivacionService } from '../services/EstadoActivacion.Service'
 import { invokeController } from '../commons/invokeController'
 
 
@@ -14,13 +14,13 @@ const validationBodySchemaEstadoActivacion = {properties: {
 
 const getEstadoActivacion = async (req, res) => invokeController(
   'getEstadoActivacion', 200, req, res, validationQuerySchemaCliente, undefined,
-  async reqX => ClienteActivacionService.getEstadoActivacion(reqX.query.idCliente))
+  async reqX => EstadoActivacionService.getEstadoActivacion(reqX.query.idCliente))
 
 const setEstadoActivacion = async (req, res) => invokeController(
   'setEstadoActivacion', 201, req, res, undefined, validationBodySchemaEstadoActivacion,
-  async reqX => ClienteActivacionService.setEstadoActivacion(reqX.body.idCliente,reqX.body.estadoActivacion))
+  async reqX => EstadoActivacionService.setEstadoActivacion(reqX.body.idCliente,reqX.body.estadoActivacion))
 
-export const ClienteActivacionController = {
+export const EstadoActivacionController = {
   getEstadoActivacion,
   setEstadoActivacion
 }

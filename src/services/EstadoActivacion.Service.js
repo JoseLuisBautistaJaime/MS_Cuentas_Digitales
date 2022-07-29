@@ -1,6 +1,6 @@
 import { toInteger } from 'lodash'
 import { log } from '../commons/log'
-import { ActivacionDAO } from '../dao/EstadoActivacion.DAO'
+import { EstadoActivacionDAO } from '../dao/EstadoActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ACTIVACION_EVENTOS_TIMETOLIVE } from '../commons/constants'
 import { NotFoundCliente } from '../commons/exceptions'
@@ -17,12 +17,12 @@ async function setEstadoActivacion(idCliente, estadoActivacion, codigoOtp) {
   const activacion = {
     idCliente,
     estadoActivacion,
-    estadoActivacionNombre: ActivacionDAO.convertirEstadoActivacionNombre(estadoActivacion),
+    estadoActivacionNombre: EstadoActivacionDAO.convertirEstadoActivacionNombre(estadoActivacion),
     ultimaActualizacion: Date.now()
   }
   log.debug(`setEstadoActivacion: idCliente: ${idCliente} activacion: ${estadoActivacion}, codigoOtp: ${codigoOtp} `)
   if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
-  await ActivacionDAO.setEstadoActivacion(idCliente, activacion)
+  await EstadoActivacionDAO.setEstadoActivacion(idCliente, activacion)
   log.info('SERV: Terminando setEstadoActivacion')
   // eslint-disable-next-line no-use-before-define
   return getEstadoActivacion(idCliente)
@@ -34,7 +34,7 @@ const unixTimeStamp = (fecha, addSeconds) => toInteger(fecha.getTime() / 1000, 1
 async function getEstadoActivacion(idCliente) {
   log.info('SERV: Iniciando getEstadoActivacion')
 
-  const activacion = await ActivacionDAO.getEstadoActivacion(idCliente)
+  const activacion = await EstadoActivacionDAO.getEstadoActivacion(idCliente)
 
   // evaluar desbloqueo de cuenta, en caso de estar bloqueada
   log.debug(`estadoActivacion ${activacion.estadoActivacion}`)
@@ -55,9 +55,7 @@ async function getEstadoActivacion(idCliente) {
   return toReturn
 }
 
-export const ClienteActivacionService = {
+export const EstadoActivacionService = {
   getEstadoActivacion,
   setEstadoActivacion
 }
-
-export default ClienteActivacionService

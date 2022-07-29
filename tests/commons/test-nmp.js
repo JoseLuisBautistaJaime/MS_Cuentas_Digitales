@@ -5,7 +5,7 @@ import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
 import { log } from '../../src/commons/log'
 import { ActivacionEventoService } from '../../src/services/EventosEstadoActivacion.Service'
-import { ClienteActivacionService } from '../../src/services/EstadoActivacion.Service'
+import { EstadoActivacionService } from '../../src/services/EstadoActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
 
 // SECCION 1. CONSTAONTES DE CONTEXTO
@@ -66,24 +66,24 @@ export const actionCliente = {
     log.fatal('iniciando-reiniciarCliente')
     await ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY)
     await ActivacionEventoService.deleteEventos(idCliente)
-    await ClienteActivacionService.setEstadoActivacion(idCliente, 2, '0000')
+    await EstadoActivacionService.setEstadoActivacion(idCliente, 2, '0000')
     log.fatal('terminando-reiniciarCliente')
   },
   actualizar: async idCliente => ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY),
   bloquearConEnvios: async idCliente => {
     await ActivacionEventoService.deleteEventos(idCliente)
     for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
-      await ClienteActivacionService.setEstadoActivacion(idCliente, 3, '0000')
+      await EstadoActivacionService.setEstadoActivacion(idCliente, 3, '0000')
     }
   },
   bloquearSinEventos: async idCliente => {
     await ActivacionEventoService.deleteEventos(idCliente)
-    await ClienteActivacionService.setEstadoActivacion(idCliente, 5)
+    await EstadoActivacionService.setEstadoActivacion(idCliente, 5)
   }
 }
 
 export const bloquearClienteSinEventos = async tag => {
   log.debug(tag)
-  await ClienteActivacionService.setEstadoActivacion(TEST.CLIENTE, 5)
+  await EstadoActivacionService.setEstadoActivacion(TEST.CLIENTE, 5)
   await ActivacionEventoService.deleteEventos(TEST.CLIENTE)
 }
