@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ClienteService } from '../services/Cliente.Service'
-import { invokeController } from '../commons/cd-controller'
+import { invokeController } from '../commons/invokeController'
 
 const validationBodySchemaCliente = {properties: { 
     idCliente: { type: 'string', required: true },

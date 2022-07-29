@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import https from 'https'
-import { log } from './cd-log'
+import { log } from './log'
 
 const agent = new https.Agent({ rejectUnauthorized: false })
 

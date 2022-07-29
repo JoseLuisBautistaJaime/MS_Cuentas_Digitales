@@ -11,8 +11,8 @@ import {
   URL_API_COMUNICACIONES
 } from '../commons/constants'
 import { HttpClientService } from '../commons/http-client'
-import { log } from '../commons/cd-log'
-import { InternalServerError } from '../commons/cd-controller-exceptions'
+import { log } from '../commons/log'
+import { InternalServerError } from '../commons/exceptions'
 
 const { HttpMethod } = HttpClientService
 
@@ -23,8 +23,6 @@ const { HttpMethod } = HttpClientService
  */
 const createHeaderComunicaciones = async req => {
   log.info('SERV: Iniciando createHeaderComunicaciones')
-  // await CommonValidator.validateHeaderOAG(req)
-  // await Util.validateHeaderOAG(req)
   const idConsumidor = req.header(HEADER_ID_CONSUMIDOR)
   const idDestino = req.header(HEADER_ID_DESTINO)
   const usuario = req.header(HEADER_USUARIO)

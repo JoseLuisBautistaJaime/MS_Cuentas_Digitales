@@ -3,11 +3,11 @@ import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
 import { ClienteActivacionService } from './ClienteActivacion.Service'
 import { ActivacionEventoService } from './ActivacionEvento.Service'
-import { log } from '../commons/cd-log'
+import { log } from '../commons/log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
 import { ACTIVACION_BLOQUEO_REINTENTOS } from '../commons/constants'
-import { NotFoundCliente, CuentaBloqueadaException, VerificarOtpError } from '../commons/cd-controller-exceptions'
+import { NotFoundCliente, CuentaBloqueadaException, VerificarOtpError } from '../commons/exceptions'
 
 // Cambiar a variables de ambiente
 const OTP_SECRET = '465465465465sgdfgsdfa4ardsgasgsasdag'

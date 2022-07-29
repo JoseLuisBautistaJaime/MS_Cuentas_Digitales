@@ -1,9 +1,9 @@
 import { toInteger } from 'lodash'
-import { log } from '../commons/cd-log'
+import { log } from '../commons/log'
 import { ActivacionDAO } from '../dao/ClienteActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ACTIVACION_EVENTOS_TIMETOLIVE } from '../commons/constants'
-import { NotFoundCliente } from '../commons/cd-controller-exceptions'
+import { NotFoundCliente } from '../commons/exceptions'
 
 /**
  * SERV: Establece el estatus de actuvacion.

@@ -1,7 +1,7 @@
 /* eslint-disable mocha/no-setup-in-describe */
 /* eslint-disable prettier/prettier */
-import { actionCliente, TEST, MongoDB, CONTEXT } from './commons/cd-test-nmp'
-import { SuiteTEST, IT } from './commons/cd-test'
+import { actionCliente, TEST, MongoDB, CONTEXT } from './commons/test-nmp'
+import { SuiteTEST, IT } from './commons/test'
 
 SuiteTEST('T00','Cliente', { suiteTestIgnore: false } ,{ // callbakcs
     before: async () => { 

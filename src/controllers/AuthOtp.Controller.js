@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { AuthOtpService } from '../services/AuthOtp.Service'
-import { invokeController } from '../commons/cd-controller'
+import { invokeController } from '../commons/invokeController'
 
 const validationBodySchemaEnviarOtp = {properties: { 
     idCliente: { type: 'string', required: true },
