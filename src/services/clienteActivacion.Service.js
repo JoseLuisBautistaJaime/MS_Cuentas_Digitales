@@ -25,7 +25,7 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoO
   await ActivacionDAO.establecerEstatusActivacion(idCliente, activacion)
   log.info('SERV: Terminando establecerEstatusActivacion')
   // eslint-disable-next-line no-use-before-define
-  return obtenerEstatusActivacion(idCliente, false)
+  return obtenerEstatusActivacion(idCliente)
 }
 
 const unixTimeStamp = (fecha, addSeconds) => toInteger(fecha.getTime() / 1000, 10) + toInteger(addSeconds)
@@ -41,8 +41,6 @@ async function obtenerEstatusActivacion(idCliente) {
 
   // Conversion de valores generales
   const toReturn = {}
-  // toReturn.code = activacion.estatusActivacion === 5 ? 203 : 201
-  // toReturn.code = activacion.estatusActivacion === 1 ? 400 : toReturn.code
   toReturn.estatusActivacion = activacion.estatusActivacion
   toReturn.estatusActivacionNombre = activacion.estatusActivacionNombre
 

@@ -41,8 +41,6 @@ SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
       IT.Post('T21A.4','Enviar OTP, por FAX. (medio no valido)', { shouldHaveStatus: 400, body: { idCliente : TEST.CLIENTE, "modoEnvio": "fax" }})
       IT.Post('T21A.5','Enviar OTP, por email, pero MS_COMUNICACIONES, fallando.', { shouldHaveStatus: 500 })
       
-
-
       // POST-Verificar OTP
       IT.Post('T21B.0','Verificar un OTP al cliente, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
