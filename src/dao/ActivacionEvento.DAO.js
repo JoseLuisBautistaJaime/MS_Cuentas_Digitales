@@ -1,5 +1,5 @@
 import Mongoose from 'mongoose'
-import { log } from '../commons/pi8-log'
+import { log } from '../commons/log'
 import { activacionEventoSchema } from '../models/activacionEvento.model'
 
 const activacionEvento = Mongoose.model('ActivacionEvento', activacionEventoSchema)

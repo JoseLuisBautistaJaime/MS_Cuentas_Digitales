@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ClienteActivacionService } from '../services/ClienteActivacion.Service'
-import { invokeController } from '../commons/pi8-controller'
+import { invokeController } from '../commons/controller'
 
 
 const validationQuerySchemaCliente = { properties: { 

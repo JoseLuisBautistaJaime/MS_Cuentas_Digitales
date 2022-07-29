@@ -3,7 +3,7 @@
 import cfenv from 'cfenv'
 import mongoose from 'mongoose'
 import { toInteger } from 'lodash'
-import { log } from './pi8-log'
+import { log } from './log'
 import { ACTIVACION_EVENTOS_TIMETOLIVE } from './constants'
 
 const appEnv = cfenv.getAppEnv()

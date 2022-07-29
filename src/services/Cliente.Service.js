@@ -1,7 +1,7 @@
-import { log } from '../commons/pi8-log'
+import { log } from '../commons/log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ClienteActivacionService } from './ClienteActivacion.Service'
-import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
+import { NotFoundCliente } from '../commons/controller-exceptions'
 
 /**
  * Obtiene el cliente con el idCliente especificado en los parametros del query.

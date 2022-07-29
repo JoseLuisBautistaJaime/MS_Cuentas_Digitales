@@ -3,7 +3,7 @@
 import MongodbMemoryServer from 'mongodb-memory-server'
 import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
-import { log } from '../../src/commons/pi8-log'
+import { log } from '../../src/commons/log'
 import { ActivacionEventoService } from '../../src/services/ActivacionEvento.Service'
 import { ClienteActivacionService } from '../../src/services/ClienteActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'

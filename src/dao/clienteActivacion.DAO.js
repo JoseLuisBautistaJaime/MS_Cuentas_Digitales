@@ -1,5 +1,5 @@
 import Mongoose from 'mongoose'
-import { log } from '../commons/pi8-log'
+import { log } from '../commons/log'
 import { clienteSchema } from '../models/cliente.model'
 import { ClienteDAO } from './Cliente.DAO'
 import { ActivacionEventoDAO } from './ActivacionEvento.DAO'

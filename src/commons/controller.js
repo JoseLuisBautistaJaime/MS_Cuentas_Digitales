@@ -1,8 +1,8 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
-import { log } from './pi8-log'
-import { validateBody, validateHeaderOAG, validateQuery, validateSchemaEMPTY } from './pi8-controller-validations'
+import { log } from './log'
+import { validateBody, validateHeaderOAG, validateQuery, validateSchemaEMPTY } from './controller-validations'
 
 const Iniciando = async (req, tagName, evalOAG, validationQuerySchema, validationBodySchema) => {
   log.info('')

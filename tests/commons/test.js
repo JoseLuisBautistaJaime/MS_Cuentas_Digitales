@@ -6,7 +6,7 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import chaiAsPromised from 'chai-as-promised'
-import { log } from '../../src/commons/pi8-log'
+import { log } from '../../src/commons/log'
 import app from '../../src/server'
 
 
