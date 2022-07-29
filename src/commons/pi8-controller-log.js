@@ -8,64 +8,31 @@ log4JS.configure({
         type: 'pattern',
         pattern: '[%d{ISO8601}][%[%-5.5p%]]-[%[%-10.10c%]] %m'
       }
-    },
-    controller: {
-      type: 'dateFile',
-      pattern: 'yyyy.MM.dd',
-      alwaysIncludePattern: true,
-      keepFileExt: true,
-      filename: './logs/api.catalogos.log',
-      layout: {
-        type: 'pattern',
-        pattern: '[%d{ISO8601}][%[%-5.5p%]]-[%[%-10.10c%]] %m'
-      }
     }
   },
   categories: {
     default: {
-      appenders: ['out', 'controller'],
+      appenders: ['out'],
       level: process.env.LOG_LEVEL || 'info'
     }
   }
 })
 
-export const LOG = log4JS.getLogger('controller')
-// LOG.level = process.env.LOG_LEVEL || 'info'
+export const LOG = log4JS.getLogger('tests')
 LOG.level = 'debug'
-LOG.debugJSON = (message, json) => {
-  LOG.debug(`${message}: ${JSON.stringify(json)}`)
-}
 
-LOG.reFatal = (message, json) => LOG.fatal(`\x1b[30m\x1b[41m${message}: ${JSON.stringify(json)}\x1b[0m`)
-LOG.reWarn = (message, json) => {
-  if (json === undefined) {
-    LOG.warn(`\x1b[30m\x1b[43m${message}`)
+const genMessage = (message, _json, colorStyle) => {
+  if (typeof _json === 'undefined') {
+    LOG.mark(`${colorStyle}${message}\x1b[0m`)
   } else {
-    LOG.warn(`\x1b[30m\x1b[43m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  }
-}
-const colorReMark = '\x1b[37m\x1b[44m'
-
-export const reMark = (message, json) => {
-  if (typeof json === 'undefined') {
-    LOG.mark(`${colorReMark}${message}\x1b[0m`)
-  } else {
-    LOG.mark(`${colorReMark}${message}: ${JSON.stringify(json)}\x1b[0m`)
+    LOG.mark(`${colorStyle}${message}: ${JSON.stringify(_json)}\x1b[0m`)
   }
 }
 
-export const info = message => LOG.info(message)
-
-// LOG.reMark = (message, json) => LOG.mark(`\x1b[37m\x1b[44m${message}: ${JSON.stringify(json)}\x1b[0m`)
-
-LOG.test = (message, json) => {
-  LOG.debug(`\x1b[30m\x1b[41m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  LOG.debug(`\x1b[37m\x1b[41m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  LOG.debug(`\x1b[30m\x1b[45m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  LOG.debug(`\x1b[37m\x1b[45m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  LOG.debug(`\x1b[30m\x1b[44m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  LOG.debug(`\x1b[37m\x1b[44m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  LOG.debug(`\x1b[30m\x1b[43m${message}: ${JSON.stringify(json)}\x1b[0m`)
-  LOG.debug(`\x1b[37m\x1b[43m${message}: ${JSON.stringify(json)}\x1b[0m`)
+export const log = {
+  reWarn: (message, _json) => genMessage(message, _json, '\x1b[30m\x1b[43m'),
+  reMark: (message, _json) => genMessage(message, _json, '\x1b[37m\x1b[44m'),
+  reFatal: (message, _json) => genMessage(message, _json, '\x1b[30m\x1b[41m'),
+  info: message => LOG.info(message),
+  debug: message => LOG.debug(message)
 }
-export const log = { info }

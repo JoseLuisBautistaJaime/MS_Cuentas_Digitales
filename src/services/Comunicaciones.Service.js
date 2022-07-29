@@ -12,7 +12,8 @@ import {
 } from '../commons/constants'
 import { HttpClientService } from '../commons/http-client'
 import LOG from '../commons/LOG'
-import { Util } from '../commons/utils'
+import { InternalServerError } from '../commons/pi8-controller-exceptions'
+
 
 const { HttpMethod } = HttpClientService
 
@@ -24,7 +25,7 @@ const { HttpMethod } = HttpClientService
 const createHeaderComunicaciones = async req => {
   LOG.info('SERV: Iniciando createHeaderComunicaciones')
   // await CommonValidator.validateHeaderOAG(req)
-  await Util.validateHeaderOAG(req)
+  // await Util.validateHeaderOAG(req)
   const idConsumidor = req.header(HEADER_ID_CONSUMIDOR)
   const idDestino = req.header(HEADER_ID_DESTINO)
   const usuario = req.header(HEADER_USUARIO)
@@ -54,12 +55,15 @@ const internalEnviarMensaje = async (req, bodyComunicaciones) => {
     }
     LOG.debugJSON('internalEnviarMensaje-HttpComunicaciones', HttpComunicaciones)
     const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
+    if (bodyResp.statusRequest !== 201) {
+      throw new InternalServerError({ message: JSON.stringify(bodyResp), exceptionCode: 50002 })
+    }
     LOG.debugJSON('internalEnviarMensaje-bodyResp', bodyResp)
     LOG.info('SERV: Terminando internalEnviarEmail')
     return bodyResp
-  } catch (error) {
-    LOG.error(error)
-    // return handlerError(res, error)
+  } catch (err) {
+    LOG.error(err)
+    throw new InternalServerError({ message: JSON.stringify(err), exceptionCode: 50001 })
   }
 }
 
@@ -119,6 +123,7 @@ const enviarCodigoEMAIL = async (req, destinatario, codigoOtp) => {
   }
 
   const bodyResp = await internalEnviarMensaje(req, bodyComunicaciones)
+  LOG.info(`**** TAG bodyResp ${bodyResp}`)
   LOG.info('SERV: Terminado enviarCodigoEMAIL')
   return bodyResp
 }

@@ -1,43 +1,26 @@
-import LOG from '../commons/LOG'
-import handleError from '../validator/handler-error'
-import { Response } from '../commons'
-// import { ActivacionService } from '../services/Activacion.Service'
-import { ActivacionEventoService } from '../services/ActivacionEvento.Service'
+/* eslint-disable prettier/prettier */
+import { activacionEventoService } from '../services/activacionEvento.Service'
+import { invokeController } from '../commons/pi8-controller'
 
-const listarEventos = async (req, res) => {
-  LOG.info('CTRL: Iniciando obtenerActivacionEventos')
-  try {
-    // await Util.validateHeaderOAG(req)
-    const { idCliente } = req.query
-    const { estatusActivacion } = req.query
-    const result = await ActivacionEventoService.listarEventos(idCliente, estatusActivacion)
-    LOG.info(`CTRL: Terminado obtenerActivacionEventos ${idCliente}`)
-    return res.status(200).send(result)
-  } catch (err) {
-    LOG.error(err)
-    return handleError(res, err)
-  }
-}
+const validationQuerySchemaCliente = { properties: { 
+  idCliente: { type: 'string', required: true },
+}, additionalProperties : false }
 
-const removerEventos = async (req, res) => {
-  LOG.info('CTRL: Iniciando removerEventos')
-  try {
-    // await Util.validateHeaderOAG(req)
-    const { idCliente } = req.query
-    const { estatusActivacion } = req.query
-    await ActivacionEventoService.removerEventos(idCliente, estatusActivacion)
-    LOG.info(`CTRL: Terminado removerEventos ${idCliente}`)
-    return Response.Ok(res)
-    // return res.status(200).send()
-  } catch (err) {
-    LOG.error(err)
-    return handleError(res, err)
-  }
-}
+const validationBodySchemaStatusActivacion = { properties: { 
+  estatusActivacion: { type: 'number', required: false },
+}, additionalProperties : false }
 
-export const ActivacionEventoController = {
+const listarEventos = async (req, res) =>
+  invokeController('listarEventos', 200, req, res, true, validationQuerySchemaCliente, undefined, async reqX =>
+    activacionEventoService.listarEventos(reqX.query.idCliente))
+
+const removerEventos = async (req, res) =>
+  invokeController('removerEventos', 201, req, res, true, validationQuerySchemaCliente, validationBodySchemaStatusActivacion, async reqX =>
+    activacionEventoService.removerEventos(reqX.query.idCliente,reqX.body.estatusActivacion))  
+
+export const activacionEventoController = {
   listarEventos,
   removerEventos
 }
 
-export default ActivacionEventoController
+export default activacionEventoController

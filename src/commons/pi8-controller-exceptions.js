@@ -42,3 +42,36 @@ export class NotFoundCliente {
     this.stack = null
   }
 }
+
+export class InternalServerError {
+  constructor(message) {
+    this.name = 'Internal Server Error'
+    this.statusCode = 500
+    this.exceptionCode = message.exceptionCode
+    this.message = message.message
+    this.mergeVariables = null
+    this.stack = null
+  }
+}
+
+export class CuentaBloqueadaException {
+  constructor(message) {
+    this.name = 'Cuenta Bloqueada'
+    this.statusCode = 203
+    this.exceptionCode = message.exceptionCode
+    this.message = message.message
+    this.mergeVariables = null
+    this.stack = null
+  }
+}
+
+export class VerificarOtpError {
+  constructor() {
+    this.name = 'Verificar Otp Error'
+    this.statusCode = 214
+    this.exceptionCode = 21400
+    this.message = 'No existe o no se ha enviado un Codigo OTP al cliente'
+    this.mergeVariables = null
+    this.stack = null
+  }
+}

@@ -2,7 +2,7 @@ import Mongoose from 'mongoose'
 import LOG from '../commons/LOG'
 import { clienteSchema } from '../models/cliente.model'
 import { ClienteDAO } from './Cliente.DAO'
-import { ActivacionEventoDAO } from './ActivacionEvento.DAO'
+import { activacionEventoDAO } from './activacionEvento.DAO'
 
 const Cliente = Mongoose.model('cliente', clienteSchema)
 
@@ -13,10 +13,8 @@ const Cliente = Mongoose.model('cliente', clienteSchema)
  */
 export function convertirEstatusActivacionNombre(estatusActivacion) {
   let result
-  switch (String(estatusActivacion)) {
-    case '0':
-      result = ''
-      break
+  const strStatusActivacion = String(estatusActivacion)
+  switch (strStatusActivacion) {
     case '1':
       result = 'NoExisteCliente_Activacion'
       break
@@ -31,9 +29,6 @@ export function convertirEstatusActivacionNombre(estatusActivacion) {
       break
     case '5':
       result = 'Bloqueado_Activacion'
-      break
-    case '6':
-      result = 'Error_Activacion'
       break
     default:
   }
@@ -63,7 +58,7 @@ async function establecerEstatusActivacion(idCliente, activacion) {
     }
   )
   LOG.debugJSON('idCliente', idCliente)
-  await ActivacionEventoDAO.agregarEvento(activacion)
+  await activacionEventoDAO.agregarEvento(activacion)
   LOG.info('DAO: Terminando establecerEstatusActivacion')
   return result
 }
@@ -74,16 +69,13 @@ async function establecerEstatusActivacion(idCliente, activacion) {
  * @returns Retorna el objeto EsatusActivacion.
  */
 async function obtenerEstatusActivacion(idCliente) {
-  let estatusActivacion = 1
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   let activacion = {}
   if (cliente === null || cliente === undefined) {
     activacion.estatusActivacion = 1
   } else {
     activacion = cliente.activacion
-    estatusActivacion = cliente.activacion.estatusActivacion
-    if (estatusActivacion === '' || estatusActivacion === undefined) estatusActivacion = 2
-    activacion.estatusActivacion = estatusActivacion
+    activacion.estatusActivacion = cliente.activacion.estatusActivacion
   }
   activacion.estatusActivacionNombre = `${convertirEstatusActivacionNombre(activacion.estatusActivacion)} ${idCliente}`
   return activacion

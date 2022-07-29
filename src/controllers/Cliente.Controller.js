@@ -29,7 +29,7 @@ const obtenerCliente = async (req, res) => invokeController(
 
 const removerCliente = async (req, res) => invokeController(
   'removerCliente', 201, req, res, 
-  true, validationQuerySchemaCliente, null,
+  true, validationQuerySchemaCliente, undefined,
   async reqX => ClienteService.removerCliente(reqX.query.idCliente))
 
 export const ClienteController = {

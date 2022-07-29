@@ -1,4 +1,4 @@
-import LOG from '../commons/LOG'
+import { log } from '../commons/pi8-controller-log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { clienteActivacionService } from './clienteActivacion.Service'
 import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
@@ -10,10 +10,12 @@ import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
  * @returns Retorna todo el contenido de documento cliente.
  */
 const removerCliente = async idCliente => {
-  LOG.info('SERV: Iniciando removerCliente')
+  log.info('SERV: Iniciando removerCliente')
+  const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
   await ClienteDAO.remover(idCliente)
-  LOG.info(`SERV: Terminando removerCliente`)
-  return true
+  log.info(`SERV: Terminando removerCliente`)
+  return cliente
 }
 
 /**
@@ -22,10 +24,10 @@ const removerCliente = async idCliente => {
  * @returns Retorna todo el contenido de documento cliente.
  */
 const obtenerCliente = async idCliente => {
-  LOG.info(`SERV: Iniciando obtenerCliente ${idCliente}`)
+  log.info(`SERV: Iniciando obtenerCliente ${idCliente}`)
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
-  LOG.info(`SERV: Terminando obtenerCliente`)
+  log.info(`SERV: Terminando obtenerCliente`)
   return cliente
 }
 
@@ -35,11 +37,12 @@ const obtenerCliente = async idCliente => {
  * @returns Status 200, si la actualizacion se llevo a cabo con exito.
  */
 const actualizarCliente = async body => {
-  LOG.info('SERV: Iniciando actualizarCliente')
+  log.info('SERV: Iniciando actualizarCliente')
+  let resultSave
   const { idCliente } = body
   const usuarioExist = await ClienteDAO.countIdCliente(idCliente)
-  LOG.debug(`usuarioExist ${usuarioExist}`)
-  let resultSave
+  log.debug(`usuarioExist ${usuarioExist}`)
+
   if (usuarioExist === 0) {
     const clienteToAdd = {
       idCliente,
@@ -52,8 +55,8 @@ const actualizarCliente = async body => {
       celularCliente: body.celularCliente
     }
     resultSave = await ClienteDAO.save(clienteToAdd)
-    clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
-    LOG.debug(`actualizarCliente-Cliente guardado ${idCliente}`)
+    await clienteActivacionService.establecerEstatusActivacion(idCliente, 2)
+    log.debug(`actualizarCliente-Cliente guardado ${idCliente}`)
   } else {
     const clienteUpdate = {
       idDevice: body.idDevice,
@@ -66,8 +69,8 @@ const actualizarCliente = async body => {
     }
     resultSave = await ClienteDAO.findOneAndUpdate(idCliente, clienteUpdate)
   }
-  LOG.debug(`resultSave ${resultSave}`)
-  LOG.info('SERV: Terminando actualizarCliente')
+  log.debug(`resultSave ${resultSave}`)
+  log.info('SERV: Terminando actualizarCliente')
   return resultSave
 }
 

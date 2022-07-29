@@ -48,30 +48,21 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 const corsOptionsDelegate = (req, callback) => {
   const regex = new RegExp(`(http|https)://localhost`)
-  const corsOptions = regex.test(req.header('Origin'))
-    ? { origin: true }
-    : { origin: false }
+  const corsOptions = regex.test(req.header('Origin')) ? { origin: true } : { origin: false }
   callback(null, corsOptions)
 }
 
 app.use(cors(corsOptionsDelegate))
 
 app.use(`/${CONTEXT_NAME}/${CONTEXT_VERSION}`, appRoutes)
-app.use(
-  `/${CONTEXT_NAME}/${CONTEXT_VERSION}/${GLOBAL_CONSTANTS.EP_PREFIX}`,
-  ePRoutes
-)
+app.use(`/${CONTEXT_NAME}/${CONTEXT_VERSION}/${GLOBAL_CONSTANTS.EP_PREFIX}`, ePRoutes)
 
 createConnection()
   .then(() => {
     app.listen(PORT, appEnv.bind, () => {
-      LOG.info(
-        `server running on ${appEnv.url}/${CONTEXT_NAME}/${CONTEXT_VERSION}`
-      )
+      LOG.info(`server running on ${appEnv.url}/${CONTEXT_NAME}/${CONTEXT_VERSION}`)
       if (nodeEnv !== 'production') {
-        LOG.info(
-          `Swagger documentation server running on ${appEnv.url}/api-docs/`
-        )
+        LOG.info(`Swagger documentation server running on ${appEnv.url}/api-docs/`)
       }
     })
   })

@@ -10,7 +10,7 @@ const Iniciando = async (req, tagName, evalOAG, showBody, validationQuerySchema,
   log.info('')
   log.info('\x1b[36m*******************************************************************\x1b[0m')
   log.info(`\x1b[36m*** CTRL: Iniciando Método\x1b[0m ${tagName}\x1b[36m.\x1b[0m`)
-  if (req.header('testTitle')) log.info(`\x1b[36m*** TestTag:\x1b[0m ${req.header('testTitle')}`)
+  if (req.header('testDesc')) log.info(`\x1b[36m*** TestTag:\x1b[0m ${req.header('testTitle')}`)
 
   log.info('\x1b[36m-------------------------------------------------------------------\x1b[0m')
   log.info(`\x1b[36m-- Request.Query:\x1b[0m ${JSON.stringify(req.query)}`)

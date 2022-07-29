@@ -10,7 +10,7 @@ import { createConnection } from '../src/commons/connection'
 import { ClienteService } from '../src/services/Cliente.Service'
 // import { clienteActivacionService } from '../src/services/clienteActivacion.Service'
 import {testHelpers, HEADER, TEST_CLIENTE_DATA, TEST_CLIENTE } from './commons/testHelpers'
-import { ActivacionEventoService } from '../src/services/ActivacionEvento.Service'
+import { ActivacionEventoService } from '../src/services/activacionEvento.Service'
 
 const context = CONTEXT_NAME
 const version = CONTEXT_VERSION

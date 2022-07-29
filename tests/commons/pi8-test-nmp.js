@@ -4,7 +4,7 @@ import MongodbMemoryServer from 'mongodb-memory-server'
 import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
 import { LOG } from '../../src/commons'
-import { ActivacionEventoService } from '../../src/services/ActivacionEvento.Service'
+import { activacionEventoService } from '../../src/services/activacionEvento.Service'
 import { clienteActivacionService } from '../../src/services/clienteActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
 
@@ -32,9 +32,12 @@ export const MongoDB = {
 }
 
 // SECCION 2. CONSTANTES PARA TEST
-export const TEST_CLIENTE = '9999'
+export const TEST_CLIENTE = '9991'
 export const TEST = {
   CLIENTE: TEST_CLIENTE,
+  CLIENTE_NO_EXISTE: '9990',
+  CLIENTE_PARA_REMOVER: '9995',
+  CLIENTE_EXTRA: '8888',
   CLIENTE_BODY: {
     idCliente: TEST_CLIENTE,
     idDevice: '74312734d5403d54',
@@ -58,31 +61,44 @@ export const TEST = {
 export const actionCliente = {
   eliminar: async idCliente => {
     await ClienteService.removerCliente(idCliente)
-    await ActivacionEventoService.removerEventos(idCliente)
+    await activacionEventoService.removerEventos(idCliente)
   },
   reiniciar: async idCliente => {
-    actionCliente.eliminar(idCliente)
+    LOG.fatal('iniciando-reiniciarCliente')
+    // await actionCliente.eliminar(idCliente)
     // await ClienteService.removerCliente(TEST.idCliente)
     // await ActivacionEventoService.removerEventos(idCliente)
-    await ClienteService.actualizarCliente(TEST.CLIENTE_BODY)
-  }
-}
-
-export const bloquearClienteConEnviosOtp = async tag => {
-  LOG.debug(tag)
-  await ActivacionEventoService.removerEventos(TEST.CLIENTE)
-  for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
-    await clienteActivacionService.establecerEstatusActivacion(TEST.CLIENTE, 3, '0000')
+    const body = TEST.CLIENTE_BODY
+    body.idCliente = idCliente
+    await ClienteService.actualizarCliente(body)
+    await activacionEventoService.removerEventos(idCliente)
+    await clienteActivacionService.establecerEstatusActivacion(idCliente, 2, '0000')
+    LOG.fatal('terminando-reiniciarCliente')
+  },
+  actualizar: async idCliente => {
+    const body = TEST.CLIENTE_BODY
+    body.idCliente = idCliente
+    await ClienteService.actualizarCliente(body)
+  },
+  bloquearConEnvios: async idCliente => {
+    await activacionEventoService.removerEventos(idCliente)
+    for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
+      await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, '0000')
+    }
+  },
+  bloquearSinEventos: async idCliente => {
+    await activacionEventoService.removerEventos(idCliente)
+    await clienteActivacionService.establecerEstatusActivacion(idCliente, 5)
   }
 }
 
 export const bloquearClienteSinEventos = async tag => {
   LOG.debug(tag)
   await clienteActivacionService.establecerEstatusActivacion(TEST.CLIENTE, 5)
-  await ActivacionEventoService.removerEventos(TEST.CLIENTE)
+  await activacionEventoService.removerEventos(TEST.CLIENTE)
 }
 
-export const actionsCliente = {
-  bloquearClienteConEnviosOtp,
-  bloquearClienteSinEventos
-}
+// export const actionsCliente = {
+//   bloquearClienteConEnviosOtp,
+//   bloquearClienteSinEventos
+// }
