@@ -12,8 +12,8 @@ router.route('/cliente').delete(ClienteController.deleteCliente)
 
 router.route('/cliente/estadoActivacion').get(ClienteActivacionController.getEstadoActivacion)
 router.route('/cliente/estadoActivacion').post(ClienteActivacionController.setEstadoActivacion)
-router.route('/cliente/estadoActivacion/eventos').get(ActivacionEventoController.listarEventos)
-router.route('/cliente/estadoActivacion/eventos').delete(ActivacionEventoController.removerEventos)
+router.route('/cliente/estadoActivacion/eventos').get(ActivacionEventoController.getEventos)
+router.route('/cliente/estadoActivacion/eventos').delete(ActivacionEventoController.deleteEventos)
 
 router.route('/cliente/enviarOtp').post(AuthOtpController.enviarOtp)
 router.route('/cliente/verificarOtp').post(AuthOtpController.verificarOtp)

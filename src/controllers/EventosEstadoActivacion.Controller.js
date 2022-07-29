@@ -10,17 +10,17 @@ const validationBodySchemaEstadoActivacion = { properties: {
   estadoActivacion: { type: 'number', required: false },
 }, additionalProperties : false }
 
-const listarEventos = async (req, res) => invokeController('listarEventos', 200, req, res, 
+const getEventos = async (req, res) => invokeController('getEventos', 200, req, res, 
   validationQuerySchemaCliente, undefined, 
-  async reqX => ActivacionEventoService.listarEventos(reqX.query.idCliente))
+  async reqX => ActivacionEventoService.getEventos(reqX.query.idCliente))
 
-const removerEventos = async (req, res) => invokeController('removerEventos', 201, req, res, 
+const deleteEventos = async (req, res) => invokeController('deleteEventos', 201, req, res, 
   validationQuerySchemaCliente, validationBodySchemaEstadoActivacion, 
-  async reqX => ActivacionEventoService.removerEventos(reqX.query.idCliente,reqX.body.estadoActivacion))  
+  async reqX => ActivacionEventoService.deleteEventos(reqX.query.idCliente,reqX.body.estadoActivacion))  
 
 export const ActivacionEventoController = {
-  listarEventos,
-  removerEventos
+  getEventos,
+  deleteEventos
 }
 
 export default ActivacionEventoController

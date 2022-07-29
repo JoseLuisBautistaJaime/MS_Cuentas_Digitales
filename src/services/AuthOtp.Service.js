@@ -28,8 +28,8 @@ const evaluarBloqueo = async idCliente => {
   log.info('SERV: Iniciando AuthOtp.evaluarBloqueo')
 
   // evaluando acciones
-  const totalEventos6 = await ActivacionEventoService.listarEventos(idCliente, 6, true)
-  const totalEventos3 = await ActivacionEventoService.listarEventos(idCliente, 3, true)
+  const totalEventos6 = await ActivacionEventoService.getEventos(idCliente, 6, true)
+  const totalEventos3 = await ActivacionEventoService.getEventos(idCliente, 3, true)
   const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - totalEventos6 - totalEventos3
   const bloquearCliente = reintentosDisponibles <= 0
 
@@ -85,7 +85,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
 
   await ClienteActivacionService.setEstadoActivacion(idCliente, 3, codigoOtp)
   log.info('SERV: Terminando enviarOtp method')
-  const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
+  const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.getEventos(idCliente, 3, true))
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
 }
 

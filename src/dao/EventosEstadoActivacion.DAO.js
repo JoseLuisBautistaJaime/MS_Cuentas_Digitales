@@ -14,31 +14,31 @@ async function agregarEventoError(idCliente, mensaje) {
   return activacionEvento.create(eventoError)
 }
 
-async function listarEventos(idCliente, estadoActivacion) {
-  log.info(`DAO: Iniciando ActivacionEventoDAO.listarEventos ${idCliente}, ${estadoActivacion}`)
+async function getEventos(idCliente, estadoActivacion) {
+  log.info(`DAO: Iniciando ActivacionEventoDAO.getEventos ${idCliente}, ${estadoActivacion}`)
   let filter
   if (estadoActivacion === undefined) filter = { idCliente }
   else filter = { $and: [{ idCliente }, { estadoActivacion }] }
   const toReturn = await activacionEvento.find(filter)
-  log.info(`DAO: Terminando ActivacionEventoDAO.listarEventos`)
+  log.info(`DAO: Terminando ActivacionEventoDAO.getEventos`)
   return toReturn
 }
 
-async function removerEventos(idCliente, estadoActivacion) {
-  log.info(`DAO: Iniciando ActivacionEventoDAO.removerEventos`)
+async function deleteEventos(idCliente, estadoActivacion) {
+  log.info(`DAO: Iniciando ActivacionEventoDAO.deleteEventos`)
   let filter
   if (estadoActivacion === undefined) filter = { idCliente }
   else filter = { $and: [{ idCliente }, { estadoActivacion }] }
   const toReturn = await activacionEvento.remove(filter)
-  log.info(`DAO: Terminando ActivacionEventoDAO.removerEventos ${toReturn}`)
+  log.info(`DAO: Terminando ActivacionEventoDAO.deleteEventos ${toReturn}`)
   return toReturn
 }
 
 export const ActivacionEventoDAO = {
   agregarEvento,
   agregarEventoError,
-  listarEventos,
-  removerEventos
+  getEventos,
+  deleteEventos
 }
 
 export default ActivacionEventoDAO
