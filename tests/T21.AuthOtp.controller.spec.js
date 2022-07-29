@@ -1,8 +1,8 @@
 /* eslint-disable mocha/no-setup-in-describe */
 /* eslint-disable prettier/prettier */
 import nock from 'nock'
-import { TEST, MongoDB, CONTEXT, actionCliente } from './commons/test-nmp'
-import { SuiteTEST, IT } from './commons/test'
+import { TEST, MongoDB, CONTEXT, actionCliente } from './commons/cd-test-nmp'
+import { SuiteTEST, IT } from './commons/cd-test'
 import { URL_API_COMUNICACIONES } from '../src/commons/constants'
 
 let codigoOtp = "1234"

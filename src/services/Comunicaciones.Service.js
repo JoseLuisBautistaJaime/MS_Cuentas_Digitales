@@ -11,8 +11,8 @@ import {
   URL_API_COMUNICACIONES
 } from '../commons/constants'
 import { HttpClientService } from '../commons/http-client'
-import { log } from '../commons/log'
-import { InternalServerError } from '../commons/controller-exceptions'
+import { log } from '../commons/cd-log'
+import { InternalServerError } from '../commons/cd-controller-exceptions'
 
 const { HttpMethod } = HttpClientService
 

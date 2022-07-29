@@ -1,7 +1,7 @@
-import { log } from '../commons/log'
+import { log } from '../commons/cd-log'
 import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { NotFoundCliente } from '../commons/controller-exceptions'
+import { NotFoundCliente } from '../commons/cd-controller-exceptions'
 
 async function listarEventos(idCliente, estatusActivacion, soloContar) {
   log.info(`SERV: Iniciando ActivacionEventoService.listarEventos`)

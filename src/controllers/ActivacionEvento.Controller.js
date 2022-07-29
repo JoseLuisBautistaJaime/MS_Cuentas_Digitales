@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ActivacionEventoService } from '../services/ActivacionEvento.Service'
-import { invokeController } from '../commons/controller'
+import { invokeController } from '../commons/cd-controller'
 
 const validationQuerySchemaCliente = { properties: { 
   idCliente: { type: 'string', required: true },

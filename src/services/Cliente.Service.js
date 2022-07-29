@@ -1,7 +1,7 @@
-import { log } from '../commons/log'
+import { log } from '../commons/cd-log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ClienteActivacionService } from './ClienteActivacion.Service'
-import { NotFoundCliente } from '../commons/controller-exceptions'
+import { NotFoundCliente } from '../commons/cd-controller-exceptions'
 
 /**
  * Obtiene el cliente con el idCliente especificado en los parametros del query.

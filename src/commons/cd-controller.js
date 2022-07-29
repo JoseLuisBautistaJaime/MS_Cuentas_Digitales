@@ -1,8 +1,8 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
-import { log } from './log'
-import { validateBody, validateHeaderOAG, validateQuery, validateSchemaEMPTY } from './controller-validations'
+import { log } from './cd-log'
+import { validateBody, validateHeaderOAG, validateQuery, validateSchemaEMPTY } from './cd-controller-validations'
 
 const Iniciando = async (req, tagName, evalOAG, validationQuerySchema, validationBodySchema) => {
   log.info('')

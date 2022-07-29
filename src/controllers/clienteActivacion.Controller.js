@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ClienteActivacionService } from '../services/ClienteActivacion.Service'
-import { invokeController } from '../commons/controller'
+import { invokeController } from '../commons/cd-controller'
 
 
 const validationQuerySchemaCliente = { properties: { 
