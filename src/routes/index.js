@@ -1,7 +1,7 @@
 import express from 'express'
 import { ClienteController } from '../controllers/Cliente.Controller'
 import { AuthOtpController } from '../controllers/AuthOtp.Controller'
-import { ClienteActivacionController } from '../controllers/EstatusActivacion.Controller'
+import { ClienteActivacionController } from '../controllers/EstadoActivacion.Controller'
 import { ActivacionEventoController } from '../controllers/EventosEstadoActivacion.Controller'
 
 const router = express.Router()

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-export const clienteActivacionSchema = new mongoose.Schema({
+export const estadoActivacionSchema = new mongoose.Schema({
   estatusActivacion: Number,
   estatusActivacionNombre: String,
   codigoOtp: String,

@@ -2,7 +2,7 @@ import Mongoose from 'mongoose'
 import { log } from '../commons/log'
 import { clienteSchema } from '../models/cliente.model'
 import { ClienteDAO } from './Cliente.DAO'
-import { ActivacionEventoDAO } from './ActivacionEvento.DAO'
+import { ActivacionEventoDAO } from './EventosEstadoActivacion.DAO'
 
 const Cliente = Mongoose.model('cliente', clienteSchema)
 

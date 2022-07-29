@@ -1,5 +1,5 @@
 import { log } from '../commons/log'
-import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
+import { ActivacionEventoDAO } from '../dao/EventosEstadoActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { NotFoundCliente } from '../commons/exceptions'
 

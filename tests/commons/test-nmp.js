@@ -4,8 +4,8 @@ import MongodbMemoryServer from 'mongodb-memory-server'
 import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
 import { log } from '../../src/commons/log'
-import { ActivacionEventoService } from '../../src/services/ActivacionEvento.Service'
-import { ClienteActivacionService } from '../../src/services/ClienteEstatusActivacion.Service'
+import { ActivacionEventoService } from '../../src/services/EventosEstadoActivacion.Service'
+import { ClienteActivacionService } from '../../src/services/EstadoActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
 
 // SECCION 1. CONSTAONTES DE CONTEXTO

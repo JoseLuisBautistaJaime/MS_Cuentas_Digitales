@@ -1,6 +1,6 @@
 import { log } from '../commons/log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { ClienteActivacionService } from './ClienteEstatusActivacion.Service'
+import { ClienteActivacionService } from './EstadoActivacion.Service'
 import { NotFoundCliente } from '../commons/exceptions'
 
 /**

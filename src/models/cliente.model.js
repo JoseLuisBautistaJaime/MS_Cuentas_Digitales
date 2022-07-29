@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { clienteActivacionSchema } from './clienteEstatusActivacion.model'
+import { estadoActivacionSchema } from './estadoActivacion.model'
 
 export const clienteSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
@@ -12,5 +12,5 @@ export const clienteSchema = new mongoose.Schema({
   nombreCompleto: String,
   correoCliente: String,
   celularCliente: String,
-  activacion: clienteActivacionSchema
+  activacion: estadoActivacionSchema
 })

@@ -1,6 +1,6 @@
 import { toInteger } from 'lodash'
 import { log } from '../commons/log'
-import { ActivacionDAO } from '../dao/ClienteEstatusActivacion.DAO'
+import { ActivacionDAO } from '../dao/EstadoActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ACTIVACION_EVENTOS_TIMETOLIVE } from '../commons/constants'
 import { NotFoundCliente } from '../commons/exceptions'

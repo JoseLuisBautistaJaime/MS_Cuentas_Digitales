@@ -1,8 +1,8 @@
 import Mongoose from 'mongoose'
 import { log } from '../commons/log'
-import { activacionEventoSchema } from '../models/activacionEvento.model'
+import { eventoEstadoActivacionSchema } from '../models/eventoEstadoActivacion.model'
 
-const activacionEvento = Mongoose.model('ActivacionEvento', activacionEventoSchema)
+const activacionEvento = Mongoose.model('ActivacionEvento', eventoEstadoActivacionSchema)
 
 async function agregarEvento(activacion) {
   log.info(`DAO: Ejecutando ActivacionEventoDAO.agregar`)

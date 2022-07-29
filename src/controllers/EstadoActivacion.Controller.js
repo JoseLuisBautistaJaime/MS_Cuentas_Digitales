@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { ClienteActivacionService } from '../services/ClienteEstatusActivacion.Service'
+import { ClienteActivacionService } from '../services/EstadoActivacion.Service'
 import { invokeController } from '../commons/invokeController'
 
 

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { ActivacionEventoService } from '../services/ActivacionEvento.Service'
+import { ActivacionEventoService } from '../services/EventosEstadoActivacion.Service'
 import { invokeController } from '../commons/invokeController'
 
 const validationQuerySchemaCliente = { properties: { 
