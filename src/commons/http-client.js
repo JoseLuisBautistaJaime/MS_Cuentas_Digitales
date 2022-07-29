@@ -1,7 +1,6 @@
 import fetch from 'node-fetch'
 import https from 'https'
 import { log } from './pi8-log'
-// import { InternalServerException, CommonException, createMessageError } from './exceptions'
 
 const agent = new https.Agent({ rejectUnauthorized: false })
 

@@ -2,12 +2,11 @@ import { log } from '../commons/pi8-log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ClienteActivacionService } from './ClienteActivacion.Service'
 import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
-// import { OAuthService } from './OAuth.Service'
 
 /**
  * Obtiene el cliente con el idCliente especificado en los parametros del query.
  * @param {*} idCliente El número del idCliente.
- * @returns Retorna todo el contenido de documento cliente.
+ * @returns Retorna el contenido de documento cliente.
  */
 const removerCliente = async idCliente => {
   log.info('SERV: Iniciando removerCliente')
@@ -21,7 +20,7 @@ const removerCliente = async idCliente => {
 /**
  * Obtiene el cliente con el idCliente especificado en los parametros del query.
  * @param {*} idCliente El número del idCliente.
- * @returns Retorna todo el contenido de documento cliente.
+ * @returns Retorna el contenido de documento cliente.
  */
 const obtenerCliente = async idCliente => {
   log.info(`SERV: Iniciando obtenerCliente ${idCliente}`)

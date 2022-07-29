@@ -13,14 +13,12 @@ const validationBodySchemaEstatusActivacion = {properties: {
 }, additionalProperties : false}
 
 const obtenerEstatusActivacion = async (req, res) => invokeController(
-  'obtenerEstatusActivacion', 200, req, res, 
-  true, validationQuerySchemaCliente, undefined,
+  'obtenerEstatusActivacion', 200, req, res, validationQuerySchemaCliente, undefined,
   async reqX => ClienteActivacionService.obtenerEstatusActivacion(reqX.query.idCliente))
 
 const establecerEstatusActivacion = async (req, res) => invokeController(
-    'establecerEstatusActivacion', 201, req, res, 
-    true, undefined, validationBodySchemaEstatusActivacion,
-    async reqX => ClienteActivacionService.establecerEstatusActivacion(reqX.body.idCliente,reqX.body.estatusActivacion))
+  'establecerEstatusActivacion', 201, req, res, undefined, validationBodySchemaEstatusActivacion,
+  async reqX => ClienteActivacionService.establecerEstatusActivacion(reqX.body.idCliente,reqX.body.estatusActivacion))
 
 export const ClienteActivacionController = {
   obtenerEstatusActivacion,

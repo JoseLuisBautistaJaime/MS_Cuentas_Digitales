@@ -17,19 +17,16 @@ const validationQuerySchemaCliente = { properties: {
     idCliente: { type: 'string', required: true },
   }, additionalProperties : false}
 
-const actualizarCliente = async (req, res) => invokeController(
-  'actualizarCliente', 201, req, res, 
-  true, undefined, validationBodySchemaCliente,
+const actualizarCliente = async (req, res) => invokeController('actualizarCliente', 201, req, res, 
+  undefined, validationBodySchemaCliente, 
   async reqX => ClienteService.actualizarCliente(reqX.body))
 
-const obtenerCliente = async (req, res) => invokeController(
-  'obtenerCliente', 200, req, res, 
-  true, validationQuerySchemaCliente, undefined,
+const obtenerCliente = async (req, res) => invokeController('obtenerCliente', 200, req, res, 
+  validationQuerySchemaCliente, undefined, 
   async reqX => ClienteService.obtenerCliente(reqX.query.idCliente))
 
-const removerCliente = async (req, res) => invokeController(
-  'removerCliente', 201, req, res, 
-  true, validationQuerySchemaCliente, undefined,
+const removerCliente = async (req, res) => invokeController('removerCliente', 201, req, res, 
+  validationQuerySchemaCliente, undefined, 
   async reqX => ClienteService.removerCliente(reqX.query.idCliente))
 
 export const ClienteController = {

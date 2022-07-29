@@ -13,15 +13,13 @@ const validationBodySchemaVerificarOtp = {properties: {
     enviarEmail: { type: 'boolean', required: false },
   }, additionalProperties : false }
 
-const enviarOtp = async (req, res) => invokeController(
-  'enviarOtp', 201, req, res, 
-  true, undefined, validationBodySchemaEnviarOtp,
+const enviarOtp = async (req, res) => invokeController('enviarOtp', 201, req, res, 
+  undefined, validationBodySchemaEnviarOtp,
   async reqX => AuthOtpService.enviarOtp(reqX, reqX.body))
 
-  const verificarOtp = async (req, res) => invokeController(
-    'verificarOtp', 201, req, res, 
-    true, undefined, validationBodySchemaVerificarOtp,
-    async reqX => AuthOtpService.verificarOtp(reqX, reqX.body))
+const verificarOtp = async (req, res) => invokeController('verificarOtp', 201, req, res, 
+  undefined, validationBodySchemaVerificarOtp,
+  async reqX => AuthOtpService.verificarOtp(reqX, reqX.body))
 
 export const AuthOtpController = {
   enviarOtp,

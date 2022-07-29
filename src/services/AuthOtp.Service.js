@@ -21,8 +21,7 @@ const OTP_OPTIONS = {
 function generateHashSecret(idCliente, idDevice) {
   const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`
   log.debug(`TOTP-fullSecret ${fullSecret}`)
-  const hashSecret = String(md5(fullSecret)).toUpperCase()
-  return hashSecret
+  return String(md5(fullSecret)).toUpperCase()
 }
 
 const evaluarBloqueo = async idCliente => {
@@ -64,7 +63,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
 
   /** EVALUACION DE BLOQUEOS */
-  const bloquearCliente = await evaluarBloqueo(idCliente, 3)
+  const bloquearCliente = await evaluarBloqueo(idCliente)
   if (bloquearCliente.estatusActivacion === 5) throw new CuentaBloqueadaException({ exceptionCode: 20301, message: JSON.stringify(bloquearCliente) })
 
   /** PROCESANDO CUENTA SIN BLOQUEAR */
@@ -108,7 +107,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
 
   /** EVALUACION DE BLOQUEOS */
-  const bloquearCliente = await evaluarBloqueo(idCliente, 3)
+  const bloquearCliente = await evaluarBloqueo(idCliente)
   if (bloquearCliente.estatusActivacion === 5) throw new CuentaBloqueadaException({ exceptionCode: 20302, message: JSON.stringify(bloquearCliente) })
 
   // verificacion si existe el estatus apropiado para evaluar el codigo otp.

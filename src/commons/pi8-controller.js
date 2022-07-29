@@ -52,11 +52,11 @@ const CatchError = async (nameMethod, res, err) => {
   return res.status(statusCode).send(err)
 }
 
-export async function invokeController(nameMethod, responseStatusCode, req, res, evalOAG, validationQuerySchema, validationBodySchema, callback) {
+export async function invokeController(nameMethod, responseStatusCode, req, res, validationQuerySchema, validationBodySchema, callback) {
   try {
     if (validationQuerySchema === undefined || (validationQuerySchema === undefined) === null) validationQuerySchema = validateSchemaEMPTY
     if (validationBodySchema === undefined || (validationBodySchema === undefined) === null) validationBodySchema = validateSchemaEMPTY
-    await Iniciando(req, nameMethod, evalOAG, validationQuerySchema, validationBodySchema)
+    await Iniciando(req, nameMethod, true, validationQuerySchema, validationBodySchema)
     const toReturn = await callback(req, res)
     return Terminando(nameMethod, responseStatusCode, res, toReturn)
   } catch (err) {
