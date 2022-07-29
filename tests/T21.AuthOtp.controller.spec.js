@@ -27,7 +27,7 @@ SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
       IT.Post('T21A.0','Enviar un OTP al cliente, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
-          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/enviarOtp`,
+          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/enviarOtp`,
           body: { idCliente : TEST.CLIENTE, "modoEnvio": "email" },
           shouldHaveStatus: 201}})
       IT.Post('T21A.0','Enviar OTP, por email a un cliente que NO EXISTA', { shouldHaveStatus: 404, body: { idCliente : TEST.CLIENTE_NO_EXISTE, "modoEnvio": "email" }})      
@@ -45,7 +45,7 @@ SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
       IT.Post('T21B.0','Verificar un OTP al cliente, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
-          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/verificarOtp`,
+          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/verificarOtp`,
           body: { "idCliente": TEST.CLIENTE, "codigoOtp": '0000', "enviarEmail": true },
           shouldHaveStatus: 201}})
       
@@ -65,21 +65,21 @@ SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
       IT.Post('T21C.1','Enviar OTP, por email, pero con cliente bloqueado por exceso de envios.', { testIgnore: false, 
         shouldHaveStatus: 203,
         listHeaders: TEST.LISTHEADER_OAG,
-        url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/enviarOtp`,
+        url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/enviarOtp`,
         body: { idCliente : TEST.CLIENTE_EXTRA, "modoEnvio": "email" }}
         ,{ before: async () => actionCliente.bloquearConEnvios(TEST.CLIENTE_EXTRA)})
 
       IT.Post('T21C.1','Verificar OTP, por email, pero con cliente bloqueado por exceso de envios.', { testIgnore: false, 
         shouldHaveStatus: 203,
         listHeaders: TEST.LISTHEADER_OAG,
-        url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/verificarOtp`,
+        url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/verificarOtp`,
         body: { "idCliente": TEST.CLIENTE_EXTRA, "codigoOtp": "0000", "enviarEmail": true }},
         { before: async () => actionCliente.bloquearConEnvios(TEST.CLIENTE_EXTRA)})
 
       IT.Post('T21C.1','Verificar OTP, por email, pero con cliente bloqueado por exceso de envios.', { testIgnore: false, 
         shouldHaveStatus: 214,
         listHeaders: TEST.LISTHEADER_OAG,
-        url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/verificarOtp`,
+        url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/verificarOtp`,
         body: { "idCliente": TEST.CLIENTE_EXTRA, "codigoOtp": "0000", "enviarEmail": true }},
         { before: async () => actionCliente.bloquearSinEventos(TEST.CLIENTE_EXTRA)})
 }})

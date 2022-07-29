@@ -1,6 +1,6 @@
 import { log } from '../commons/log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { ClienteActivacionService } from './ClienteActivacion.Service'
+import { ClienteActivacionService } from './ClienteEstatusActivacion.Service'
 import { NotFoundCliente } from '../commons/exceptions'
 
 /**
@@ -53,7 +53,7 @@ const setCliente = async (idCliente, body) => {
       celularCliente: body.celularCliente
     }
     resultSave = await ClienteDAO.save(clienteToAdd)
-    await ClienteActivacionService.setEstatusActivacion(idCliente, 2)
+    await ClienteActivacionService.setEstadoActivacion(idCliente, 2)
     log.debug(`setCliente-Cliente guardado ${idCliente}`)
   } else {
     const clienteUpdate = {

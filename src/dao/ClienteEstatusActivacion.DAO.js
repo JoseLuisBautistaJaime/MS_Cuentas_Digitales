@@ -41,9 +41,9 @@ export function convertirEstatusActivacionNombre(estatusActivacion) {
  * @param {*} estatusActivacion El número del estatus de activacion.
  * @returns Objeto Cliente
  */
-async function setEstatusActivacion(idCliente, activacion) {
-  log.info('DAO: Iniciando setEstatusActivacion')
-  log.debug(`ActivacionDAO.setEstatusActivacion ${activacion}`)
+async function setEstadoActivacion(idCliente, activacion) {
+  log.info('DAO: Iniciando setEstadoActivacion')
+  log.debug(`ActivacionDAO.setEstadoActivacion ${activacion}`)
   const result = await Cliente.findOneAndUpdate(
     {
       idCliente
@@ -59,7 +59,7 @@ async function setEstatusActivacion(idCliente, activacion) {
   )
   log.debugJSON('idCliente', idCliente)
   await ActivacionEventoDAO.agregarEvento(activacion)
-  log.info('DAO: Terminando setEstatusActivacion')
+  log.info('DAO: Terminando setEstadoActivacion')
   return result
 }
 
@@ -68,7 +68,7 @@ async function setEstatusActivacion(idCliente, activacion) {
  * @param {*} idCliente El Id del Cliente de cuentas digitales.
  * @returns Retorna el objeto EsatusActivacion.
  */
-async function getEstatusActivacion(idCliente) {
+async function getEstadoActivacion(idCliente) {
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   let activacion = {}
   if (cliente === null || cliente === undefined) {
@@ -82,8 +82,8 @@ async function getEstatusActivacion(idCliente) {
 }
 
 export const ActivacionDAO = {
-  setEstatusActivacion,
-  getEstatusActivacion,
+  setEstadoActivacion,
+  getEstadoActivacion,
   convertirEstatusActivacionNombre
 }
 

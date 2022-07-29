@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { clienteActivacionSchema } from './clienteActivacion.model'
+import { clienteActivacionSchema } from './clienteEstatusActivacion.model'
 
 export const clienteSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },

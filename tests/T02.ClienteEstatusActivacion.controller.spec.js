@@ -10,7 +10,7 @@ SuiteTEST('T3','clienteEstatusActivacion', { suiteTestIgnore: false } ,{ // call
     after: async () => { 
       MongoDB.disconnect()}, 
     tests: () => {
-      // Metodo GET=> getEstatusActivacion
+      // Metodo GET=> getEstadoActivacion
       IT.Get('T3A.0','GET: /cliente/estatusActivacion, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
@@ -20,8 +20,8 @@ SuiteTEST('T3','clienteEstatusActivacion', { suiteTestIgnore: false } ,{ // call
       IT.Get('T3A.1','GET: /cliente/estatusActivacion, cuando el cliente SI EXISTE.')          
       IT.Get('T3A.2','GET: /cliente/estatusActivacion, cuando el cliente NO EXISTE.',{ shoulHaveStatus:404, query: { idCliente: TEST.CLIENTE_NO_EXISTE } })
 
-      // Metodo POST=> setEstatusActivacion
-      IT.Post('T3B.0','setEstatusActivacion, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
+      // Metodo POST=> setEstadoActivacion
+      IT.Post('T3B.0','setEstadoActivacion, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
           url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/estatusActivacion`,
