@@ -41,9 +41,9 @@ export function convertirEstatusActivacionNombre(estatusActivacion) {
  * @param {*} estatusActivacion El número del estatus de activacion.
  * @returns Objeto Cliente
  */
-async function establecerEstatusActivacion(idCliente, activacion) {
-  log.info('DAO: Iniciando establecerEstatusActivacion')
-  log.debug(`ActivacionDAO.establecerEstatusActivacion ${activacion}`)
+async function setEstatusActivacion(idCliente, activacion) {
+  log.info('DAO: Iniciando setEstatusActivacion')
+  log.debug(`ActivacionDAO.setEstatusActivacion ${activacion}`)
   const result = await Cliente.findOneAndUpdate(
     {
       idCliente
@@ -59,7 +59,7 @@ async function establecerEstatusActivacion(idCliente, activacion) {
   )
   log.debugJSON('idCliente', idCliente)
   await ActivacionEventoDAO.agregarEvento(activacion)
-  log.info('DAO: Terminando establecerEstatusActivacion')
+  log.info('DAO: Terminando setEstatusActivacion')
   return result
 }
 
@@ -82,7 +82,7 @@ async function getEstatusActivacion(idCliente) {
 }
 
 export const ActivacionDAO = {
-  establecerEstatusActivacion,
+  setEstatusActivacion,
   getEstatusActivacion,
   convertirEstatusActivacionNombre
 }

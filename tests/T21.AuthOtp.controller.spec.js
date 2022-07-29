@@ -7,7 +7,7 @@ import { URL_API_COMUNICACIONES } from '../src/commons/constants'
 
 let codigoOtp = "1234"
 
-SuiteTEST('T21','enviarOtp', { suiteTestIgnore: true } ,{ // callbakcs
+SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
     before: async () => { 
       await MongoDB.connect()
       await actionCliente.reiniciar(TEST.CLIENTE)

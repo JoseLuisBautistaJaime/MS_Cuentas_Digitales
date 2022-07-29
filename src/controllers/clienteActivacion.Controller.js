@@ -16,11 +16,11 @@ const getEstatusActivacion = async (req, res) => invokeController(
   'getEstatusActivacion', 200, req, res, validationQuerySchemaCliente, undefined,
   async reqX => ClienteActivacionService.getEstatusActivacion(reqX.query.idCliente))
 
-const establecerEstatusActivacion = async (req, res) => invokeController(
-  'establecerEstatusActivacion', 201, req, res, undefined, validationBodySchemaEstatusActivacion,
-  async reqX => ClienteActivacionService.establecerEstatusActivacion(reqX.body.idCliente,reqX.body.estatusActivacion))
+const setEstatusActivacion = async (req, res) => invokeController(
+  'setEstatusActivacion', 201, req, res, undefined, validationBodySchemaEstatusActivacion,
+  async reqX => ClienteActivacionService.setEstatusActivacion(reqX.body.idCliente,reqX.body.estatusActivacion))
 
 export const ClienteActivacionController = {
   getEstatusActivacion,
-  establecerEstatusActivacion
+  setEstatusActivacion
 }

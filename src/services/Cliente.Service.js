@@ -53,7 +53,7 @@ const setCliente = async (idCliente, body) => {
       celularCliente: body.celularCliente
     }
     resultSave = await ClienteDAO.save(clienteToAdd)
-    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2)
+    await ClienteActivacionService.setEstatusActivacion(idCliente, 2)
     log.debug(`setCliente-Cliente guardado ${idCliente}`)
   } else {
     const clienteUpdate = {

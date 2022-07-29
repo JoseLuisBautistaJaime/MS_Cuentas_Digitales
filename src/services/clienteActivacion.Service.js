@@ -10,8 +10,8 @@ import { NotFoundCliente } from '../commons/exceptions'
  * @param {*} idCliente el número idCliente.
  * @param {*} estatusActivacion El número del estatus de Activacion.
  */
-async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoOtp) {
-  log.info('SERV: Iniciando establecerEstatusActivacion')
+async function setEstatusActivacion(idCliente, estatusActivacion, codigoOtp) {
+  log.info('SERV: Iniciando setEstatusActivacion')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
   const activacion = {
@@ -20,10 +20,10 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoO
     estatusActivacionNombre: ActivacionDAO.convertirEstatusActivacionNombre(estatusActivacion),
     ultimaActualizacion: Date.now()
   }
-  log.debug(`establecerEstatusActivacion: idCliente: ${idCliente} activacion: ${estatusActivacion}, codigoOtp: ${codigoOtp} `)
+  log.debug(`setEstatusActivacion: idCliente: ${idCliente} activacion: ${estatusActivacion}, codigoOtp: ${codigoOtp} `)
   if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
-  await ActivacionDAO.establecerEstatusActivacion(idCliente, activacion)
-  log.info('SERV: Terminando establecerEstatusActivacion')
+  await ActivacionDAO.setEstatusActivacion(idCliente, activacion)
+  log.info('SERV: Terminando setEstatusActivacion')
   // eslint-disable-next-line no-use-before-define
   return getEstatusActivacion(idCliente)
 }
@@ -57,7 +57,7 @@ async function getEstatusActivacion(idCliente) {
 
 export const ClienteActivacionService = {
   getEstatusActivacion,
-  establecerEstatusActivacion
+  setEstatusActivacion
 }
 
 export default ClienteActivacionService

@@ -40,10 +40,10 @@ const evaluarBloqueo = async idCliente => {
 
   // evalua el desbloqueo de cuenta..
   if (activacion.estatusActivacion === 5 && bloquearCliente === false)
-    activacion = await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2)
+    activacion = await ClienteActivacionService.setEstatusActivacion(idCliente, 2)
 
   // procedimientos cuando la cuenta necesita bloearse o se debe de encontrar debidamente bloqueada
-  if (bloquearCliente && activacion.estatusActivacion !== 5) activacion = await ClienteActivacionService.establecerEstatusActivacion(idCliente, 5)
+  if (bloquearCliente && activacion.estatusActivacion !== 5) activacion = await ClienteActivacionService.setEstatusActivacion(idCliente, 5)
 
   // preparanto resultados a Retornar
   log.info('SERV: Terminando AuthOtp.evaluarBloqueo')
@@ -83,7 +83,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
   if (modoEnvio === 'email') await ComunicacionesService.enviarCodigoEMAIL(req, correoCliente, codigoOtp)
   if (modoEnvio === 'sms') await ComunicacionesService.enviarCodigoSMS(req, celularCliente, codigoOtp)
 
-  await ClienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)
+  await ClienteActivacionService.setEstatusActivacion(idCliente, 3, codigoOtp)
   log.info('SERV: Terminando enviarOtp method')
   const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
@@ -134,7 +134,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
     toReturn.estaExpiradoOtp = !toReturn.esValidoOtp
   }
   if (toReturn.esValidoOtp === true) {
-    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 4)
+    await ClienteActivacionService.setEstatusActivacion(idCliente, 4)
   }
   if (toReturn.esValidoOtp && enviarEmail) await ComunicacionesService.enviarActivacionEMAIL(req, cliente)
   return toReturn

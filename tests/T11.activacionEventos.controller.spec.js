@@ -22,7 +22,7 @@ SuiteTEST('T11','activacionEvento/eventos', { suiteTestIgnore: true } ,{ // call
       IT.Get('T11A.1','activacionEvento/eventos, cuando el cliente SI EXISTE.')          
       IT.Get('T11A.2','activacionEvento/eventos, cuando el cliente NO EXISTE.', { shouldHaveStatus:404, query: { idCliente: TEST.CLIENTE_NO_EXISTE } })
 
-      // Metodo POST=> establecerEstatusActivacion
+      // Metodo POST=> setEstatusActivacion
       IT.Delete('T3B.0','activacionEvento/eventos, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
@@ -31,6 +31,6 @@ SuiteTEST('T11','activacionEvento/eventos', { suiteTestIgnore: true } ,{ // call
           body: { estatusActivacion: 2},
           shouldHaveStatus: 201}})
       IT.Delete('T11B.2','activacionEvento/eventos, cuando el cliente SI EXISTE.')
-      IT.Delete('T3B.1','establecerEstatusActivacion, cuando el cliente NO EXISTE.', { query: {idCliente: TEST.CLIENTE_NO_EXISTE}})
+      IT.Delete('T3B.1','setEstatusActivacion, cuando el cliente NO EXISTE.', { query: {idCliente: TEST.CLIENTE_NO_EXISTE}})
 }})
 

@@ -66,24 +66,24 @@ export const actionCliente = {
     log.fatal('iniciando-reiniciarCliente')
     await ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY)
     await ActivacionEventoService.removerEventos(idCliente)
-    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2, '0000')
+    await ClienteActivacionService.setEstatusActivacion(idCliente, 2, '0000')
     log.fatal('terminando-reiniciarCliente')
   },
   actualizar: async idCliente => ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY),
   bloquearConEnvios: async idCliente => {
     await ActivacionEventoService.removerEventos(idCliente)
     for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
-      await ClienteActivacionService.establecerEstatusActivacion(idCliente, 3, '0000')
+      await ClienteActivacionService.setEstatusActivacion(idCliente, 3, '0000')
     }
   },
   bloquearSinEventos: async idCliente => {
     await ActivacionEventoService.removerEventos(idCliente)
-    await ClienteActivacionService.establecerEstatusActivacion(idCliente, 5)
+    await ClienteActivacionService.setEstatusActivacion(idCliente, 5)
   }
 }
 
 export const bloquearClienteSinEventos = async tag => {
   log.debug(tag)
-  await ClienteActivacionService.establecerEstatusActivacion(TEST.CLIENTE, 5)
+  await ClienteActivacionService.setEstatusActivacion(TEST.CLIENTE, 5)
   await ActivacionEventoService.removerEventos(TEST.CLIENTE)
 }

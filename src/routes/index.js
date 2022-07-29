@@ -12,7 +12,7 @@ router.route('/cliente').delete(ClienteController.deleteCliente)
 
 router.route('/cliente/estatusActivacion').get(ClienteActivacionController.getEstatusActivacion)
 
-router.route('/establecerEstatusActivacion').post(ClienteActivacionController.establecerEstatusActivacion)
+router.route('/cliente/estatusActivacion').post(ClienteActivacionController.setEstatusActivacion)
 
 router.route('/enviarOtp').post(AuthOtpController.enviarOtp)
 router.route('/verificarOtp').post(AuthOtpController.verificarOtp)
