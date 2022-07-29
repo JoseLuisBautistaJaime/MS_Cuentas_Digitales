@@ -1,26 +1,19 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
-import { log } from './pi8-controller-log'
+import { log } from './pi8-log'
 import { validateBody, validateHeaderOAG, validateQuery, validateSchemaEMPTY } from './pi8-controller-validations'
-// import { UCommon } from './UCommon'
 
-global.mode = 33
-const Iniciando = async (req, tagName, evalOAG, showBody, validationQuerySchema, validationBodySchema) => {
+const Iniciando = async (req, tagName, evalOAG, validationQuerySchema, validationBodySchema) => {
   log.info('')
   log.info('\x1b[36m*******************************************************************\x1b[0m')
   log.info(`\x1b[36m*** CTRL: Iniciando Método\x1b[0m ${tagName}\x1b[36m.\x1b[0m`)
   if (req.header('testDesc')) log.info(`\x1b[36m*** TestTag:\x1b[0m ${req.header('testTitle')}`)
-
   log.info('\x1b[36m-------------------------------------------------------------------\x1b[0m')
   log.info(`\x1b[36m-- Request.Query:\x1b[0m ${JSON.stringify(req.query)}`)
-  if (showBody === undefined) showBody = true
-  if (showBody) log.info(`\x1b[36m-- Request.BODY:\x1b[0m ${JSON.stringify(req.body)}`)
+  log.info(`\x1b[36m-- Request.BODY:\x1b[0m ${JSON.stringify(req.body)}`)
   log.info('\x1b[36m-------------------------------------------------------------------\x1b[0m')
-  // eslint-disable-next-line no-param-reassign
-  if (evalOAG === undefined) evalOAG = true
   if (evalOAG) await validateHeaderOAG(req)
-
   validateQuery(req.query, validationQuerySchema)
   validateBody(req.body, validationBodySchema)
 }
@@ -63,7 +56,7 @@ export async function invokeController(nameMethod, responseStatusCode, req, res,
   try {
     if (validationQuerySchema === undefined || (validationQuerySchema === undefined) === null) validationQuerySchema = validateSchemaEMPTY
     if (validationBodySchema === undefined || (validationBodySchema === undefined) === null) validationBodySchema = validateSchemaEMPTY
-    await Iniciando(req, nameMethod, evalOAG, true, validationQuerySchema, validationBodySchema)
+    await Iniciando(req, nameMethod, evalOAG, validationQuerySchema, validationBodySchema)
     const toReturn = await callback(req, res)
     return Terminando(nameMethod, responseStatusCode, res, toReturn)
   } catch (err) {

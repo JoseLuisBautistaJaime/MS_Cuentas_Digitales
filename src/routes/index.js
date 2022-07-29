@@ -6,8 +6,6 @@ import { ActivacionEventoController } from '../controllers/ActivacionEvento.Cont
 
 const router = express.Router()
 
-// router.route('/').get(ClienteController.healthCheck)
-
 router.route('/actualizarCliente').post(ClienteController.actualizarCliente)
 router.route('/obtenerCliente').get(ClienteController.obtenerCliente)
 router.route('/removerCliente').post(ClienteController.removerCliente)

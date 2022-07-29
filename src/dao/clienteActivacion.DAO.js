@@ -1,5 +1,5 @@
 import Mongoose from 'mongoose'
-import LOG from '../commons/LOG'
+import { log } from '../commons/pi8-log'
 import { clienteSchema } from '../models/cliente.model'
 import { ClienteDAO } from './Cliente.DAO'
 import { ActivacionEventoDAO } from './ActivacionEvento.DAO'
@@ -42,8 +42,8 @@ export function convertirEstatusActivacionNombre(estatusActivacion) {
  * @returns Objeto Cliente
  */
 async function establecerEstatusActivacion(idCliente, activacion) {
-  LOG.info('DAO: Iniciando establecerEstatusActivacion')
-  LOG.debugJSON('ActivacionDAO.establecerEstatusActivacion', activacion)
+  log.info('DAO: Iniciando establecerEstatusActivacion')
+  log.debug(`ActivacionDAO.establecerEstatusActivacion ${activacion}`)
   const result = await Cliente.findOneAndUpdate(
     {
       idCliente
@@ -57,9 +57,9 @@ async function establecerEstatusActivacion(idCliente, activacion) {
       new: true
     }
   )
-  LOG.debugJSON('idCliente', idCliente)
+  log.debugJSON('idCliente', idCliente)
   await ActivacionEventoDAO.agregarEvento(activacion)
-  LOG.info('DAO: Terminando establecerEstatusActivacion')
+  log.info('DAO: Terminando establecerEstatusActivacion')
   return result
 }
 

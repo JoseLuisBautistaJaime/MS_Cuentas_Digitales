@@ -46,8 +46,6 @@ export const validateBody = (body, validationBodySchema) => {
 
 export const validateQuery = (query, validationQuerySchema) => {
   const VALIDATOR = new Validator()
-  // LOG.debug(`qry  ${JSON.stringify(query)}`)
-  // ${JSON.stringify(req.body)}
   const validationErrors = VALIDATOR.validate(query, validationQuerySchema)
   if (!validationErrors.errors.length) return
   const messageErrors = validate_getMessages(validationErrors.errors)

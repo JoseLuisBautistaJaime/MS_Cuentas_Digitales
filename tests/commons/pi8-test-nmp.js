@@ -3,7 +3,7 @@
 import MongodbMemoryServer from 'mongodb-memory-server'
 import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
-import { LOG } from '../../src/commons'
+import { log } from '../../src/commons/pi8-log'
 import { ActivacionEventoService } from '../../src/services/ActivacionEvento.Service'
 import { ClienteActivacionService } from '../../src/services/ClienteActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
@@ -64,13 +64,13 @@ export const actionCliente = {
     await ActivacionEventoService.removerEventos(idCliente)
   },
   reiniciar: async idCliente => {
-    LOG.fatal('iniciando-reiniciarCliente')
+    log.fatal('iniciando-reiniciarCliente')
     const body = TEST.CLIENTE_BODY
     body.idCliente = idCliente
     await ClienteService.actualizarCliente(body)
     await ActivacionEventoService.removerEventos(idCliente)
     await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2, '0000')
-    LOG.fatal('terminando-reiniciarCliente')
+    log.fatal('terminando-reiniciarCliente')
   },
   actualizar: async idCliente => {
     const body = TEST.CLIENTE_BODY
@@ -90,7 +90,7 @@ export const actionCliente = {
 }
 
 export const bloquearClienteSinEventos = async tag => {
-  LOG.debug(tag)
+  log.debug(tag)
   await ClienteActivacionService.establecerEstatusActivacion(TEST.CLIENTE, 5)
   await ActivacionEventoService.removerEventos(TEST.CLIENTE)
 }

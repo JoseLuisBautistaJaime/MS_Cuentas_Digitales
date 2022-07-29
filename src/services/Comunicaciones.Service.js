@@ -11,9 +11,8 @@ import {
   URL_API_COMUNICACIONES
 } from '../commons/constants'
 import { HttpClientService } from '../commons/http-client'
-import LOG from '../commons/LOG'
+import { log } from '../commons/pi8-log'
 import { InternalServerError } from '../commons/pi8-controller-exceptions'
-
 
 const { HttpMethod } = HttpClientService
 
@@ -23,7 +22,7 @@ const { HttpMethod } = HttpClientService
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const createHeaderComunicaciones = async req => {
-  LOG.info('SERV: Iniciando createHeaderComunicaciones')
+  log.info('SERV: Iniciando createHeaderComunicaciones')
   // await CommonValidator.validateHeaderOAG(req)
   // await Util.validateHeaderOAG(req)
   const idConsumidor = req.header(HEADER_ID_CONSUMIDOR)
@@ -42,27 +41,27 @@ const createHeaderComunicaciones = async req => {
 }
 
 const internalEnviarMensaje = async (req, bodyComunicaciones) => {
-  LOG.info('SERV: Iniciando internalEnviarMensaje')
+  log.info('SERV: Iniciando internalEnviarMensaje')
   try {
     const header = await createHeaderComunicaciones(req)
-    LOG.debugJSON('internalEnviarMensaje-header', header)
-    LOG.debugJSON('internalEnviarMensaje-body', bodyComunicaciones)
+    log.debugJSON('internalEnviarMensaje-header', header)
+    log.debugJSON('internalEnviarMensaje-body', bodyComunicaciones)
     const HttpComunicaciones = {
       url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
       method: HttpMethod.POST,
       headers: header,
       body: bodyComunicaciones
     }
-    LOG.debugJSON('internalEnviarMensaje-HttpComunicaciones', HttpComunicaciones)
+    log.debugJSON('internalEnviarMensaje-HttpComunicaciones', HttpComunicaciones)
     const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
     if (bodyResp.statusRequest !== 201) {
       throw new InternalServerError({ message: JSON.stringify(bodyResp), exceptionCode: 50002 })
     }
-    LOG.debugJSON('internalEnviarMensaje-bodyResp', bodyResp)
-    LOG.info('SERV: Terminando internalEnviarEmail')
+    log.debugJSON('internalEnviarMensaje-bodyResp', bodyResp)
+    log.info('SERV: Terminando internalEnviarEmail')
     return bodyResp
   } catch (err) {
-    LOG.error(err)
+    log.error(err)
     throw new InternalServerError({ message: JSON.stringify(err), exceptionCode: 50001 })
   }
 }
@@ -75,7 +74,7 @@ const internalEnviarMensaje = async (req, bodyComunicaciones) => {
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const enviarCodigoSMS = async (req, destinatario, codigoOtp) => {
-  LOG.info('SERV: Iniciando enviarCodigoSMS')
+  log.info('SERV: Iniciando enviarCodigoSMS')
 
   const bodyComunicaciones = {
     destinatario: {
@@ -90,7 +89,7 @@ const enviarCodigoSMS = async (req, destinatario, codigoOtp) => {
     }
   }
   const bodyResp = await internalEnviarMensaje(req, bodyComunicaciones)
-  LOG.info('SERV: Terminando enviarCodigoSMS', bodyResp)
+  log.info('SERV: Terminando enviarCodigoSMS', bodyResp)
   return bodyResp
 }
 
@@ -102,7 +101,7 @@ const enviarCodigoSMS = async (req, destinatario, codigoOtp) => {
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const enviarCodigoEMAIL = async (req, destinatario, codigoOtp) => {
-  LOG.info('SERV: Iniciando enviarCodigoEMAIL')
+  log.info('SERV: Iniciando enviarCodigoEMAIL')
   const bodyComunicaciones = {
     destinatario: {
       email: destinatario
@@ -123,8 +122,8 @@ const enviarCodigoEMAIL = async (req, destinatario, codigoOtp) => {
   }
 
   const bodyResp = await internalEnviarMensaje(req, bodyComunicaciones)
-  LOG.info(`**** TAG bodyResp ${bodyResp}`)
-  LOG.info('SERV: Terminado enviarCodigoEMAIL')
+  log.info(`**** TAG bodyResp ${bodyResp}`)
+  log.info('SERV: Terminado enviarCodigoEMAIL')
   return bodyResp
 }
 
@@ -136,7 +135,7 @@ const enviarCodigoEMAIL = async (req, destinatario, codigoOtp) => {
  * @returns {Promise<*>} La información de la respuesta obtenida.
  */
 const enviarActivacionEMAIL = async (req, cliente) => {
-  LOG.info('SERV: Iniciando enviarActivacionEMAIL')
+  log.info('SERV: Iniciando enviarActivacionEMAIL')
   const destinatario = cliente.correoCliente
   const clienteFullName = `${cliente.nombreCliente} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`
 
@@ -161,7 +160,7 @@ const enviarActivacionEMAIL = async (req, cliente) => {
   }
 
   const bodyResp = await internalEnviarMensaje(req, bodyComunicaciones)
-  LOG.info('SERV: Terminando enviarActivacionEMAIL', bodyResp)
+  log.info('SERV: Terminando enviarActivacionEMAIL', bodyResp)
   return bodyResp
 }
 

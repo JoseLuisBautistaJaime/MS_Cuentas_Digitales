@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import nock from 'nock'
 import { TEST, MongoDB, CONTEXT, actionCliente } from './commons/pi8-test-nmp'
-import { SuiteTEST, IT, log } from './commons/pi8-test'
+import { SuiteTEST, IT } from './commons/pi8-test'
 import { URL_API_COMUNICACIONES } from '../src/commons/constants'
 
 let codigoOtp = "1234"
@@ -36,7 +36,6 @@ SuiteTEST('T21','enviarOtp', { suiteTestIgnore: false } ,{ // callbakcs
         {body: { idCliente : TEST.CLIENTE, "modoEnvio": "sms" }},
         {end: (err,res) => { 
           codigoOtp = res.body.codigoOtp 
-          log.reFatal(codigoOtp)
         }})
       IT.Post('T21A.3','Enviar OTP, sin definir medio', { shouldHaveStatus: 400, body: { idCliente : TEST.CLIENTE }})        
       IT.Post('T21A.4','Enviar OTP, por FAX. (medio no valido)', { shouldHaveStatus: 400, body: { idCliente : TEST.CLIENTE, "modoEnvio": "fax" }})

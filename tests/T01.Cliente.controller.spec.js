@@ -32,6 +32,8 @@ SuiteTEST('T00','Cliente', { suiteTestIgnore: false } ,{ // callbakcs
             query: { idCliente: TEST.CLIENTE }}})
       IT.Get('T00B.2','obtenerCliente, cuando el cliente SI EXISTE.')
       IT.Get('T00B.1','obtenerCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404, query: { idCliente: TEST.CLIENTE_NO_EXISTE }})
+      IT.Get('T00B.1','obtenerCliente, cuando no especifico el idCliente o un parametro no valido.', { shouldHaveStatus: 400, query: { Cliente: TEST.CLIENTE_NO_EXISTE } })
+      
 
       // Metodo POST => remover cliente
       IT.Post('T00C.0','removerCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],

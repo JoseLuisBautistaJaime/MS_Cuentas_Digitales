@@ -13,5 +13,4 @@ export const clienteSchema = new mongoose.Schema({
   correoCliente: String,
   celularCliente: String,
   activacion: clienteActivacionSchema
-  // activacionLogEvents: [clienteActivacionLogEventsSchema]
 })

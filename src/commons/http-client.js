@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import https from 'https'
-import LOG from './LOG'
+import { log } from './pi8-log'
 // import { InternalServerException, CommonException, createMessageError } from './exceptions'
 
 const agent = new https.Agent({ rejectUnauthorized: false })
@@ -24,10 +24,10 @@ const parseResponse = res => {
 }
 
 const sendRequest = async ({ url, method, body = null, headers, isHttps = true }) => {
-  LOG.debug('SERVICE: Starting sendRequest method')
+  log.debug('SERVICE: Starting sendRequest method')
 
-  LOG.debug(`url - ${url}`)
-  LOG.debug(`method - ${method}`)
+  log.debug(`url - ${url}`)
+  log.debug(`method - ${method}`)
   const options = {
     method,
     headers: {
@@ -45,15 +45,15 @@ const sendRequest = async ({ url, method, body = null, headers, isHttps = true }
   try {
     const { responseBody, ok, status } = await fetch(url, options).then(parseResponse)
 
-    LOG.debugJSON('valido', ok)
-    LOG.debugJSON('status', status)
-    LOG.debug('SERVICE: Ending sendRequest method')
+    log.debug(`valido: ${ok}`)
+    log.debug(`status: ${status}`)
+    log.debug('SERVICE: Ending sendRequest method')
     responseBody.statusRequest = status
     return responseBody
   } catch (err) {
-    LOG.error(`Error: ${JSON.stringify(err)}`)
+    log.error(`Error: ${JSON.stringify(err)}`)
     // if (err instanceof CommonException) throw err
-
+    // AGREGAR CONTROL DE EXCEPCION EN ESTE PUNTO...
     // throw new InternalServerException(createMessageError('NMP.CUENTASDIGITALES-500', { text: err.message }))
   }
 }

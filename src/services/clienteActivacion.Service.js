@@ -1,5 +1,5 @@
 import { toInteger } from 'lodash'
-import LOG from '../commons/LOG'
+import { log } from '../commons/pi8-log'
 import { ActivacionDAO } from '../dao/ClienteActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ACTIVACION_EVENTOS_TIMETOLIVE } from '../commons/constants'
@@ -11,7 +11,7 @@ import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
  * @param {*} estatusActivacion El número del estatus de Activacion.
  */
 async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoOtp) {
-  LOG.info('SERV: Iniciando establecerEstatusActivacion')
+  log.info('SERV: Iniciando establecerEstatusActivacion')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
   const activacion = {
@@ -20,10 +20,10 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoO
     estatusActivacionNombre: ActivacionDAO.convertirEstatusActivacionNombre(estatusActivacion),
     ultimaActualizacion: Date.now()
   }
-  LOG.debug(`establecerEstatusActivacion: idCliente: ${idCliente} activacion: ${estatusActivacion}, codigoOtp: ${codigoOtp} `)
+  log.debug(`establecerEstatusActivacion: idCliente: ${idCliente} activacion: ${estatusActivacion}, codigoOtp: ${codigoOtp} `)
   if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
   await ActivacionDAO.establecerEstatusActivacion(idCliente, activacion)
-  LOG.info('SERV: Terminando establecerEstatusActivacion')
+  log.info('SERV: Terminando establecerEstatusActivacion')
   // eslint-disable-next-line no-use-before-define
   return obtenerEstatusActivacion(idCliente, false)
 }
@@ -32,12 +32,12 @@ const unixTimeStamp = (fecha, addSeconds) => toInteger(fecha.getTime() / 1000, 1
 
 // ** Inicio: getEstatusActivacion
 async function obtenerEstatusActivacion(idCliente) {
-  LOG.info('SERV: Iniciando obtenerEstatusActivacion')
+  log.info('SERV: Iniciando obtenerEstatusActivacion')
 
   const activacion = await ActivacionDAO.obtenerEstatusActivacion(idCliente)
 
   // evaluar desbloqueo de cuenta, en caso de estar bloqueada
-  LOG.debug(`estatusActivacion ${activacion.estatusActivacion}`)
+  log.debug(`estatusActivacion ${activacion.estatusActivacion}`)
 
   // Conversion de valores generales
   const toReturn = {}
@@ -53,7 +53,7 @@ async function obtenerEstatusActivacion(idCliente) {
     toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
   }
   if (toReturn.estatusActivacion === 3) toReturn.codigoOtp = activacion.codigoOtp
-  LOG.info(`SERV: Terminando obtenerEstatusActivacion ${toReturn}`)
+  log.info(`SERV: Terminando obtenerEstatusActivacion ${toReturn}`)
   return toReturn
 }
 

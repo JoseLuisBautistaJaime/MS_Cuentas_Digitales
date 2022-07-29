@@ -3,7 +3,7 @@ import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
 import { ClienteActivacionService } from './ClienteActivacion.Service'
 import { ActivacionEventoService } from './ActivacionEvento.Service'
-import LOG from '../commons/LOG'
+import { log } from '../commons/pi8-log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ActivacionEventoDAO } from '../dao/ActivacionEvento.DAO'
 import { ACTIVACION_BLOQUEO_REINTENTOS } from '../commons/constants'
@@ -20,13 +20,13 @@ const OTP_OPTIONS = {
 }
 function generateHashSecret(idCliente, idDevice) {
   const fullSecret = `${OTP_SECRET}.${idCliente}.${idDevice}`
-  LOG.debug(`TOTP-fullSecret ${fullSecret}`)
+  log.debug(`TOTP-fullSecret ${fullSecret}`)
   const hashSecret = String(md5(fullSecret)).toUpperCase()
   return hashSecret
 }
 
 const evaluarBloqueo = async idCliente => {
-  LOG.info('SERV: Iniciando AuthOtp.evaluarBloqueo')
+  log.info('SERV: Iniciando AuthOtp.evaluarBloqueo')
 
   // evaluando acciones
   const totalEventos6 = await ActivacionEventoService.listarEventos(idCliente, 6, true)
@@ -35,9 +35,9 @@ const evaluarBloqueo = async idCliente => {
   const bloquearCliente = reintentosDisponibles <= 0
 
   // evaluacion del estatus actual y cambiar el estatus a bloquado cuando no lo este
-  LOG.debugJSON('AuthOtp.evaluarBloqueo: idCliente', idCliente)
+  log.debugJSON('AuthOtp.evaluarBloqueo: idCliente', idCliente)
   let activacion = await ClienteActivacionService.obtenerEstatusActivacion(idCliente, false)
-  LOG.debugJSON('AuthOtp.evaluarBloqueo: activacion', activacion)
+  log.debugJSON('AuthOtp.evaluarBloqueo: activacion', activacion)
 
   // evalua el desbloqueo de cuenta..
   if (activacion.estatusActivacion === 5 && bloquearCliente === false)
@@ -47,7 +47,7 @@ const evaluarBloqueo = async idCliente => {
   if (bloquearCliente && activacion.estatusActivacion !== 5) activacion = await ClienteActivacionService.establecerEstatusActivacion(idCliente, 5)
 
   // preparanto resultados a Retornar
-  LOG.info('SERV: Terminando AuthOtp.evaluarBloqueo')
+  log.info('SERV: Terminando AuthOtp.evaluarBloqueo')
   return activacion
 }
 
@@ -58,7 +58,7 @@ const evaluarBloqueo = async idCliente => {
  * @param {*} idCliente el número idCliente.
  */
 const enviarOtp = async (req, bodySchemaEnviarOtp) => {
-  LOG.info(`SERV: Iniciando enviarOtp method. idCliente.`)
+  log.info(`SERV: Iniciando enviarOtp method. idCliente.`)
   const { idCliente, modoEnvio } = bodySchemaEnviarOtp
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
@@ -70,7 +70,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
   /** PROCESANDO CUENTA SIN BLOQUEAR */
   /** generacion del Token */
   totp.options = OTP_OPTIONS
-  LOG.debugJSON('OPTIONLS:', OTP_OPTIONS)
+  log.debugJSON('OPTIONLS:', OTP_OPTIONS)
   const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
   const codigoOtp = totp.generate(hashSecret)
   const expiraCodigoOtp = parseInt((Date.now() + OTP_DURACION_SEGUNDOS * 1000) / 1000, 10)
@@ -85,7 +85,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
   if (modoEnvio === 'sms') await ComunicacionesService.enviarCodigoSMS(req, celularCliente, codigoOtp)
 
   await ClienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)
-  LOG.info('SERV: Terminando enviarOtp method')
+  log.info('SERV: Terminando enviarOtp method')
   const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
 }
@@ -97,7 +97,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
  * @param {*} idCliente el número idCliente.
  */
 const verificarOtp = async (req, bodySchemaEnviarOtp) => {
-  LOG.info('SERV: Iniciando verificarOtp method')
+  log.info('SERV: Iniciando verificarOtp method')
   const { idCliente, codigoOtp } = bodySchemaEnviarOtp
   let { enviarEmail } = bodySchemaEnviarOtp
   if (enviarEmail === undefined) enviarEmail = true
@@ -113,7 +113,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
 
   // verificacion si existe el estatus apropiado para evaluar el codigo otp.
   const toReturn = { code: 201, esValidoOtp: false, estaExpiradoOtp: false }
-  const estatus = await ClienteActivacionService.obtenerEstatusActivacion(idCliente, false)
+  const estatus = await ClienteActivacionService.obtenerEstatusActivacion(idCliente)
 
   if (estatus.estatusActivacion !== 3) {
     ActivacionEventoDAO.agregarEventoError(idCliente, 'No existe o no se ha enviado un Codigo OTP al cliente')
@@ -130,8 +130,8 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
     totp.options = OTP_OPTIONS
     const hashSecret = generateHashSecret(idCliente, cliente.idDevice)
     toReturn.esValidoOtp = totp.check(codigoOtp, hashSecret)
-    LOG.debug(`TEST: esValidoOtp: ${toReturn.esValidoOtp}`)
-    LOG.info('SERV: Terminando verificarOtp method')
+    log.debug(`TEST: esValidoOtp: ${toReturn.esValidoOtp}`)
+    log.info('SERV: Terminando verificarOtp method')
     toReturn.estaExpiradoOtp = !toReturn.esValidoOtp
   }
   if (toReturn.esValidoOtp === true) {

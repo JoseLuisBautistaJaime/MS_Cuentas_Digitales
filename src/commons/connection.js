@@ -1,8 +1,9 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-console */
 import cfenv from 'cfenv'
 import mongoose from 'mongoose'
 import { toInteger } from 'lodash'
-import LOG from './LOG'
+import { log } from './pi8-log'
 import { ACTIVACION_EVENTOS_TIMETOLIVE } from './constants'
 
 const appEnv = cfenv.getAppEnv()
@@ -15,12 +16,8 @@ export const createConnection = async () => {
 
   let uri = ''
 
-  if (credentials) {
-    // eslint-disable-next-line prefer-destructuring
-    uri = credentials.connection.mongodb.composed[0]
-  } else {
-    uri = process.env.MONGO_URL
-  }
+  if (credentials) uri = credentials.connection.mongodb.composed[0]
+  else uri = process.env.MONGO_URL
 
   let options = {
     useNewUrlParser: true,
@@ -49,7 +46,7 @@ export const createConnection = async () => {
   const db = instance.connection
 
   db.on('error', console.error.bind(console, 'connection error: '))
-  db.once('open', () => LOG.info('Connection Successful'))
+  db.once('open', () => log.info('Connection Successful'))
   db.collection('activacioneventos').createIndexes({ createdAt: 1 }, { expireAfterSeconds: toInteger(ACTIVACION_EVENTOS_TIMETOLIVE) })
   return instance
 }

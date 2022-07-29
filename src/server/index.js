@@ -6,7 +6,7 @@ import swaggerJsDoc from 'swagger-jsdoc'
 import swaggerUI from 'swagger-ui-express'
 import { CONTEXT_NAME, CONTEXT_VERSION } from '../commons/constants'
 import { createConnection } from '../commons/connection'
-import LOG from '../commons/LOG'
+import { log } from '../commons/pi8-log'
 import appRoutes from '../routes'
 import { ePRoutes } from '../routes/ePRoutes'
 import { GLOBAL_CONSTANTS } from '../constants'
@@ -60,12 +60,12 @@ app.use(`/${CONTEXT_NAME}/${CONTEXT_VERSION}/${GLOBAL_CONSTANTS.EP_PREFIX}`, ePR
 createConnection()
   .then(() => {
     app.listen(PORT, appEnv.bind, () => {
-      LOG.info(`server running on ${appEnv.url}/${CONTEXT_NAME}/${CONTEXT_VERSION}`)
+      log.info(`server running on ${appEnv.url}/${CONTEXT_NAME}/${CONTEXT_VERSION}`)
       if (nodeEnv !== 'production') {
-        LOG.info(`Swagger documentation server running on ${appEnv.url}/api-docs/`)
+        log.info(`Swagger documentation server running on ${appEnv.url}/api-docs/`)
       }
     })
   })
-  .catch(err => LOG.error(err))
+  .catch(err => log.error(err))
 
 export default app

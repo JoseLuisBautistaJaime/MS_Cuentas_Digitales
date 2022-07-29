@@ -1,4 +1,4 @@
-import { log } from '../commons/pi8-controller-log'
+import { log } from '../commons/pi8-log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { ClienteActivacionService } from './ClienteActivacion.Service'
 import { NotFoundCliente } from '../commons/pi8-controller-exceptions'
