@@ -24,16 +24,16 @@ SuiteTEST('T00','Cliente', { suiteTestIgnore: false } ,{ // callbakcs
       IT.Post('T00A.1','setCliente, cuando el cliente NO EXISTE.')
       IT.Post('T00A.2','setCliente, cuando el cliente SI EXISTE.')
       
-      // Metodo GET => obtenerCliente
-      IT.Get('T0B.0','obtenerCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
+      // Metodo GET => getCliente
+      IT.Get('T0B.0','getCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
           defaultOptions: {
             listHeaders: TEST.LISTHEADER_OAG,
-            url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/obtenerCliente`,
+            url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente`,
             shoulHaveStatus: 200,
             query: { idCliente: TEST.CLIENTE }}})
-      IT.Get('T00B.2','obtenerCliente, cuando el cliente SI EXISTE.')
-      IT.Get('T00B.1','obtenerCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404, query: { idCliente: TEST.CLIENTE_NO_EXISTE }})
-      IT.Get('T00B.1','obtenerCliente, cuando no especifico el idCliente o un parametro no valido.', { shouldHaveStatus: 400, query: { Cliente: TEST.CLIENTE_NO_EXISTE } })
+      IT.Get('T00B.2','getCliente, cuando el cliente SI EXISTE.')
+      IT.Get('T00B.1','getCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404, query: { idCliente: TEST.CLIENTE_NO_EXISTE }})
+      IT.Get('T00B.1','getCliente, cuando no especifico el idCliente o un parametro no valido.', { shouldHaveStatus: 400, query: { Cliente: TEST.CLIENTE_NO_EXISTE } })
       
 
       // Metodo POST => remover cliente

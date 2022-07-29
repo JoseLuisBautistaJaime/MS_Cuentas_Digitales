@@ -22,11 +22,11 @@ const removerCliente = async idCliente => {
  * @param {*} idCliente El número del idCliente.
  * @returns Retorna el contenido de documento cliente.
  */
-const obtenerCliente = async idCliente => {
-  log.info(`SERV: Iniciando obtenerCliente ${idCliente}`)
+const getCliente = async idCliente => {
+  log.info(`SERV: Iniciando getCliente ${idCliente}`)
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
-  log.info(`SERV: Terminando obtenerCliente`)
+  log.info(`SERV: Terminando getCliente`)
   return cliente
 }
 
@@ -75,6 +75,6 @@ const setCliente = async (idCliente, body) => {
 
 export const ClienteService = {
   setCliente,
-  obtenerCliente,
+  getCliente,
   removerCliente
 }
