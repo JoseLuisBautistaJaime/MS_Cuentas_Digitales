@@ -2,7 +2,7 @@ import Mongoose from 'mongoose'
 import { log } from '../commons/log'
 import { clienteSchema } from '../models/cliente.model'
 import { ClienteDAO } from './Cliente.DAO'
-import { ActivacionEventoDAO } from './EventosEstadoActivacion.DAO'
+import { EventosEstadoActivacionDAO } from './EventosEstadoActivacion.DAO'
 
 const Cliente = Mongoose.model('cliente', clienteSchema)
 
@@ -58,7 +58,7 @@ async function setEstadoActivacion(idCliente, activacion) {
     }
   )
   log.debugJSON('idCliente', idCliente)
-  await ActivacionEventoDAO.agregarEvento(activacion)
+  await EventosEstadoActivacionDAO.agregarEvento(activacion)
   log.info('DAO: Terminando setEstadoActivacion')
   return result
 }

@@ -2,10 +2,10 @@ import md5 from 'md5'
 import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
 import { EstadoActivacionService } from './EstadoActivacion.Service'
-import { ActivacionEventoService } from './EventosEstadoActivacion.Service'
+import { EventosEstadoActivacionService } from './EventosEstadoActivacion.Service'
 import { log } from '../commons/log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { ActivacionEventoDAO } from '../dao/EventosEstadoActivacion.DAO'
+import { EventosEstadoActivacionDAO } from '../dao/EventosEstadoActivacion.DAO'
 import { ACTIVACION_BLOQUEO_REINTENTOS } from '../commons/constants'
 import { NotFoundCliente, CuentaBloqueadaException, VerificarOtpError } from '../commons/exceptions'
 
@@ -28,8 +28,8 @@ const evaluarBloqueo = async idCliente => {
   log.info('SERV: Iniciando AuthOtp.evaluarBloqueo')
 
   // evaluando acciones
-  const totalEventos6 = await ActivacionEventoService.getEventos(idCliente, 6, true)
-  const totalEventos3 = await ActivacionEventoService.getEventos(idCliente, 3, true)
+  const totalEventos6 = await EventosEstadoActivacionService.getEventos(idCliente, 6, true)
+  const totalEventos3 = await EventosEstadoActivacionService.getEventos(idCliente, 3, true)
   const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - totalEventos6 - totalEventos3
   const bloquearCliente = reintentosDisponibles <= 0
 
@@ -85,7 +85,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
 
   await EstadoActivacionService.setEstadoActivacion(idCliente, 3, codigoOtp)
   log.info('SERV: Terminando enviarOtp method')
-  const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.getEventos(idCliente, 3, true))
+  const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await EventosEstadoActivacionService.getEventos(idCliente, 3, true))
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
 }
 
@@ -115,7 +115,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
   const estatus = await EstadoActivacionService.getEstadoActivacion(idCliente)
 
   if (estatus.estadoActivacion !== 3) {
-    ActivacionEventoDAO.agregarEventoError(idCliente, 'No existe o no se ha enviado un Codigo OTP al cliente')
+    EventosEstadoActivacionDAO.agregarEventoError(idCliente, 'No existe o no se ha enviado un Codigo OTP al cliente')
     throw new VerificarOtpError()
   }
 
@@ -123,7 +123,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
   if (estatus.codigoOtp !== codigoOtp) {
     toReturn.mensaje = `Codigo OTP no es el correcto. ${estatus.codigoOtp}`
     toReturn.code = 201
-    ActivacionEventoDAO.agregarEventoError(idCliente, toReturn.mensaje)
+    EventosEstadoActivacionDAO.agregarEventoError(idCliente, toReturn.mensaje)
   } else {
     // validaciones y carga de parametros
     totp.options = OTP_OPTIONS

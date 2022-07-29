@@ -30,9 +30,7 @@ const genMessage = (message, _json, colorStyle) => {
 }
 
 export const log = {
-  reWarn: (message, _json) => genMessage(message, _json, '\x1b[30m\x1b[43m'),
   reMark: (message, _json) => genMessage(message, _json, '\x1b[37m\x1b[44m'),
-  reFatal: (message, _json) => genMessage(message, _json, '\x1b[30m\x1b[41m'),
   fatal: message => LOG.fatal(message),
   info: message => LOG.info(message),
   debug: message => LOG.debug(message),

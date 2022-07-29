@@ -4,7 +4,7 @@ import MongodbMemoryServer from 'mongodb-memory-server'
 import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
 import { log } from '../../src/commons/log'
-import { ActivacionEventoService } from '../../src/services/EventosEstadoActivacion.Service'
+import { EventosEstadoActivacionService } from '../../src/services/EventosEstadoActivacion.Service'
 import { EstadoActivacionService } from '../../src/services/EstadoActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
 
@@ -60,24 +60,24 @@ export const TEST = {
 export const actionCliente = {
   eliminar: async idCliente => {
     await ClienteService.deleteCliente(idCliente)
-    await ActivacionEventoService.deleteEventos(idCliente)
+    await EventosEstadoActivacionService.deleteEventos(idCliente)
   },
   reiniciar: async idCliente => {
     log.fatal('iniciando-reiniciarCliente')
     await ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY)
-    await ActivacionEventoService.deleteEventos(idCliente)
+    await EventosEstadoActivacionService.deleteEventos(idCliente)
     await EstadoActivacionService.setEstadoActivacion(idCliente, 2, '0000')
     log.fatal('terminando-reiniciarCliente')
   },
   actualizar: async idCliente => ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY),
   bloquearConEnvios: async idCliente => {
-    await ActivacionEventoService.deleteEventos(idCliente)
+    await EventosEstadoActivacionService.deleteEventos(idCliente)
     for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
       await EstadoActivacionService.setEstadoActivacion(idCliente, 3, '0000')
     }
   },
   bloquearSinEventos: async idCliente => {
-    await ActivacionEventoService.deleteEventos(idCliente)
+    await EventosEstadoActivacionService.deleteEventos(idCliente)
     await EstadoActivacionService.setEstadoActivacion(idCliente, 5)
   }
 }
@@ -85,5 +85,5 @@ export const actionCliente = {
 export const bloquearClienteSinEventos = async tag => {
   log.debug(tag)
   await EstadoActivacionService.setEstadoActivacion(TEST.CLIENTE, 5)
-  await ActivacionEventoService.deleteEventos(TEST.CLIENTE)
+  await EventosEstadoActivacionService.deleteEventos(TEST.CLIENTE)
 }
