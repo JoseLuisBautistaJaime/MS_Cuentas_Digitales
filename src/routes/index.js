@@ -10,7 +10,7 @@ router.route('/cliente').post(ClienteController.setCliente)
 router.route('/cliente').get(ClienteController.getCliente)
 router.route('/cliente').delete(ClienteController.deleteCliente)
 
-router.route('/obtenerEstatusActivacion').get(ClienteActivacionController.obtenerEstatusActivacion)
+router.route('/cliente/estatusActivacion').get(ClienteActivacionController.getEstatusActivacion)
 
 router.route('/establecerEstatusActivacion').post(ClienteActivacionController.establecerEstatusActivacion)
 

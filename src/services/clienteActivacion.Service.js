@@ -25,16 +25,16 @@ async function establecerEstatusActivacion(idCliente, estatusActivacion, codigoO
   await ActivacionDAO.establecerEstatusActivacion(idCliente, activacion)
   log.info('SERV: Terminando establecerEstatusActivacion')
   // eslint-disable-next-line no-use-before-define
-  return obtenerEstatusActivacion(idCliente)
+  return getEstatusActivacion(idCliente)
 }
 
 const unixTimeStamp = (fecha, addSeconds) => toInteger(fecha.getTime() / 1000, 10) + toInteger(addSeconds)
 
 // ** Inicio: getEstatusActivacion
-async function obtenerEstatusActivacion(idCliente) {
-  log.info('SERV: Iniciando obtenerEstatusActivacion')
+async function getEstatusActivacion(idCliente) {
+  log.info('SERV: Iniciando getEstatusActivacion')
 
-  const activacion = await ActivacionDAO.obtenerEstatusActivacion(idCliente)
+  const activacion = await ActivacionDAO.getEstatusActivacion(idCliente)
 
   // evaluar desbloqueo de cuenta, en caso de estar bloqueada
   log.debug(`estatusActivacion ${activacion.estatusActivacion}`)
@@ -51,12 +51,12 @@ async function obtenerEstatusActivacion(idCliente) {
     toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
   }
   if (toReturn.estatusActivacion === 3) toReturn.codigoOtp = activacion.codigoOtp
-  log.info(`SERV: Terminando obtenerEstatusActivacion ${toReturn}`)
+  log.info(`SERV: Terminando getEstatusActivacion ${toReturn}`)
   return toReturn
 }
 
 export const ClienteActivacionService = {
-  obtenerEstatusActivacion,
+  getEstatusActivacion,
   establecerEstatusActivacion
 }
 

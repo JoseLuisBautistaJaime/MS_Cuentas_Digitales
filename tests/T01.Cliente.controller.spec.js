@@ -3,7 +3,7 @@
 import { actionCliente, TEST, MongoDB, CONTEXT } from './commons/test-nmp'
 import { SuiteTEST, IT } from './commons/test'
 
-SuiteTEST('T00','Cliente', { suiteTestIgnore: false } ,{ // callbakcs
+SuiteTEST('T00','Cliente', { suiteTestIgnore: true } ,{ // callbakcs
     before: async () => { 
       await MongoDB.connect()
       await actionCliente.actualizar(TEST.CLIENTE)

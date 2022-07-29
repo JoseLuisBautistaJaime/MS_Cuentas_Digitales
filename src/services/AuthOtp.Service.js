@@ -35,7 +35,7 @@ const evaluarBloqueo = async idCliente => {
 
   // evaluacion del estatus actual y cambiar el estatus a bloquado cuando no lo este
   log.debugJSON('AuthOtp.evaluarBloqueo: idCliente', idCliente)
-  let activacion = await ClienteActivacionService.obtenerEstatusActivacion(idCliente, false)
+  let activacion = await ClienteActivacionService.getEstatusActivacion(idCliente, false)
   log.debugJSON('AuthOtp.evaluarBloqueo: activacion', activacion)
 
   // evalua el desbloqueo de cuenta..
@@ -112,7 +112,7 @@ const verificarOtp = async (req, bodySchemaEnviarOtp) => {
 
   // verificacion si existe el estatus apropiado para evaluar el codigo otp.
   const toReturn = { code: 201, esValidoOtp: false, estaExpiradoOtp: false }
-  const estatus = await ClienteActivacionService.obtenerEstatusActivacion(idCliente)
+  const estatus = await ClienteActivacionService.getEstatusActivacion(idCliente)
 
   if (estatus.estatusActivacion !== 3) {
     ActivacionEventoDAO.agregarEventoError(idCliente, 'No existe o no se ha enviado un Codigo OTP al cliente')

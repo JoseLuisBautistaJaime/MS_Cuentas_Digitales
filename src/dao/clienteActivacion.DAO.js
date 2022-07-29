@@ -68,7 +68,7 @@ async function establecerEstatusActivacion(idCliente, activacion) {
  * @param {*} idCliente El Id del Cliente de cuentas digitales.
  * @returns Retorna el objeto EsatusActivacion.
  */
-async function obtenerEstatusActivacion(idCliente) {
+async function getEstatusActivacion(idCliente) {
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   let activacion = {}
   if (cliente === null || cliente === undefined) {
@@ -83,7 +83,7 @@ async function obtenerEstatusActivacion(idCliente) {
 
 export const ActivacionDAO = {
   establecerEstatusActivacion,
-  obtenerEstatusActivacion,
+  getEstatusActivacion,
   convertirEstatusActivacionNombre
 }
 
