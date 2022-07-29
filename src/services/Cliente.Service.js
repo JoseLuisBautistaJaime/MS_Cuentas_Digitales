@@ -35,10 +35,9 @@ const obtenerCliente = async idCliente => {
  * @param {*} body contiene el 'idCliente' y otra serie de parametros de datos personales dentro del body.
  * @returns Status 200, si la actualizacion se llevo a cabo con exito.
  */
-const actualizarCliente = async body => {
-  log.info('SERV: Iniciando actualizarCliente')
+const setCliente = async (idCliente, body) => {
+  log.info(`SERV: Iniciando setCliente ${idCliente}`)
   let resultSave
-  const { idCliente } = body
   const usuarioExist = await ClienteDAO.countIdCliente(idCliente)
   log.debug(`usuarioExist ${usuarioExist}`)
 
@@ -55,9 +54,10 @@ const actualizarCliente = async body => {
     }
     resultSave = await ClienteDAO.save(clienteToAdd)
     await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2)
-    log.debug(`actualizarCliente-Cliente guardado ${idCliente}`)
+    log.debug(`setCliente-Cliente guardado ${idCliente}`)
   } else {
     const clienteUpdate = {
+      idCliente,
       idDevice: body.idDevice,
       tarjetaMonte: body.tarjetaMonte,
       nombreCliente: body.nombreCliente,
@@ -69,12 +69,12 @@ const actualizarCliente = async body => {
     resultSave = await ClienteDAO.findOneAndUpdate(idCliente, clienteUpdate)
   }
   log.debug(`resultSave ${resultSave}`)
-  log.info('SERV: Terminando actualizarCliente')
+  log.info('SERV: Terminando setCliente')
   return resultSave
 }
 
 export const ClienteService = {
-  actualizarCliente,
+  setCliente,
   obtenerCliente,
   removerCliente
 }

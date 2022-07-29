@@ -13,15 +13,16 @@ SuiteTEST('T00','Cliente', { suiteTestIgnore: false } ,{ // callbakcs
     after: async () => { 
       MongoDB.disconnect()}, 
     tests: () => {
-      // Metodo POST=> actualizarCliente
-      IT.Post('T00A.0','actualizarCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
+      // Metodo POST=> setCliente
+      IT.Post('T00A.0','setCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
-          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/actualizarCliente`,
+          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente`,
+          query: { idCliente: TEST.CLIENTE },
           body: TEST.CLIENTE_BODY,
           shoulHaveStatus: 201}})
-      IT.Post('T00A.1','actualizarCliente, cuando el cliente NO EXISTE.')
-      IT.Post('T00A.2','actualizarCliente, cuando el cliente SI EXISTE.')
+      IT.Post('T00A.1','setCliente, cuando el cliente NO EXISTE.')
+      IT.Post('T00A.2','setCliente, cuando el cliente SI EXISTE.')
       
       // Metodo GET => obtenerCliente
       IT.Get('T0B.0','obtenerCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],

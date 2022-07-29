@@ -3,7 +3,6 @@ import { ClienteService } from '../services/Cliente.Service'
 import { invokeController } from '../commons/invokeController'
 
 const validationBodySchemaCliente = {properties: { 
-    idCliente: { type: 'string', required: true },
     idDevice: { type: 'string',  required: true },
     tarjetaMonte: { type: 'string', required: true },
     nombreCliente: { type: 'string', required: true },
@@ -12,14 +11,14 @@ const validationBodySchemaCliente = {properties: {
     celularCliente : { type: 'string', required: false },
     correoCliente : { type: 'string', required: false }
   }, additionalProperties : false}
-
+  
 const validationQuerySchemaCliente = { properties: { 
     idCliente: { type: 'string', required: true },
   }, additionalProperties : false}
 
-const actualizarCliente = async (req, res) => invokeController('actualizarCliente', 201, req, res, 
-  undefined, validationBodySchemaCliente, 
-  async reqX => ClienteService.actualizarCliente(reqX.body))
+const setCliente = async (req, res) => invokeController('setCliente', 201, req, res, 
+validationQuerySchemaCliente, validationBodySchemaCliente, 
+  async reqX => ClienteService.setCliente(reqX.query.idCliente,reqX.body))
 
 const obtenerCliente = async (req, res) => invokeController('obtenerCliente', 200, req, res, 
   validationQuerySchemaCliente, undefined, 
@@ -32,7 +31,7 @@ const removerCliente = async (req, res) => invokeController('removerCliente', 20
 export const ClienteController = {
   obtenerCliente,
   removerCliente,
-  actualizarCliente
+  setCliente
 }
 export default ClienteController
 

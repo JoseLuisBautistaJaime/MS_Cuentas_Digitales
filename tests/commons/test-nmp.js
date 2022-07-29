@@ -39,7 +39,6 @@ export const TEST = {
   CLIENTE_PARA_REMOVER: '9995',
   CLIENTE_EXTRA: '8888',
   CLIENTE_BODY: {
-    idCliente: TEST_CLIENTE,
     idDevice: '74312734d5403d54',
     tarjetaMonte: '11111',
     nombreCliente: 'ricoff',
@@ -65,18 +64,12 @@ export const actionCliente = {
   },
   reiniciar: async idCliente => {
     log.fatal('iniciando-reiniciarCliente')
-    const body = TEST.CLIENTE_BODY
-    body.idCliente = idCliente
-    await ClienteService.actualizarCliente(body)
+    await ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY)
     await ActivacionEventoService.removerEventos(idCliente)
     await ClienteActivacionService.establecerEstatusActivacion(idCliente, 2, '0000')
     log.fatal('terminando-reiniciarCliente')
   },
-  actualizar: async idCliente => {
-    const body = TEST.CLIENTE_BODY
-    body.idCliente = idCliente
-    await ClienteService.actualizarCliente(body)
-  },
+  actualizar: async idCliente => ClienteService.setCliente(idCliente, TEST.CLIENTE_BODY),
   bloquearConEnvios: async idCliente => {
     await ActivacionEventoService.removerEventos(idCliente)
     for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
