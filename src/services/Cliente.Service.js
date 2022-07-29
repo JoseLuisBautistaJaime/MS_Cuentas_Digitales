@@ -8,12 +8,12 @@ import { NotFoundCliente } from '../commons/exceptions'
  * @param {*} idCliente El número del idCliente.
  * @returns Retorna el contenido de documento cliente.
  */
-const removerCliente = async idCliente => {
-  log.info('SERV: Iniciando removerCliente')
+const deleteCliente = async idCliente => {
+  log.info('SERV: Iniciando deleteCliente')
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
   await ClienteDAO.remover(idCliente)
-  log.info(`SERV: Terminando removerCliente`)
+  log.info(`SERV: Terminando deleteCliente`)
   return cliente
 }
 
@@ -76,5 +76,5 @@ const setCliente = async (idCliente, body) => {
 export const ClienteService = {
   setCliente,
   getCliente,
-  removerCliente
+  deleteCliente
 }

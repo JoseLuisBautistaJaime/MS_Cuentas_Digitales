@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.route('/cliente').post(ClienteController.setCliente)
 router.route('/cliente').get(ClienteController.getCliente)
-router.route('/removerCliente').post(ClienteController.removerCliente)
+router.route('/cliente').delete(ClienteController.deleteCliente)
 
 router.route('/obtenerEstatusActivacion').get(ClienteActivacionController.obtenerEstatusActivacion)
 

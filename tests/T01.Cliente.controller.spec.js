@@ -37,12 +37,12 @@ SuiteTEST('T00','Cliente', { suiteTestIgnore: false } ,{ // callbakcs
       
 
       // Metodo POST => remover cliente
-      IT.Post('T00C.0','removerCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
+      IT.Delete('T00C.0','deleteCliente, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
-          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/removerCliente`,
+          url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente`,
           query: { idCliente: TEST.CLIENTE_EXTRA }
         }})
-      IT.Post('T00C.1','removerCliente, cuando el cliente SI EXISTE.')
-      IT.Post('T00C.2','removerCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404 })
+      IT.Delete('T00C.1','deleteCliente, cuando el cliente SI EXISTE.')
+      IT.Delete('T00C.2','deleteCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404 })
 }})

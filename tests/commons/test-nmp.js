@@ -59,7 +59,7 @@ export const TEST = {
 // Acciones de CLIENTE
 export const actionCliente = {
   eliminar: async idCliente => {
-    await ClienteService.removerCliente(idCliente)
+    await ClienteService.deleteCliente(idCliente)
     await ActivacionEventoService.removerEventos(idCliente)
   },
   reiniciar: async idCliente => {
