@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import https from 'https'
 import LOG from './LOG'
-import { InternalServerException, CommonException, createMessageError } from './exceptions'
+// import { InternalServerException, CommonException, createMessageError } from './exceptions'
 
 const agent = new https.Agent({ rejectUnauthorized: false })
 
@@ -52,9 +52,9 @@ const sendRequest = async ({ url, method, body = null, headers, isHttps = true }
     return responseBody
   } catch (err) {
     LOG.error(`Error: ${JSON.stringify(err)}`)
-    if (err instanceof CommonException) throw err
+    // if (err instanceof CommonException) throw err
 
-    throw new InternalServerException(createMessageError('NMP.CUENTASDIGITALES-500', { text: err.message }))
+    // throw new InternalServerException(createMessageError('NMP.CUENTASDIGITALES-500', { text: err.message }))
   }
 }
 

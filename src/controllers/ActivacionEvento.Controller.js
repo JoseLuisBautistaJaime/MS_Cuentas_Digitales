@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { activacionEventoService } from '../services/activacionEvento.Service'
+import { ActivacionEventoService } from '../services/ActivacionEvento.Service'
 import { invokeController } from '../commons/pi8-controller'
 
 const validationQuerySchemaCliente = { properties: { 
@@ -12,15 +12,15 @@ const validationBodySchemaStatusActivacion = { properties: {
 
 const listarEventos = async (req, res) =>
   invokeController('listarEventos', 200, req, res, true, validationQuerySchemaCliente, undefined, async reqX =>
-    activacionEventoService.listarEventos(reqX.query.idCliente))
+  ActivacionEventoService.listarEventos(reqX.query.idCliente))
 
 const removerEventos = async (req, res) =>
   invokeController('removerEventos', 201, req, res, true, validationQuerySchemaCliente, validationBodySchemaStatusActivacion, async reqX =>
-    activacionEventoService.removerEventos(reqX.query.idCliente,reqX.body.estatusActivacion))  
+  ActivacionEventoService.removerEventos(reqX.query.idCliente,reqX.body.estatusActivacion))  
 
-export const activacionEventoController = {
+export const ActivacionEventoController = {
   listarEventos,
   removerEventos
 }
 
-export default activacionEventoController
+export default ActivacionEventoController

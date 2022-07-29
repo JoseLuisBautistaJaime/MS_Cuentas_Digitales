@@ -4,9 +4,6 @@ import nock from 'nock'
 import { TEST, MongoDB, CONTEXT, actionCliente } from './commons/pi8-test-nmp'
 import { SuiteTEST, IT } from './commons/pi8-test'
 
-// router.route('/activacionEvento/eventos').get(ActivacionEventoController.listarEventos)
-// router.route('/activacionEvento/eventos').delete(ActivacionEventoController.removerEventos)
-
 SuiteTEST('T11','activacionEvento/eventos', { suiteTestIgnore: false } ,{ // callbakcs
     before: async () => { 
       await MongoDB.connect()

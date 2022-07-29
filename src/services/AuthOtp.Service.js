@@ -2,7 +2,7 @@ import md5 from 'md5'
 import { totp } from 'otplib'
 import { ComunicacionesService } from './Comunicaciones.Service'
 import { clienteActivacionService } from './clienteActivacion.Service'
-import { activacionEventoService } from './activacionEvento.Service'
+import { ActivacionEventoService } from './ActivacionEvento.Service'
 import LOG from '../commons/LOG'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { activacionEventoDAO } from '../dao/activacionEvento.DAO'
@@ -29,8 +29,8 @@ const evaluarBloqueo = async idCliente => {
   LOG.info('SERV: Iniciando AuthOtp.evaluarBloqueo')
 
   // evaluando acciones
-  const totalEventos6 = await activacionEventoService.listarEventos(idCliente, 6, true)
-  const totalEventos3 = await activacionEventoService.listarEventos(idCliente, 3, true)
+  const totalEventos6 = await ActivacionEventoService.listarEventos(idCliente, 6, true)
+  const totalEventos3 = await ActivacionEventoService.listarEventos(idCliente, 3, true)
   const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - totalEventos6 - totalEventos3
   const bloquearCliente = reintentosDisponibles <= 0
 
@@ -86,7 +86,7 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
 
   await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, codigoOtp)
   LOG.info('SERV: Terminando enviarOtp method')
-  const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await activacionEventoService.listarEventos(idCliente, 3, true))
+  const reintentosDisponibles = ACTIVACION_BLOQUEO_REINTENTOS - (await ActivacionEventoService.listarEventos(idCliente, 3, true))
   return { code: 200, codigoOtp, expiraCodigoOtp, expiraCodigoOtpISO, reintentosDisponibles }
 }
 

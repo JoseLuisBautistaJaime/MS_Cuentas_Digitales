@@ -23,13 +23,6 @@ const Iniciando = async (req, tagName, evalOAG, showBody, validationQuerySchema,
 
   validateQuery(req.query, validationQuerySchema)
   validateBody(req.body, validationBodySchema)
-
-  // LOG.info(`Iniciando-isTraceEnabled: ${LOG.isTraceEnabled}`)
-  // LOG.info(`Iniciando-validationQuerySchema: ${JSON.stringify(validationQuerySchema)}`)
-  // LOG.info(`Iniciando-validationBodySchema: ${JSON.stringify(validationBodySchema)}`)
-  // if (validationQuerySchema !== null && validationQuerySchema !== undefined) validateQuery(req.query, validationQuerySchema)
-  // validateQuery(req.query, validationQuerySchema)
-  // if (validationBodySchema !== null && validationBodySchema !== undefined) validateBody(req.body, validationBodySchema)
 }
 
 const Terminando = async (nameMethod, responseStatusCode, res, toReturn) => {
@@ -46,9 +39,6 @@ const Terminando = async (nameMethod, responseStatusCode, res, toReturn) => {
 }
 
 const CatchError = async (nameMethod, res, err) => {
-  // LOG.reMark(`-- Err: ${JSON.stringify(err)}`)
-  // const statusCode = UCommon.propGetDelete(err, 'statusCode', 500)
-  // const exceptionCode = UCommon.propGetDelete(err, 'exceptionCode', 50000)
   const exceptionCode = err.exceptionCode
   const statusCode = err.statusCode
   const colorText = statusCode >= 500 ? '\x1b[31m' : '\x1b[33m'

@@ -4,7 +4,7 @@ import MongodbMemoryServer from 'mongodb-memory-server'
 import { createConnection } from '../../src/commons/connection'
 import { ClienteService } from '../../src/services/Cliente.Service'
 import { LOG } from '../../src/commons'
-import { activacionEventoService } from '../../src/services/activacionEvento.Service'
+import { ActivacionEventoService } from '../../src/services/ActivacionEvento.Service'
 import { clienteActivacionService } from '../../src/services/clienteActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
 
@@ -61,17 +61,14 @@ export const TEST = {
 export const actionCliente = {
   eliminar: async idCliente => {
     await ClienteService.removerCliente(idCliente)
-    await activacionEventoService.removerEventos(idCliente)
+    await ActivacionEventoService.removerEventos(idCliente)
   },
   reiniciar: async idCliente => {
     LOG.fatal('iniciando-reiniciarCliente')
-    // await actionCliente.eliminar(idCliente)
-    // await ClienteService.removerCliente(TEST.idCliente)
-    // await ActivacionEventoService.removerEventos(idCliente)
     const body = TEST.CLIENTE_BODY
     body.idCliente = idCliente
     await ClienteService.actualizarCliente(body)
-    await activacionEventoService.removerEventos(idCliente)
+    await ActivacionEventoService.removerEventos(idCliente)
     await clienteActivacionService.establecerEstatusActivacion(idCliente, 2, '0000')
     LOG.fatal('terminando-reiniciarCliente')
   },
@@ -81,13 +78,13 @@ export const actionCliente = {
     await ClienteService.actualizarCliente(body)
   },
   bloquearConEnvios: async idCliente => {
-    await activacionEventoService.removerEventos(idCliente)
+    await ActivacionEventoService.removerEventos(idCliente)
     for (let i = 0; i < ACTIVACION_BLOQUEO_REINTENTOS; i++) {
       await clienteActivacionService.establecerEstatusActivacion(idCliente, 3, '0000')
     }
   },
   bloquearSinEventos: async idCliente => {
-    await activacionEventoService.removerEventos(idCliente)
+    await ActivacionEventoService.removerEventos(idCliente)
     await clienteActivacionService.establecerEstatusActivacion(idCliente, 5)
   }
 }
@@ -95,7 +92,7 @@ export const actionCliente = {
 export const bloquearClienteSinEventos = async tag => {
   LOG.debug(tag)
   await clienteActivacionService.establecerEstatusActivacion(TEST.CLIENTE, 5)
-  await activacionEventoService.removerEventos(TEST.CLIENTE)
+  await ActivacionEventoService.removerEventos(TEST.CLIENTE)
 }
 
 // export const actionsCliente = {

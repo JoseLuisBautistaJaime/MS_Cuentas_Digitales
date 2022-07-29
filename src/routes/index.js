@@ -2,7 +2,7 @@ import express from 'express'
 import { ClienteController } from '../controllers/Cliente.Controller'
 import { AuthOtpController } from '../controllers/AuthOtp.Controller'
 import { clienteActivacionController } from '../controllers/clienteActivacion.Controller'
-import { activacionEventoController } from '../controllers/activacionEvento.Controller'
+import { ActivacionEventoController } from '../controllers/ActivacionEvento.Controller'
 
 const router = express.Router()
 
@@ -19,7 +19,7 @@ router.route('/establecerEstatusActivacion').post(clienteActivacionController.es
 router.route('/enviarOtp').post(AuthOtpController.enviarOtp)
 router.route('/verificarOtp').post(AuthOtpController.verificarOtp)
 
-router.route('/activacionEvento/eventos').get(activacionEventoController.listarEventos)
-router.route('/activacionEvento/eventos').delete(activacionEventoController.removerEventos)
+router.route('/activacionEvento/eventos').get(ActivacionEventoController.listarEventos)
+router.route('/activacionEvento/eventos').delete(ActivacionEventoController.removerEventos)
 
 export default router
