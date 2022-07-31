@@ -6,7 +6,7 @@ import { EventosEstadoActivacionService } from './EventosEstadoActivacion.Servic
 import { log } from '../commons/log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { EventosEstadoActivacionDAO } from '../dao/EventosEstadoActivacion.DAO'
-import { ACTIVACION_BLOQUEO_REINTENTOS } from '../commons/constants'
+import { ACTIVACION_BLOQUEO_REINTENTOS } from '../constants/constants'
 import { NotFoundCliente, CuentaBloqueadaException, VerificarOtpError } from '../commons/exceptions'
 
 // Cambiar a variables de ambiente

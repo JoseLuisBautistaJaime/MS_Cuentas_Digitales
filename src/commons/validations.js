@@ -1,5 +1,5 @@
 import { Validator } from 'jsonschema'
-import { HEADER_AUTHORIZATION, HEADER_ID_CONSUMIDOR, HEADER_ID_DESTINO, HEADER_OAUTH, HEADER_USUARIO } from './constants'
+import { HEADER_AUTHORIZATION, HEADER_ID_CONSUMIDOR, HEADER_ID_DESTINO, HEADER_OAUTH, HEADER_USUARIO } from '../constants/constants'
 import { ValidationHeaderException, ValidationQueryException, ValidationBodyException } from './exceptions'
 
 const NO_TIPO = 'is not of a type(s)'

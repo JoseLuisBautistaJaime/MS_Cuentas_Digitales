@@ -1,3 +1,3 @@
 export * from './connection'
-export * from './constants'
+export * from '../constants/constants'
 export * from './messages'

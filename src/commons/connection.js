@@ -4,7 +4,7 @@ import cfenv from 'cfenv'
 import mongoose from 'mongoose'
 import { toInteger } from 'lodash'
 import { log } from './log'
-import { ACTIVACION_EVENTOS_TIMETOLIVE } from './constants'
+import { ACTIVACION_EVENTOS_TIMETOLIVE } from '../constants/constants'
 
 const appEnv = cfenv.getAppEnv()
 const { services } = appEnv

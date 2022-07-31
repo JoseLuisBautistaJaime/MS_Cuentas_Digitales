@@ -13,7 +13,7 @@ SuiteTEST('T11','/cliente/estadoActivacion/eventos', { suiteTestIgnore: false } 
       MongoDB.disconnect()}, 
     tests: () => {
       // Metodo POST=> activacionEvento/eventos
-      IT.Get('T1A.0','GET: /cliente/estadoActivacion/eventos, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
+      IT.Get('T11A.0','GET: /cliente/estadoActivacion/eventos, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
           url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/estadoActivacion/eventos`,
@@ -23,14 +23,14 @@ SuiteTEST('T11','/cliente/estadoActivacion/eventos', { suiteTestIgnore: false } 
       IT.Get('T11A.2','GET: /cliente/estadoActivacion/eventos, cuando el cliente NO EXISTE.', { shouldHaveStatus:404, query: { idCliente: TEST.CLIENTE_NO_EXISTE } })
 
       // Metodo POST=> setEstadoActivacion
-      IT.Delete('T3B.0','DELETE: /cliente/estadoActivacion/eventos, sin OAG.', { testIgnore: false, shouldHaveStatus: 400, listHeaders: [],
+      IT.Delete('T11B.0','DELETE: /cliente/estadoActivacion/eventos, sin OAG.', { shouldHaveStatus: 400, listHeaders: [],
         defaultOptions: {
           listHeaders: TEST.LISTHEADER_OAG,
           url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/estadoActivacion/eventos`,
           query: { idCliente: TEST.CLIENTE},
           body: { estadoActivacion: 2},
           shouldHaveStatus: 201}})
-      IT.Delete('T11B.2','DELETE: /cliente/estadoActivacion/eventos, cuando el cliente SI EXISTE.')
-      IT.Delete('T3B.1','DELETE: /cliente/estadoActivacion/eventos, cuando el cliente NO EXISTE.', { query: {idCliente: TEST.CLIENTE_NO_EXISTE}})
+      IT.Delete('T11B.1','DELETE: /cliente/estadoActivacion/eventos, cuando el cliente SI EXISTE.')
+      IT.Delete('T11B.2','DELETE: /cliente/estadoActivacion/eventos, cuando el cliente NO EXISTE.', { query: {idCliente: TEST.CLIENTE_NO_EXISTE}})
 }})
 

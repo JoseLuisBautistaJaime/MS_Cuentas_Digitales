@@ -6,7 +6,7 @@ import { ClienteService } from '../../src/services/Cliente.Service'
 import { log } from '../../src/commons/log'
 import { EventosEstadoActivacionService } from '../../src/services/EventosEstadoActivacion.Service'
 import { EstadoActivacionService } from '../../src/services/EstadoActivacion.Service'
-import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS } from '../../src/commons/constants'
+import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS, URL_API_COMUNICACIONES } from '../../src/constants/constants'
 
 // SECCION 1. CONSTAONTES DE CONTEXTO
 export const CONTEXT = {
@@ -34,6 +34,7 @@ export const MongoDB = {
 // SECCION 2. CONSTANTES PARA TEST
 export const TEST_CLIENTE = '9991'
 export const TEST = {
+  URL_API_COMUNICACIONES,
   CLIENTE: TEST_CLIENTE,
   CLIENTE_NO_EXISTE: '9990',
   CLIENTE_PARA_REMOVER: '9995',

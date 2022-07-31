@@ -9,7 +9,7 @@ import {
   TEMPLATE_API_COMUNICACIONES_EMAIL_ACTIVACION,
   TEMPLATE_API_COMUNICACIONES_SMS,
   URL_API_COMUNICACIONES
-} from '../commons/constants'
+} from '../constants/constants'
 import { HttpClientService } from '../commons/http-client'
 import { log } from '../commons/log'
 import { InternalServerError } from '../commons/exceptions'
