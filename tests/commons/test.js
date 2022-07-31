@@ -14,34 +14,10 @@ import { filterbySuiteTest, filterbyTest } from "./test-constants"
 
 /** SECCION DE FUNCIONES DE TESTING */
 chai.use(chaiHttp).use(chaiAsPromised).should()
-let DefaultOptions = {}
-let DefaultSubs = {}
-
-export const SuiteTEST = async (key, title, options, callbacks) => {
-  // DefaultOptions = typeof defaultOptions === 'undefined' ? {} : defaultOptions
-    if (options !== undefined && options.suiteTestIgnore === true) return
-    if (filterbySuiteTest !== undefined && filterbySuiteTest !=='') {
-      const ipos = String(key).indexOf(filterbySuiteTest)
-      if (ipos === -1) return
-    }
-
-      
-      describe(title, () => {
-        // eslint-disable-next-line mocha/no-hooks-for-single-case
-        before(async () => {
-          if(typeof callbacks !=='undefined' && typeof callbacks.before !== 'undefined')  {
-            await callbacks.before()
-          }})
-        // eslint-disable-next-line mocha/no-hooks-for-single-case
-        after(async () => {
-          if(typeof callbacks !=='undefined' && typeof callbacks.after !== 'undefined')  {
-            await callbacks.after()
-          }
-        })
-        callbacks.tests()
-      })
-  
-}
+let DefaultOption = {}
+let DefaultSub = {}
+let ListDefaultOption = {}
+let ListDefaultSub = {}
 
 export const XPos = {
   readFirst: (list, sep) => {
@@ -78,42 +54,79 @@ const runSubsFromList = async (listSubs, filterSub) => {
     if (itemSub === '') return
       const canRun = (String(itemSub).indexOf(filterSub) !== -1)
       if (canRun) {
-        log.reMark(`--runSub ${filterSub}`, DefaultSubs[itemSub].title)
-        await DefaultSubs[itemSub].sub()
+        log.reMark(`--runSub ${filterSub}`, DefaultSub[itemSub].title)
+        await DefaultSub[itemSub].sub()
       }
   }
 }
+
+
+export const SuiteTEST = async (key, title, configs, callbacks) => {
+  // DefaultOptions = typeof defaultOptions === 'undefined' ? {} : defaultOptions
+    if (configs !== undefined && configs.listDefaultOption !== undefined) ListDefaultOption[key] = configs.listDefaultOption
+    if (configs !== undefined && configs.listDefaultSub !== undefined) ListDefaultSub[key] = configs.listDefaultSub
+    log.reFatal(`PASO#1 SuiteTest: ${key}`)
+    log.reFatal(`PASO#1 ListDefaultSub: ${JSON.stringify(ListDefaultSub)}`)
+    log.reFatal(`PASO#1 ListDefaultOption: ${JSON.stringify(ListDefaultOption)}`)
+    if (filterbySuiteTest !== undefined && filterbySuiteTest !=='') {
+      const ipos = String(key).indexOf(filterbySuiteTest)
+      if (ipos === -1) return
+    }
+
+      
+      describe(title, () => {
+        // eslint-disable-next-line mocha/no-hooks-for-single-case
+        before(async () => {
+          if(typeof callbacks !=='undefined' && typeof callbacks.before !== 'undefined')  {
+            await callbacks.before()
+          }})
+        // eslint-disable-next-line mocha/no-hooks-for-single-case
+        after(async () => {
+          if(typeof callbacks !=='undefined' && typeof callbacks.after !== 'undefined')  {
+            await callbacks.after()
+          }
+        })
+        callbacks.tests()
+      })
+  
+}
+
+
 
 
 export const itREQUEST = (method, testKey, testTitle, options, callbacks) => {
   const testDesc = `${testKey}-${testTitle}`
   // LECTURA DE LAS OPCIONES
   options = typeof options === 'undefined' ? {} : options
-  if (options !== undefined && options.testIgnore) {
-     log.reWarn(`Test Ignored: ${testDesc}`)  
-     return
-  }
+  
 
   if (filterbyTest !== undefined && filterbyTest !== '') {
     const existTest = XPos.existItem(filterbyTest,testKey) 
     if (!existTest) return
   }
   
+  
   describe(testKey, () => {
     before(async ()=> {
-        if (options.defaultOptions !== undefined) DefaultOptions = options.defaultOptions
-        if (options.defaultSubs !== undefined) DefaultSubs = options.defaultSubs
-        if (DefaultOptions.testIgnore !== undefined && options.testIgnore === undefined) options.testIgnore = DefaultOptions.testIgnore
-        if (DefaultOptions.url !== undefined && options.url === undefined) options.url = DefaultOptions.url
-        if (DefaultOptions.query !== undefined && options.query === undefined) options.query = DefaultOptions.query
-        if (DefaultOptions.body !== undefined && options.body === undefined) options.body = DefaultOptions.body
-        if (DefaultOptions.listHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = DefaultOptions.listHeaders
-        if (DefaultOptions.shouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = DefaultOptions.shouldHaveStatus
+        const keySuite = String(testKey).substring(0,3)
+        
+        if (options !== undefined && options.useOption) DefaultOption = ListDefaultOption[keySuite][options.useOption]
+        if (options !== undefined && options.useOption) DefaultSub = ListDefaultSub[keySuite]
+
+        
+        log.reMark('Iniciando-IT-BEFORE',DefaultOption)
+
+        if (options.defaultOption !== undefined) DefaultOption = options.defaultOption
+        if (DefaultOption.url !== undefined && options.url === undefined) options.url = DefaultOption.url
+        if (DefaultOption.query !== undefined && options.query === undefined) options.query = DefaultOption.query
+        if (DefaultOption.body !== undefined && options.body === undefined) options.body = DefaultOption.body
+        if (DefaultOption.listHeaders !== undefined && options.listHeaders === undefined) options.listHeaders = DefaultOption.listHeaders
+        if (DefaultOption.shouldHaveStatus !== undefined && options.shouldHaveStatus === undefined) options.shouldHaveStatus = DefaultOption.shouldHaveStatus
       const existRunSubs = (options !==undefined && options.runSubs !== undefined)
-      const existCallBackBefpre = (callbacks !==undefined && callbacks.before !== undefined)
-      if (existRunSubs || existCallBackBefpre) {
+      const existCallbacks = (callbacks !==undefined && callbacks.before !== undefined)
+      if (existRunSubs || existCallbacks) {
         log.reMark('Iniciando-IT-BEFORE')
-        if (existCallBackBefpre) await callbacks.before()
+        if (existCallbacks) await callbacks.before()
         if (existRunSubs) await runSubsFromList(options.runSubs,'before')
         log.reMark('Terminando-IT-BEFORE')
       }

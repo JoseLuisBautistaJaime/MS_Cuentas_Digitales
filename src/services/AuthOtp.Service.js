@@ -56,9 +56,9 @@ const evaluarBloqueo = async idCliente => {
  * @param {*} res response del Controller (requerido para el proceso de comunicaciones)
  * @param {*} idCliente el número idCliente.
  */
-const enviarOtp = async (req, bodySchemaEnviarOtp) => {
+const enviarOtp = async (idCliente, bodySchemaEnviarOtp, req) => {
   log.info(`SERV: Iniciando enviarOtp method. idCliente.`)
-  const { idCliente, modoEnvio } = bodySchemaEnviarOtp
+  const { modoEnvio } = bodySchemaEnviarOtp
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
 
@@ -95,9 +95,9 @@ const enviarOtp = async (req, bodySchemaEnviarOtp) => {
  * @param {*} res response del Controller (requerido para el proceso de comunicaciones)
  * @param {*} idCliente el número idCliente.
  */
-const verificarOtp = async (req, bodySchemaEnviarOtp) => {
+const verificarOtp = async (idCliente, bodySchemaEnviarOtp, req) => {
   log.info('SERV: Iniciando verificarOtp method')
-  const { idCliente, codigoOtp } = bodySchemaEnviarOtp
+  const { codigoOtp } = bodySchemaEnviarOtp
   let { enviarEmail } = bodySchemaEnviarOtp
   if (enviarEmail === undefined) enviarEmail = true
 
