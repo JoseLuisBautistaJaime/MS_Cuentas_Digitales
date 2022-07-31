@@ -5,9 +5,9 @@ import { SuiteTEST, IT } from './commons/test'
 
 SuiteTEST('T02','/cliente/estadoActivacion', { 
     listDefaultOption: {
-      opt10: { shouldHaveStatus: 200, url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/estadoActivacion`,
+    opt10: { shouldHaveStatus: 200, url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/estadoActivacion`,
       listHeaders: TEST.LISTHEADER_OAG, query: { idCliente: TEST.CLIENTE }},
-      opt20: { shouldHaveStatus: 201, url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/estadoActivacion`,
+    opt20: { shouldHaveStatus: 201, url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente/estadoActivacion`,
       listHeaders: TEST.LISTHEADER_OAG, query: { idCliente: TEST.CLIENTE }, body:{ estadoActivacion: 2}},
     },
     listDefaultSub: {
@@ -18,9 +18,7 @@ SuiteTEST('T02','/cliente/estadoActivacion', {
       await MongoDB.connect()
       await actionCliente.reiniciar(TEST.CLIENTE)
     },
-
-    after: async () => { 
-      MongoDB.disconnect()}, 
+    after: async () => MongoDB.disconnect(), 
     tests: () => {
       // Metodo GET=> getEstadoActivacion
       IT.Get('T02A.0','GET: /cliente/estadoActivacion, sin OAG.', { useOption:'opt10', shouldHaveStatus: 400, listHeaders:[]})
@@ -32,3 +30,8 @@ SuiteTEST('T02','/cliente/estadoActivacion', {
       IT.Post('T02B.1','POST: /cliente/estadoActivacion, cuando el cliente SI EXISTE.')
       IT.Post('T02B.2','POST: /cliente/estadoActivacion, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404, query: { idCliente: TEST.CLIENTE_NO_EXISTE }})
 }})
+
+
+// 1. REDUCIR LA RUTA DEL URL
+// 2. ESTABLECER COMMONHEADERS..
+// 3. UNIR OPTXX CON REQUEST.. siempre validad.

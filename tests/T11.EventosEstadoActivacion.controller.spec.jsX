@@ -20,8 +20,7 @@ SuiteTEST('T11','/cliente/estadoActivacion/eventos', {
       await actionCliente.actualizar(TEST.CLIENTE)
     },
 
-    after: async () => { 
-      MongoDB.disconnect()}, 
+    after: async () => MongoDB.disconnect(), 
     tests: () => {
       // Metodo POST=> activacionEvento/eventos
       IT.Get('T11A.0','GET: /cliente/estadoActivacion/eventos, sin OAG.', { useOption:'opt10', shouldHaveStatus: 400, listHeaders: []})

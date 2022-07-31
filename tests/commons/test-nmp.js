@@ -82,9 +82,3 @@ export const actionCliente = {
     await EstadoActivacionService.setEstadoActivacion(idCliente, 5)
   }
 }
-
-export const bloquearClienteSinEventos = async tag => {
-  log.debug(tag)
-  await EstadoActivacionService.setEstadoActivacion(TEST.CLIENTE, 5)
-  await EventosEstadoActivacionService.deleteEventos(TEST.CLIENTE)
-}

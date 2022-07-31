@@ -1,20 +1,17 @@
 /* eslint-disable prettier/prettier */
 import { TEST, MongoDB, CONTEXT, actionCliente } from './commons/test-nmp'
-import { SuiteTEST, IT } from './commons/test'
+import { SuiteTEST, IT } from './commons/testX'
 
 SuiteTEST('T01','cliente', { 
+    commonHeaders: TEST.LISTHEADER_OAG, 
+    commonRootUrl: `/${CONTEXT.NAME}/${CONTEXT.VERSION}`,
     listDefaultOption: {
-      opt10: { shouldHaveStatus: 201, url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente`,
-      listHeaders: TEST.LISTHEADER_OAG, query: { idCliente: TEST.CLIENTE },  body: TEST.CLIENTE_BODY },
-
-      opt20: { shouldHaveStatus: 200, url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente`,
-      listHeaders: TEST.LISTHEADER_OAG, query: { idCliente: TEST.CLIENTE }},
-
-      opt30: { shouldHaveStatus: 201, url: `/${CONTEXT.NAME}/${CONTEXT.VERSION}/cliente`,
-      listHeaders: TEST.LISTHEADER_OAG, query: { idCliente: TEST.CLIENTE }},
+      opt10: { shouldHaveStatus: 201, url: `/cliente`, query: { idCliente: TEST.CLIENTE },  body: TEST.CLIENTE_BODY },
+      opt20: { shouldHaveStatus: 200, url: `/cliente`, query: { idCliente: TEST.CLIENTE }},
     },
     listDefaultSub: {
-      before0: { title: 'Reiniciar Cliente', sub: () => actionCliente.reiniciar(TEST.CLIENTE)}
+      before0: { title: 'Reiniciar Cliente', sub: () => actionCliente.reiniciar(TEST.CLIENTE)},
+      before1: { title: 'Eliminar Cliente', sub: () => actionCliente.eliminar(TEST.CLIENTE)}
     }
   }, { // callbakcs
     before: async () => { 
@@ -23,19 +20,19 @@ SuiteTEST('T01','cliente', {
     },
     after: async () => MongoDB.disconnect(), 
     tests: () => {
-      // Metodo GET => postCliente
-      IT.Post('T01A.0','setCliente, sin OAG.', { useOption:'opt10', runSubs: '', shouldHaveStatus: 400, listHeaders: [] })
-      IT.Post('T01A.1','setCliente, cuando el cliente NO EXISTE.')
-      IT.Post('T01A.2','setCliente, cuando el cliente SI EXISTE.')
+      // HAPPY PATH
+      IT.PostX('T01A1','opt10','set:/cliente, cuando el cliente NO EXISTE.')
+      IT.PostX('T01A2','opt10','set:/cliente, cuando el cliente SI EXISTE.')
+      IT.GetX('T01A3','opt20', 'get:/cliente, cuando el cliente SI EXISTE.')
+      IT.DeleteX('T01A4','opt20:201','delete/cliente, cuando el cliente SI EXISTE.')
 
-      // Metodo GET => getCliente
-      IT.Get('T01B.0','getCliente, sin OAG.', { useOption:'opt20', shouldHaveStatus: 400, listHeaders: []})
-      IT.Get('T01B.1','getCliente, cuando el cliente SI EXISTE.')
-      IT.Get('T01B.2','getCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404, query: { idCliente: TEST.CLIENTE_NO_EXISTE } })
-      IT.Get('T01B.3','getCliente, cuando no especifico el idCliente o un parametro no valido.', { shouldHaveStatus: 400, query: { Cliente: TEST.CLIENTE } })
-      
-      // Metodo POST => remover cliente
-      IT.Delete('T01C.0','deleteCliente, sin OAG.', { useOption:'opt30', shouldHaveStatus: 400, listHeaders: []})
-      IT.Delete('T01C.1','deleteCliente, cuando el cliente SI EXISTE.')
-      IT.Delete('T01C.2','deleteCliente, cuando el cliente NO EXISTE.', { shouldHaveStatus: 404 })
+      // Excepciones de Validaciones
+      IT.PostX('T01E0','opt10:400','set:cliente, sin OAG.', { listHeaders: [] })
+      IT.GetX('T01E0','opt20:400', 'get:/cliente, sin OAG.', { listHeaders: []})
+      IT.DeleteX('T01E0','opt20:400','delete:/cliente, sin OAG.', { listHeaders: []})
+      IT.GetX('T01E1','opt20:400', 'get:/cliente, con nombre de parametro incorrecto.', { query: { Cliente: TEST.CLIENTE } })
+
+      // // Excepciones cuando el cliente no existe
+      IT.GetX('T01B2','opt20:404', 'get:/cliente, cuando el cliente NO EXISTE.', { })
+      IT.DeleteX('T01C2','opt20:404','delete:/cliente, cuando el cliente NO EXISTE.', { })
 }})
