@@ -10,22 +10,11 @@ export class ValidationHeaderException {
   }
 }
 
-export class ValidationBodyException {
+export class ValidationException {
   constructor(message) {
-    this.name = 'Body Validation'
+    this.name = 'Shema Validation'
     this.statusCode = 400
-    this.exceptionCode = 40002
-    this.message = message.message
-    this.mergeVariables = null
-    this.stack = null
-  }
-}
-
-export class ValidationQueryException {
-  constructor(message) {
-    this.name = 'Query Validation'
-    this.statusCode = 400
-    this.exceptionCode = 40003
+    this.exceptionCode = message.exceptionCode
     this.message = message.message
     this.mergeVariables = null
     this.stack = null

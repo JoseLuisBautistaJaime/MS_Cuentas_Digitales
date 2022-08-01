@@ -1,21 +1,24 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
+import { isEmpty } from 'lodash'
 import { log } from './log'
-import { validateBody, validateHeaderOAG, validateQuery, validateSchemaEMPTY } from './validations'
+import { validateParams, validateBody, validateHeaderOAG, validateQuery, validateSchemaEMPTY } from './validations'
 
-const Iniciando = async (req, tagName, evalOAG, validationQuerySchema, validationBodySchema) => {
+const Iniciando = async (req, tagName, evalOAG, paramsSchema, querySchema, bodySchema) => {
   log.info('')
   log.info('\x1b[36m*******************************************************************\x1b[0m')
   log.info(`\x1b[36m*** CTRL: Iniciando Método\x1b[0m ${tagName}\x1b[36m.\x1b[0m`)
-  if (req.header('testDesc')) log.info(`\x1b[36m*** TestTag:\x1b[0m ${req.header('testTitle')}`)
+  if (req.header('testDesc')) log.info(`\x1b[36m*** TestTag:\x1b[0m ${req.header('testDesc')}`)
   log.info('\x1b[36m-------------------------------------------------------------------\x1b[0m')
-  log.info(`\x1b[36m-- Request.Query:\x1b[0m ${JSON.stringify(req.query)}`)
-  log.info(`\x1b[36m-- Request.BODY:\x1b[0m ${JSON.stringify(req.body)}`)
+  if (!isEmpty(req.params)) log.info(`\x1b[36m-- Request.params:\x1b[0m ${JSON.stringify(req.params)}`)
+  if (!isEmpty(req.query)) log.info(`\x1b[36m-- Request.query:\x1b[0m ${JSON.stringify(req.query)}`)
+  if (!isEmpty(req.body)) log.info(`\x1b[36m-- Request.body:\x1b[0m ${JSON.stringify(req.body)}`)
   log.info('\x1b[36m-------------------------------------------------------------------\x1b[0m')
   if (evalOAG) await validateHeaderOAG(req)
-  validateQuery(req.query, validationQuerySchema)
-  validateBody(req.body, validationBodySchema)
+  validateParams(req.params, paramsSchema)
+  validateQuery(req.query, querySchema)
+  validateBody(req.body, bodySchema)
 }
 
 const Terminando = async (nameMethod, responseStatusCode, res, toReturn) => {
@@ -52,11 +55,14 @@ const CatchError = async (nameMethod, res, err) => {
   return res.status(statusCode).send(err)
 }
 
-export async function invokeController(nameMethod, responseStatusCode, req, res, validationQuerySchema, validationBodySchema, callback) {
+export async function invokeController(nameMethod, responseStatusCode, req, res, validationSchemas, callback) {
   try {
-    if (validationQuerySchema === undefined || (validationQuerySchema === undefined) === null) validationQuerySchema = validateSchemaEMPTY
-    if (validationBodySchema === undefined || (validationBodySchema === undefined) === null) validationBodySchema = validateSchemaEMPTY
-    await Iniciando(req, nameMethod, true, validationQuerySchema, validationBodySchema)
+    let { paramsSchema, querySchema, bodySchema } = validationSchemas
+    if (paramsSchema === undefined) paramsSchema = validateSchemaEMPTY
+    if (querySchema === undefined) querySchema = validateSchemaEMPTY
+    if (bodySchema === undefined) bodySchema = validateSchemaEMPTY
+
+    await Iniciando(req, nameMethod, true, paramsSchema, querySchema, bodySchema)
     const toReturn = await callback(req, res)
     return Terminando(nameMethod, responseStatusCode, res, toReturn)
   } catch (err) {

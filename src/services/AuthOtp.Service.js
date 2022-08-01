@@ -98,8 +98,6 @@ const enviarOtp = async (idCliente, bodySchemaEnviarOtp, req) => {
 const verificarOtp = async (idCliente, bodySchemaEnviarOtp, req) => {
   log.info('SERV: Iniciando verificarOtp method')
   const { codigoOtp } = bodySchemaEnviarOtp
-  let { enviarEmail } = bodySchemaEnviarOtp
-  if (enviarEmail === undefined) enviarEmail = true
 
   // evaluacion si existe o se requiere de establecer algun bloqueo por algun abuso
   /** EVALUACION DE QUE EXISTA EL CLIENTE */
@@ -136,7 +134,7 @@ const verificarOtp = async (idCliente, bodySchemaEnviarOtp, req) => {
   if (toReturn.esValidoOtp === true) {
     await EstadoActivacionService.setEstadoActivacion(idCliente, 4)
   }
-  if (toReturn.esValidoOtp && enviarEmail) await ComunicacionesService.enviarActivacionEMAIL(req, cliente)
+  if (toReturn.esValidoOtp) await ComunicacionesService.enviarActivacionEMAIL(req, cliente)
   return toReturn
 }
 

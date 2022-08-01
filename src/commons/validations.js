@@ -1,6 +1,12 @@
 import { Validator } from 'jsonschema'
 import { HEADER_AUTHORIZATION, HEADER_ID_CONSUMIDOR, HEADER_ID_DESTINO, HEADER_OAUTH, HEADER_USUARIO } from '../constants/constants'
-import { ValidationHeaderException, ValidationQueryException, ValidationBodyException } from './exceptions'
+import {
+  ValidationException,
+  ValidationHeaderException,
+  ValidationQueryException,
+  ValidationBodyException,
+  ValidationParamsException
+} from './exceptions'
 
 const NO_TIPO = 'is not of a type(s)'
 const NO_TIPO_NEW = 'no es de tipo'
@@ -36,21 +42,33 @@ const validate_getMessages = errors => {
   return errorsFinal
 }
 
-export const validateBody = (body, validationBodySchema) => {
+export const validateSchema = (data, validationSchema, typeSchema, exceptionCode) => {
   const VALIDATOR = new Validator()
-  const validationErrors = VALIDATOR.validate(body, validationBodySchema)
+  const validationErrors = VALIDATOR.validate(data, validationSchema)
   if (!validationErrors.errors.length) return
-  const messageErrors = validate_getMessages(validationErrors.errors)
-  throw new ValidationBodyException({ message: messageErrors })
+  const messageErrors = `${typeSchema}-${validate_getMessages(validationErrors.errors)}`
+  throw new ValidationException({ exceptionCode, message: messageErrors })
 }
 
-export const validateQuery = (query, validationQuerySchema) => {
-  const VALIDATOR = new Validator()
-  const validationErrors = VALIDATOR.validate(query, validationQuerySchema)
-  if (!validationErrors.errors.length) return
-  const messageErrors = validate_getMessages(validationErrors.errors)
-  throw new ValidationQueryException({ message: messageErrors })
-}
+// export const validateParams = (query, validationQuerySchema) => {
+//   const VALIDATOR = new Validator()
+//   const validationErrors = VALIDATOR.validate(query, validationQuerySchema)
+//   if (!validationErrors.errors.length) return
+//   const messageErrors = validate_getMessages(validationErrors.errors)
+//   throw new ValidationParamsException({ message: messageErrors })
+// }
+
+export const validateBody = (data, validationSchema) => validateSchema(data, validationSchema, 'body', 40002)
+export const validateQuery = (data, validationSchema) => validateSchema(data, validationSchema, 'query', 40003)
+export const validateParams = (data, validationSchema) => validateSchema(data, validationSchema, 'params', 40004)
+
+// export const validateQuery = (query, validationQuerySchema) => {
+//   const VALIDATOR = new Validator()
+//   const validationErrors = VALIDATOR.validate(query, validationQuerySchema)
+//   if (!validationErrors.errors.length) return
+//   const messageErrors = validate_getMessages(validationErrors.errors)
+//   throw new ValidationQueryException({ message: messageErrors })
+// }
 
 export const validateHeader = async (req, header) => {
   if (!req.header(header)) {

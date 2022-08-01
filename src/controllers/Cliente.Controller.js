@@ -2,7 +2,7 @@
 import { ClienteService } from '../services/Cliente.Service'
 import { invokeController } from '../commons/invokeController'
 
-const validationBodySchemaCliente = {properties: { 
+const bodySchemaCliente = {properties: { 
     idDevice: { type: 'string',  required: true },
     tarjetaMonte: { type: 'string', required: true },
     nombreCliente: { type: 'string', required: true },
@@ -12,21 +12,21 @@ const validationBodySchemaCliente = {properties: {
     correoCliente : { type: 'string', required: false }
   }, additionalProperties : false}
   
-const validationQuerySchemaCliente = { properties: { 
+const paramsSchemaCliente = { properties: { 
     idCliente: { type: 'string', required: true },
   }, additionalProperties : false}
 
 const setCliente = async (req, res) => invokeController('setCliente', 201, req, res, 
-validationQuerySchemaCliente, validationBodySchemaCliente, 
-  async reqX => ClienteService.setCliente(reqX.query.idCliente,reqX.body))
+  {paramsSchema : paramsSchemaCliente, bodySchema : bodySchemaCliente },
+  async reqX => ClienteService.setCliente(reqX.params.idCliente,reqX.body))
 
 const getCliente = async (req, res) => invokeController('getCliente', 200, req, res, 
-  validationQuerySchemaCliente, undefined, 
-  async reqX => ClienteService.getCliente(reqX.query.idCliente))
+  {paramsSchema : paramsSchemaCliente},
+  async reqX => ClienteService.getCliente(reqX.params.idCliente))
 
 const deleteCliente = async (req, res) => invokeController('deleteCliente', 201, req, res, 
-  validationQuerySchemaCliente, undefined, 
-  async reqX => ClienteService.deleteCliente(reqX.query.idCliente))
+  {paramsSchema : paramsSchemaCliente},
+  async reqX => ClienteService.deleteCliente(reqX.params.idCliente))
 
 export const ClienteController = {
   getCliente,

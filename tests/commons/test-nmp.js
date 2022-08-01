@@ -8,6 +8,8 @@ import { EventosEstadoActivacionService } from '../../src/services/EventosEstado
 import { EstadoActivacionService } from '../../src/services/EstadoActivacion.Service'
 import { CONTEXT_NAME, CONTEXT_VERSION, ACTIVACION_BLOQUEO_REINTENTOS, URL_API_COMUNICACIONES } from '../../src/constants/constants'
 
+export const filterbySuiteTest = 'T21'
+export const filterbyTest = ''
 // SECCION 1. CONSTAONTES DE CONTEXTO
 export const CONTEXT = {
   NAME: CONTEXT_NAME,

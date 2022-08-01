@@ -15,12 +15,6 @@ export function convertirEstadoActivacionNombre(estadoActivacion) {
   let result
   const strStatusActivacion = String(estadoActivacion)
   switch (strStatusActivacion) {
-    case '1':
-      result = 'NoExisteCliente_Activacion'
-      break
-    case '2':
-      result = 'Prospecto_Activacion'
-      break
     case '3':
       result = 'OtpGenerado_Activacion'
       break
@@ -31,6 +25,7 @@ export function convertirEstadoActivacionNombre(estadoActivacion) {
       result = 'Bloqueado_Activacion'
       break
     default:
+      result = 'Prospecto_Activacion'
   }
   return result
 }
@@ -44,19 +39,7 @@ export function convertirEstadoActivacionNombre(estadoActivacion) {
 async function setEstadoActivacion(idCliente, activacion) {
   log.info('DAO: Iniciando setEstadoActivacion')
   log.debug(`EstadoActivacionDAO.setEstadoActivacion ${activacion}`)
-  const result = await Cliente.findOneAndUpdate(
-    {
-      idCliente
-    },
-    {
-      $set: {
-        activacion
-      }
-    },
-    {
-      new: true
-    }
-  )
+  const result = await Cliente.findOneAndUpdate({ idCliente }, { $set: { activacion } }, { new: true })
   log.debugJSON('idCliente', idCliente)
   await EventosEstadoActivacionDAO.agregarEvento(activacion)
   log.info('DAO: Terminando setEstadoActivacion')
@@ -71,12 +54,9 @@ async function setEstadoActivacion(idCliente, activacion) {
 async function getEstadoActivacion(idCliente) {
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
   let activacion = {}
-  if (cliente === null || cliente === undefined) {
-    activacion.estadoActivacion = 1
-  } else {
-    activacion = cliente.activacion
-    activacion.estadoActivacion = cliente.activacion.estadoActivacion
-  }
+  activacion = cliente.activacion
+  activacion.estadoActivacion = cliente.activacion.estadoActivacion
+
   activacion.estadoActivacionNombre = `${convertirEstadoActivacionNombre(activacion.estadoActivacion)} ${idCliente}`
   return activacion
 }

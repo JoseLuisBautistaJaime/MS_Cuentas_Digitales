@@ -6,17 +6,15 @@ import { EventosEstadoActivacionController } from '../controllers/EventosEstadoA
 
 const router = express.Router()
 
-router.route('/cliente').post(ClienteController.setCliente)
-router.route('/cliente').get(ClienteController.getCliente)
-router.route('/cliente').delete(ClienteController.deleteCliente)
+router.route('/cliente/:idCliente').post(ClienteController.setCliente)
+router.route('/cliente/:idCliente').get(ClienteController.getCliente)
+router.route('/cliente/:idCliente').delete(ClienteController.deleteCliente)
 
-router.route('/cliente/estadoActivacion').get(EstadoActivacionController.getEstadoActivacion)
-router.route('/cliente/estadoActivacion').post(EstadoActivacionController.setEstadoActivacion)
-router.route('/cliente/estadoActivacion/eventos').get(EventosEstadoActivacionController.getEventos)
-router.route('/cliente/estadoActivacion/eventos').delete(EventosEstadoActivacionController.deleteEventos)
+router.route('/cliente/:idCliente/estadoActivacion').get(EstadoActivacionController.getEstadoActivacion)
+router.route('/cliente/:idCliente/estadoActivacion').post(EstadoActivacionController.setEstadoActivacion)
+router.route('/cliente/:idCliente/estadoActivacion/eventos').get(EventosEstadoActivacionController.getEventos)
+router.route('/cliente/:idCliente/estadoActivacion/eventos').delete(EventosEstadoActivacionController.deleteEventos)
 
-router.route('/cliente/enviarOtp').post(AuthOtpController.enviarOtp)
-router.route('/cliente/verificarOtp').post(AuthOtpController.verificarOtp)
-
-
+router.route('/cliente/:idCliente/enviarOtp').post(AuthOtpController.enviarOtp)
+router.route('/cliente/:idCliente/verificarOtp').post(AuthOtpController.verificarOtp)
 export default router

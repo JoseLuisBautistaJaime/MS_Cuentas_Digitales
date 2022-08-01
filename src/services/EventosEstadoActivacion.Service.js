@@ -15,8 +15,11 @@ async function getEventos(idCliente, estadoActivacion, soloContar) {
 }
 
 async function deleteEventos(idCliente, estadoActivacion) {
+  log.info(`SERV: Iniciando EventosEstadoActivacionService.getEventos`)
+  const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
   await EventosEstadoActivacionDAO.deleteEventos(idCliente, estadoActivacion)
-  log.debug(`EventosEstadoActivacionService.deleteEventos`)
+  log.info(`SERV: Terminando EventosEstadoActivacionService.deleteEventos`)
 }
 
 export const EventosEstadoActivacionService = {

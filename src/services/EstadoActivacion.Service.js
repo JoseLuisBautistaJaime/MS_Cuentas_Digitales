@@ -33,6 +33,8 @@ const unixTimeStamp = (fecha, addSeconds) => toInteger(fecha.getTime() / 1000, 1
 // ** Inicio: getEstadoActivacion
 async function getEstadoActivacion(idCliente) {
   log.info('SERV: Iniciando getEstadoActivacion')
+  const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
 
   const activacion = await EstadoActivacionDAO.getEstadoActivacion(idCliente)
 
@@ -45,7 +47,7 @@ async function getEstadoActivacion(idCliente) {
   toReturn.estadoActivacionNombre = activacion.estadoActivacionNombre
 
   //  Conversion de valores especializados
-  if (toReturn.estadoActivacion >= 2) toReturn.ultimaActualizacion = activacion.ultimaActualizacion
+  toReturn.ultimaActualizacion = activacion.ultimaActualizacion
   if (toReturn.estadoActivacion === 5) {
     toReturn.expiraBloqueo = unixTimeStamp(toReturn.ultimaActualizacion, ACTIVACION_EVENTOS_TIMETOLIVE)
     toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
