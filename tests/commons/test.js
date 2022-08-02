@@ -135,7 +135,7 @@ export const itREQUEST = (method, keyTest, keyOption, testTitle, options, callba
   })
 }
 export const IT = {
-  PostX: async (keyTest, keyOption, testTitle, options, callbacks) => itREQUEST('post', keyTest, keyOption, testTitle, options, callbacks),
-  GetX: async (keyTest, keyOption, testTitle, options, callbacks) => itREQUEST('get', keyTest, keyOption, testTitle, options, callbacks),
-  DeleteX: async (keyTest, keyOption, testTitle, options, callbacks) => itREQUEST('delete', keyTest, keyOption, testTitle, options, callbacks)
+  Post: async (keyTest, keyOption, testTitle, options, callbacks) => itREQUEST('post', keyTest, keyOption, testTitle, options, callbacks),
+  Get: async (keyTest, keyOption, testTitle, options, callbacks) => itREQUEST('get', keyTest, keyOption, testTitle, options, callbacks),
+  Delete: async (keyTest, keyOption, testTitle, options, callbacks) => itREQUEST('delete', keyTest, keyOption, testTitle, options, callbacks)
 }
