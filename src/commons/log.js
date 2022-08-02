@@ -22,7 +22,7 @@ export const LOG = log4JS.getLogger('cuentasdigitales')
 LOG.level = 'debug'
 
 const genMessage = (message, _json, colorStyle) => {
-  if (typeof _json === 'undefined') {
+  if (_json === undefined) {
     LOG.mark(`${colorStyle}${message}\x1b[0m`)
   } else {
     LOG.mark(`${colorStyle}${message}: ${JSON.stringify(_json)}\x1b[0m`)

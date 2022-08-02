@@ -3,6 +3,12 @@ import { log } from '../commons/log'
 import { clienteSchema } from '../models/cliente.model'
 import { ClienteDAO } from './Cliente.DAO'
 import { EventosEstadoActivacionDAO } from './EventosEstadoActivacion.DAO'
+import {
+  ESTADO_ACTIVACION_OTPGENERADO,
+  ESTADO_ACTIVACION_ACTIVADO,
+  ESTADO_ACTIVACION_BLOQUEADO,
+  ESTADO_ACTIVACION_ERROR
+} from '../constants/constants'
 
 const Cliente = Mongoose.model('cliente', clienteSchema)
 
@@ -12,22 +18,11 @@ const Cliente = Mongoose.model('cliente', clienteSchema)
  * @returns Nombre del estatus de activacion.
  */
 export function convertirEstadoActivacionNombre(estadoActivacion) {
-  let result
-  const strStatusActivacion = String(estadoActivacion)
-  switch (strStatusActivacion) {
-    case '3':
-      result = 'OtpGenerado_Activacion'
-      break
-    case '4':
-      result = 'Activado_Activacion'
-      break
-    case '5':
-      result = 'Bloqueado_Activacion'
-      break
-    default:
-      result = 'Prospecto_Activacion'
-  }
-  return result
+  if (estadoActivacion === ESTADO_ACTIVACION_OTPGENERADO) return 'OtpGenerado_Activacion'
+  if (estadoActivacion === ESTADO_ACTIVACION_ACTIVADO) return 'Activado_Activacion'
+  if (estadoActivacion === ESTADO_ACTIVACION_BLOQUEADO) return 'Bloqueado_Activacion'
+  if (estadoActivacion === ESTADO_ACTIVACION_ERROR) return 'Error_Activacion'
+  return 'Prospecto_Activacion'
 }
 
 /**
@@ -57,7 +52,7 @@ async function getEstadoActivacion(idCliente) {
   activacion = cliente.activacion
   activacion.estadoActivacion = cliente.activacion.estadoActivacion
 
-  activacion.estadoActivacionNombre = `${convertirEstadoActivacionNombre(activacion.estadoActivacion)} ${idCliente}`
+  activacion.estadoActivacionNombre = `${convertirEstadoActivacionNombre(activacion.estadoActivacion)}`
   return activacion
 }
 

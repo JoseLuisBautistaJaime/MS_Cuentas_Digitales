@@ -6,7 +6,7 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import chaiAsPromised from 'chai-as-promised'
-import { LOG, log } from '../../src/commons/log'
+import { log } from '../../src/commons/log'
 import app from '../../src/server'
 import { filterbySuiteTest, filterbyTest } from './test-constants'
 
@@ -32,7 +32,7 @@ export const XList = {
     return String(list).substring(indexPos + String(sep).length)
   },
   existItem: (list, itemFind, sep) => {
-    if (sep === undefined) sep =','
+    if (sep === undefined) sep = ','
     if (list === undefined || itemFind === undefined || list === '' || itemFind === '') return false
     while (true) {
       const cursorItem = XList.readFirst(list, sep)
@@ -124,12 +124,9 @@ export const itREQUEST = (method, keyTest, keyOption, testTitle, options, callba
       if (options.query !== undefined) testChai.query(options.query)
       if (callbacks !== undefined && callbacks.send !== undefined) options.body = callbacks.send()
       testChai.send(options.body)
-      log.reFatal('PASO#30')
       testChai.end((err, res) => {
-        log.reFatal('PASO#31')
         if (options.shouldHaveStatus !== undefined) res.should.have.status(options.shouldHaveStatus)
         if (callbacks !== undefined && callbacks.end !== undefined) {
-          log.reFatal('PASO#CABACKFATAL')
           callbacks.end(err, res)
         }
         done()

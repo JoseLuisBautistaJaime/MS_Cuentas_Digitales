@@ -1,6 +1,7 @@
 import Mongoose from 'mongoose'
 import { log } from '../commons/log'
 import { eventoEstadoActivacionSchema } from '../models/eventoEstadoActivacion.model'
+import { ESTADO_ACTIVACION_OTPGENERADO, ESTADO_ACTIVACION_ERROR } from '../constants/constants'
 
 const activacionEvento = Mongoose.model('ActivacionEvento', eventoEstadoActivacionSchema)
 
@@ -24,6 +25,16 @@ async function getEventos(idCliente, estadoActivacion) {
   return toReturn
 }
 
+async function getEventosForBloqueo(idCliente) {
+  log.info(`DAO: Iniciando EventosEstadoActivacionDAO.getEventosForBloqueo ${idCliente}`)
+  const filter = {
+    $and: [{ idCliente }, { $or: [{ estadoActivacion: ESTADO_ACTIVACION_OTPGENERADO }, { estadoActivacion: ESTADO_ACTIVACION_ERROR }] }]
+  }
+  const toReturn = await activacionEvento.find(filter)
+  log.info(`DAO: Terminando EventosEstadoActivacionDAO.getEventosForBloqueo`)
+  return toReturn
+}
+
 async function deleteEventos(idCliente, estadoActivacion) {
   log.info(`DAO: Iniciando EventosEstadoActivacionDAO.deleteEventos`)
   let filter
@@ -38,5 +49,6 @@ export const EventosEstadoActivacionDAO = {
   agregarEvento,
   agregarEventoError,
   getEventos,
+  getEventosForBloqueo,
   deleteEventos
 }

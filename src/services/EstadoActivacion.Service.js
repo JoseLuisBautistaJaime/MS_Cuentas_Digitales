@@ -2,7 +2,7 @@ import { toInteger } from 'lodash'
 import { log } from '../commons/log'
 import { EstadoActivacionDAO } from '../dao/EstadoActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { ACTIVACION_EVENTOS_TIMETOLIVE } from '../constants/constants'
+import { ACTIVACION_EVENTOS_TIMETOLIVE, ESTADO_ACTIVACION_OTPGENERADO, ESTADO_ACTIVACION_BLOQUEADO } from '../constants/constants'
 import { NotFoundCliente } from '../commons/exceptions'
 
 /**
@@ -48,11 +48,11 @@ async function getEstadoActivacion(idCliente) {
 
   //  Conversion de valores especializados
   toReturn.ultimaActualizacion = activacion.ultimaActualizacion
-  if (toReturn.estadoActivacion === 5) {
+  if (toReturn.estadoActivacion === ESTADO_ACTIVACION_BLOQUEADO) {
     toReturn.expiraBloqueo = unixTimeStamp(toReturn.ultimaActualizacion, ACTIVACION_EVENTOS_TIMETOLIVE)
     toReturn.expiraBloqueoISO = new Date(toReturn.expiraBloqueo * 1000).toISOString()
   }
-  if (toReturn.estadoActivacion === 3) toReturn.codigoOtp = activacion.codigoOtp
+  if (toReturn.estadoActivacion === ESTADO_ACTIVACION_OTPGENERADO) toReturn.codigoOtp = activacion.codigoOtp
   log.info(`SERV: Terminando getEstadoActivacion ${toReturn}`)
   return toReturn
 }

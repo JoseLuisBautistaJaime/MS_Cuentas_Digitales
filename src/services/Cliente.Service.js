@@ -14,7 +14,7 @@ const deleteCliente = async idCliente => {
   if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
   await ClienteDAO.remover(idCliente)
   log.info(`SERV: Terminando deleteCliente`)
-  return cliente
+  return { message: `El cliente (${cliente.idCliente}) ha sido eliminado.` }
 }
 
 /**
@@ -37,38 +37,22 @@ const getCliente = async idCliente => {
  */
 const setCliente = async (idCliente, body) => {
   log.info(`SERV: Iniciando setCliente ${idCliente}`)
-  let resultSave
-  const usuarioExist = await ClienteDAO.countIdCliente(idCliente)
-  log.debug(`usuarioExist ${usuarioExist}`)
-
-  if (usuarioExist === 0) {
-    const clienteToAdd = {
-      idCliente,
-      idDevice: body.idDevice,
-      tarjetaMonte: body.tarjetaMonte,
-      nombreCliente: body.nombreCliente,
-      apellidoPaterno: body.apellidoPaterno,
-      apellidoMaterno: body.apellidoMaterno,
-      correoCliente: body.correoCliente,
-      celularCliente: body.celularCliente
-    }
-    resultSave = await ClienteDAO.save(clienteToAdd)
-    await EstadoActivacionService.setEstadoActivacion(idCliente, 2)
-    log.debug(`setCliente-Cliente guardado ${idCliente}`)
-  } else {
-    const clienteUpdate = {
-      idCliente,
-      idDevice: body.idDevice,
-      tarjetaMonte: body.tarjetaMonte,
-      nombreCliente: body.nombreCliente,
-      apellidoPaterno: body.apellidoPaterno,
-      apellidoMaterno: body.apellidoMaterno,
-      correoCliente: body.correoCliente,
-      celularCliente: body.celularCliente
-    }
-    resultSave = await ClienteDAO.findOneAndUpdate(idCliente, clienteUpdate)
+  const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  const clienteToSave = {
+    idCliente,
+    idDevice: body.idDevice,
+    tarjetaMonte: body.tarjetaMonte,
+    nombreCliente: body.nombreCliente,
+    apellidoPaterno: body.apellidoPaterno,
+    apellidoMaterno: body.apellidoMaterno,
+    correoCliente: body.correoCliente,
+    celularCliente: body.celularCliente
   }
-  log.debug(`resultSave ${resultSave}`)
+  let resultSave
+  if (cliente === null) {
+    resultSave = await ClienteDAO.save(clienteToSave)
+    await EstadoActivacionService.setEstadoActivacion(idCliente, 2)
+  } else resultSave = await ClienteDAO.findOneAndUpdate(idCliente, clienteToSave)
   log.info('SERV: Terminando setCliente')
   return resultSave
 }

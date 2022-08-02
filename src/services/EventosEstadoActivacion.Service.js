@@ -14,6 +14,13 @@ async function getEventos(idCliente, estadoActivacion, soloContar) {
   return toReturn
 }
 
+async function countEventosForBloqueo(idCliente) {
+  log.info(`SERV: Iniciando EventosEstadoActivacionService.getEventosForBloqueo`)
+  const toReturn = await EventosEstadoActivacionDAO.getEventosForBloqueo(idCliente)
+  log.info(`SERV: Terminando EventosEstadoActivacionService.getEventosForBloqueo`)
+  return toReturn.length
+}
+
 async function deleteEventos(idCliente, estadoActivacion) {
   log.info(`SERV: Iniciando EventosEstadoActivacionService.getEventos`)
   const cliente = await ClienteDAO.findByIdCliente(idCliente)
@@ -24,5 +31,6 @@ async function deleteEventos(idCliente, estadoActivacion) {
 
 export const EventosEstadoActivacionService = {
   getEventos,
+  countEventosForBloqueo,
   deleteEventos
 }
