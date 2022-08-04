@@ -3,6 +3,7 @@ import { ClienteService } from '../services/Cliente.Service'
 import { invokeController } from '../commons/invokeController'
 
 const bodySchemaCliente = {properties: { 
+    idCliente: { type: 'string', required: true },
     idDevice: { type: 'string',  required: true },
     tarjetaMonte: { type: 'string', required: true },
     nombreCliente: { type: 'string', required: true },
@@ -11,27 +12,27 @@ const bodySchemaCliente = {properties: {
     celularCliente : { type: 'string', required: false },
     correoCliente : { type: 'string', required: false }
   }, additionalProperties : false}
-  
-const paramsSchemaCliente = { properties: { 
+
+const querySchemaCliente = { properties: { 
     idCliente: { type: 'string', required: true },
   }, additionalProperties : false}
 
-const setCliente = async (req, res) => invokeController('setCliente', 201, req, res, 
-  {paramsSchema : paramsSchemaCliente, bodySchema : bodySchemaCliente },
-  async reqX => ClienteService.setCliente(reqX.params.idCliente,reqX.body))
+const actualizarCliente = async (req, res) => invokeController('actualizarCliente', 201, req, res, 
+  { bodySchema : bodySchemaCliente },
+  async reqX => ClienteService.setCliente(reqX.body.idCliente,reqX.body))
 
-const getCliente = async (req, res) => invokeController('getCliente', 200, req, res, 
-  {paramsSchema : paramsSchemaCliente},
-  async reqX => ClienteService.getCliente(reqX.params.idCliente))
+const obtenerCliente = async (req, res) => invokeController('obtenerCliente', 200, req, res, 
+  { querySchema : querySchemaCliente },
+  async reqX => ClienteService.getCliente(reqX.query.idCliente))
 
-const deleteCliente = async (req, res) => invokeController('deleteCliente', 201, req, res, 
-  {paramsSchema : paramsSchemaCliente},
-  async reqX => ClienteService.deleteCliente(reqX.params.idCliente))
+const removerCliente = async (req, res) => invokeController('removerCliente', 201, req, res, 
+  { querySchema : querySchemaCliente },
+  async reqX => ClienteService.deleteCliente(reqX.query.idCliente))
 
 export const ClienteController = {
-  getCliente,
-  deleteCliente,
-  setCliente
+  obtenerCliente,
+  removerCliente,
+  actualizarCliente
 }
 export default ClienteController
 

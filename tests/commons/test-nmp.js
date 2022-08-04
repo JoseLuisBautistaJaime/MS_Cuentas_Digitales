@@ -42,6 +42,7 @@ export const TEST = {
   CLIENTE_PARA_REMOVER: '9995',
   CLIENTE_EXTRA: '8888',
   CLIENTE_BODY: {
+    idCliente: TEST_CLIENTE,
     idDevice: '74312734d5403d54',
     tarjetaMonte: '11111',
     nombreCliente: 'ricoff',

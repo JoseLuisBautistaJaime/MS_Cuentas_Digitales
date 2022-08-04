@@ -2,18 +2,27 @@
 import { EstadoActivacionService } from '../services/EstadoActivacion.Service'
 import { invokeController } from '../commons/invokeController'
 
-const paramsSchemaCliente = { properties: { idCliente: { type: 'string', required: true }}, additionalProperties : false}
-const bodySchemaEstadoActivacion = {properties: { estadoActivacion: { type: 'number',  required: true }}, additionalProperties : false}
 
-const getEstadoActivacion = async (req, res) => invokeController('getEstadoActivacion', 200, req, res, 
-  { paramsSchema : paramsSchemaCliente},
-  async reqX => EstadoActivacionService.getEstadoActivacion(reqX.params.idCliente))
+const querySchemaCliente = { properties: { 
+  idCliente: { type: 'string', required: true },
+}, additionalProperties : false }
 
-const setEstadoActivacion = async (req, res) => invokeController('setEstadoActivacion', 201, req, res, 
-  { paramsSchema : paramsSchemaCliente, bodySchema : bodySchemaEstadoActivacion },
-  async reqX => EstadoActivacionService.setEstadoActivacion(reqX.params.idCliente,reqX.body.estadoActivacion))
+const bodySchemaEstatusActivacion = {properties: { 
+  idCliente: { type: 'string', required: true },
+  estatusActivacion: { type: 'number',  required: true },
+}, additionalProperties : false}
+
+const obtenerEstatusActivacion = async (req, res) => invokeController(
+  'obtenerEstatusActivacion', 200, req, res,
+  { querySchema : querySchemaCliente },
+  async reqX => EstadoActivacionService.getEstadoActivacion(reqX.query.idCliente))
+
+const establecerEstatusActivacion = async (req, res) => invokeController(
+  'establecerEstatusActivacion', 201, req, res,
+  { bodySchema : bodySchemaEstatusActivacion },
+  async reqX => EstadoActivacionService.setEstadoActivacion(reqX.body.idCliente,reqX.body.estatusActivacion))
 
 export const EstadoActivacionController = {
-  getEstadoActivacion,
-  setEstadoActivacion
+  obtenerEstatusActivacion,
+  establecerEstatusActivacion
 }

@@ -2,18 +2,25 @@
 import { EventosEstadoActivacionService } from '../services/EventosEstadoActivacion.Service'
 import { invokeController } from '../commons/invokeController'
 
-const paramsSchemaCliente = { properties: { idCliente: { type: 'string', required: true }}, additionalProperties : false }
-const bodySchemaEstadoActivacion = { properties: { estadoActivacion: { type: 'number', required: false }}, additionalProperties : false }
+const querySchemaCliente = { properties: { 
+  idCliente: { type: 'string', required: true },
+}, additionalProperties : false }
 
-const getEventos = async (req, res) => invokeController('getEventos', 200, req, res, 
-  { paramsSchema : paramsSchemaCliente},
-  async reqX => EventosEstadoActivacionService.getEventos(reqX.params.idCliente))
+const bodySchemaEstatusActivacion = { properties: { 
+  estatusActivacion: { type: 'number', required: false },
+}, additionalProperties : false }
 
-const deleteEventos = async (req, res) => invokeController('deleteEventos', 201, req, res, 
-  { paramsSchema : paramsSchemaCliente, bodySchema : bodySchemaEstadoActivacion },
-  async reqX => EventosEstadoActivacionService.deleteEventos(reqX.params.idCliente, reqX.body.estadoActivacion))  
+const listarEventos = async (req, res) => invokeController('listarEventos', 200, req, res, 
+{ querySchema : querySchemaCliente },
+  async reqX => EventosEstadoActivacionService.getEventos(reqX.query.idCliente))
+
+const removerEventos = async (req, res) => invokeController('removerEventos', 201, req, res, 
+{ querySchema:querySchemaCliente, bodySchema : bodySchemaEstatusActivacion },
+  async reqX => EventosEstadoActivacionService.deleteEventos(reqX.query.idCliente,reqX.body.estatusActivacion))  
 
 export const EventosEstadoActivacionController = {
-  getEventos,
-  deleteEventos
+  listarEventos,
+  removerEventos
 }
+
+export default EventosEstadoActivacionController

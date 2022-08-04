@@ -9,8 +9,8 @@ SuiteTEST('T21','enviarOtp', {
   commonHeaders: TEST.LISTHEADER_OAG, 
   commonRootUrl: `/${CONTEXT.NAME}/${CONTEXT.VERSION}`,
     listDefaultOption: {
-      opt10: { shouldHaveStatus: 201, url: `/cliente/${TEST.CLIENTE}/enviarOtp`, body: { "modoEnvio": "email" }},
-      opt20: { shouldHaveStatus: 201, url: `/cliente/${TEST.CLIENTE}/verificarOtp`, body: { "codigoOtp": '0000' }}
+      opt10: { shouldHaveStatus: 201, url: `/enviarOtp`, body: { idCliente: TEST.CLIENTE, modoEnvio: 'email' }},
+      opt20: { shouldHaveStatus: 201, url: `/verificarOtp`, body: { idCliente: TEST.CLIENTE, codigoOtp: '0000' }}
     },
     listDefaultSub: {
       before0: { title: 'Reiniciar Cliente', sub: () => actionCliente.reiniciar(TEST.CLIENTE)},
@@ -27,20 +27,21 @@ SuiteTEST('T21','enviarOtp', {
     after: async () => MongoDB.disconnect(), 
     tests: () => {
       // HAPPY PATH
-      IT.Post('T21A0','opt10:201','Enviar OTP por SMS.', {  run: 'before1', body: { "modoEnvio": "sms" }}, { end: (err,res) => { codigoOtp = res.body.codigoOtp }})
-      IT.Post('T21A1','opt20:201','Verificar OTP, con OTP VALIDO. ', {run: 'before1'}, { send: () => { return { "codigoOtp": codigoOtp  } }})
+      IT.Post('T21A0','opt10:201','Enviar OTP por EMAIL.', {  run: 'before1', body: { idCliente: TEST.CLIENTE, modoEnvio: 'sms' }}, { end: (err,res) => { codigoOtp = res.body.codigoOtp }})
+      IT.Post('T21A0','opt10:201','Enviar OTP por EMAIL.', {  run: 'before1'}, { end: (err,res) => { codigoOtp = res.body.codigoOtp }})
+      IT.Post('T21A1','opt20:201','Verificar OTP, con OTP VALIDO. ', {run: 'before1'}, { send: () => { return {  idCliente: TEST.CLIENTE, "codigoOtp": codigoOtp  } }})
 
-      // POST-EnviarOTP
+      // // POST-EnviarOTP
       IT.Post('T21A0','opt10:400','Enviar OTP, SIN OAG.', { listHeaders: []})
-      IT.Post('T21A1','opt10:404','Enviar OTP, con cliente que NO EXISTE',{ url: `/cliente/${TEST.CLIENTE_NO_EXISTE}/enviarOtp` })
+      IT.Post('T21A1','opt10:404','Enviar OTP, con cliente que NO EXISTE',{ body: { idCliente: TEST.CLIENTE_NO_EXISTE, modoEnvio: 'email' } })
       IT.Post('T21A1','opt10:201','Enviar OTP por EMAIL.', { run: 'before1'})      
-      IT.Post('T21A3','opt10:400','Enviar OTP, sin definir modoEnvio', { body: { }})        
-      IT.Post('T21A4','opt10:400','Enviar OTP, con modoEnvio NO VALIDO', { body: { "modoEnvio": "fax" }})
+      IT.Post('T21A3','opt10:400','Enviar OTP, sin definir modoEnvio', { body: {idCliente: TEST.CLIENTE }})        
+      IT.Post('T21A4','opt10:400','Enviar OTP, con modoEnvio NO VALIDO', { body: { idCliente: TEST.CLIENTE, "modoEnvio": "fax" }})
       IT.Post('T21A5','opt10:500','Enviar OTP, con MS_COMUNICACIONES, fallando.', { run: 'before2' })
       
       // POST-Verificar OTP
       IT.Post('T21B0','opt20:400','Verificar OTP, sin OAG.', { listHeaders: [] })
-      IT.Post('T21B1','opt20:404','Verificar OTP, con cliente que NO EXISTE.', { url: `/cliente/${TEST.CLIENTE_NO_EXISTE}/verificarOtp` })
+      IT.Post('T21B1','opt20:404','Verificar OTP, con cliente que NO EXISTE.', { body: {  idCliente: TEST.CLIENTE_NO_EXISTE, "codigoOtp": codigoOtp  } })
       IT.Post('T21B2','opt20:201','Verificar OTP, con codigo INVALIDO.')
       IT.Post('T21B3','opt20:214','Verificar OTP, sin haber enviado OTP.', { run:'before0'})
 

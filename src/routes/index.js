@@ -1,3 +1,5 @@
+/* eslint-disable import/named */
+/* eslint-disable camelcase */
 import express from 'express'
 import { ClienteController } from '../controllers/Cliente.Controller'
 import { AuthOtpController } from '../controllers/AuthOtp.Controller'
@@ -6,15 +8,17 @@ import { EventosEstadoActivacionController } from '../controllers/EventosEstadoA
 
 const router = express.Router()
 
-router.route('/cliente/:idCliente').post(ClienteController.setCliente)
-router.route('/cliente/:idCliente').get(ClienteController.getCliente)
-router.route('/cliente/:idCliente').delete(ClienteController.deleteCliente)
+// v1
+router.route('/actualizarCliente').post(ClienteController.actualizarCliente)
+router.route('/obtenerCliente').get(ClienteController.obtenerCliente)
+router.route('/removerCliente').post(ClienteController.removerCliente)
 
-router.route('/cliente/:idCliente/estadoActivacion').get(EstadoActivacionController.getEstadoActivacion)
-router.route('/cliente/:idCliente/estadoActivacion').post(EstadoActivacionController.setEstadoActivacion)
-router.route('/cliente/:idCliente/estadoActivacion/eventos').get(EventosEstadoActivacionController.getEventos)
-router.route('/cliente/:idCliente/estadoActivacion/eventos').delete(EventosEstadoActivacionController.deleteEventos)
+router.route('/obtenerEstatusActivacion').get(EstadoActivacionController.obtenerEstatusActivacion)
+router.route('/establecerEstatusActivacion').post(EstadoActivacionController.establecerEstatusActivacion)
 
-router.route('/cliente/:idCliente/enviarOtp').post(AuthOtpController.enviarOtp)
-router.route('/cliente/:idCliente/verificarOtp').post(AuthOtpController.verificarOtp)
+router.route('/activacionEvento/eventos').get(EventosEstadoActivacionController.listarEventos)
+router.route('/activacionEvento/eventos').delete(EventosEstadoActivacionController.removerEventos)
+
+router.route('/enviarOtp').post(AuthOtpController.enviarOtp)
+router.route('/verificarOtp').post(AuthOtpController.verificarOtp)
 export default router
