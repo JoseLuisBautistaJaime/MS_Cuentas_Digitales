@@ -54,13 +54,14 @@ export class CuentaBloqueadaException {
   }
 }
 
-export class VerificarOtpError {
-  constructor() {
+  export class VerificarOtpError {
+  constructor(message) {
     this.name = 'Verificar Otp Error'
     this.statusCode = 214
-    this.exceptionCode = 21400
-    this.message = 'No existe o no se ha enviado un Codigo OTP al cliente'
+    this.exceptionCode = message.exceptionCode
+    this.message = message.message
     this.mergeVariables = null
     this.stack = null
   }
 }
+

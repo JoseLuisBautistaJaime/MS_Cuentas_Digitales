@@ -42,7 +42,7 @@ SuiteTEST('T21','enviarOtp', {
       // POST-Verificar OTP
       IT.Post('T21B0','opt20:400','Verificar OTP, sin OAG.', { listHeaders: [] })
       IT.Post('T21B1','opt20:404','Verificar OTP, con cliente que NO EXISTE.', { body: {  idCliente: TEST.CLIENTE_NO_EXISTE, "codigoOtp": codigoOtp  } })
-      IT.Post('T21B2','opt20:201','Verificar OTP, con codigo INVALIDO.')
+      IT.Post('T21B2','opt20:214','Verificar OTP, con codigo INVALIDO.')
       IT.Post('T21B3','opt20:214','Verificar OTP, sin haber enviado OTP.', { run:'before0'})
 
       // Excepciones con BLOQUEO

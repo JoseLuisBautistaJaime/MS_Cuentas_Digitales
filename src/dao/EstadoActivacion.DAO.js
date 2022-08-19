@@ -33,10 +33,7 @@ export function convertirEstadoActivacionNombre(estadoActivacion) {
  */
 async function setEstadoActivacion(idCliente, activacion) {
   log.info('DAO: Iniciando setEstadoActivacion')
-  log.debug(`EstadoActivacionDAO.setEstadoActivacion ${activacion}`)
   const result = await Cliente.findOneAndUpdate({ idCliente }, { $set: { activacion } }, { new: true })
-  log.debugJSON('idCliente', idCliente)
-  await EventosEstadoActivacionDAO.agregarEvento(activacion)
   log.info('DAO: Terminando setEstadoActivacion')
   return result
 }

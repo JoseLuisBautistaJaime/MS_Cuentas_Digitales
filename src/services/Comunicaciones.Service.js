@@ -42,20 +42,16 @@ const internalEnviarMensaje = async (req, bodyComunicaciones) => {
   log.info('SERV: Iniciando internalEnviarMensaje')
   try {
     const header = await createHeaderComunicaciones(req)
-    log.debugJSON('internalEnviarMensaje-header', header)
-    log.debugJSON('internalEnviarMensaje-body', bodyComunicaciones)
     const HttpComunicaciones = {
       url: `${URL_API_COMUNICACIONES}/solicitud/mensaje`,
       method: HttpMethod.POST,
       headers: header,
       body: bodyComunicaciones
     }
-    log.debugJSON('internalEnviarMensaje-HttpComunicaciones', HttpComunicaciones)
     const bodyResp = await HttpClientService.sendRequest(HttpComunicaciones)
     if (bodyResp.statusRequest !== 201) {
       throw new InternalServerError({ message: JSON.stringify(bodyResp), exceptionCode: 50002 })
     }
-    log.debugJSON('internalEnviarMensaje-bodyResp', bodyResp)
     log.info('SERV: Terminando internalEnviarEmail')
     return bodyResp
   } catch (err) {

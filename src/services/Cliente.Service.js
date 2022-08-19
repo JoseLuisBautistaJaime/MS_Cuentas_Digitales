@@ -2,6 +2,8 @@ import { log } from '../commons/log'
 import { ClienteDAO } from '../dao/Cliente.DAO'
 import { EstadoActivacionService } from './EstadoActivacion.Service'
 import { NotFoundCliente } from '../commons/exceptions'
+import { ESTADO_ACTIVACION_PROSPECTO } from '../constants/constants'
+
 
 /**
  * Obtiene el cliente con el idCliente especificado en los parametros del query.
@@ -48,13 +50,11 @@ const setCliente = async (idCliente, body) => {
     correoCliente: body.correoCliente,
     celularCliente: body.celularCliente
   }
-  let resultSave
   if (cliente === null) {
-    resultSave = await ClienteDAO.save(clienteToSave)
-    await EstadoActivacionService.setEstadoActivacion(idCliente, 2)
-  } else resultSave = await ClienteDAO.findOneAndUpdate(idCliente, clienteToSave)
+    await ClienteDAO.save(clienteToSave)
+    await EstadoActivacionService.setEstadoActivacion(idCliente, ESTADO_ACTIVACION_PROSPECTO)
+  } else await ClienteDAO.findOneAndUpdate(idCliente, clienteToSave)
   log.info('SERV: Terminando setCliente')
-  return resultSave
 }
 
 export const ClienteService = {
