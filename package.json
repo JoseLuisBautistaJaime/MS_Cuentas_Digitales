@@ -61,8 +61,7 @@
     "sonarqube-scanner": "^2.8.1",
     "stringstream": "^1.0.0",
     "swagger-jsdoc": "^6.2.1",
-    "swagger-ui-express": "^4.1.5",
-    "sync": "^0.2.5"
+    "swagger-ui-express": "^4.1.5"
   },
   "devDependencies": {
     "babel-loader": "^8.2.2",
