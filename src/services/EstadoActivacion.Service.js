@@ -1,32 +1,17 @@
 import { toInteger } from 'lodash'
 import { log } from '../commons/log'
 import { EstadoActivacionDAO } from '../dao/EstadoActivacion.DAO'
+import { EventosEstadoActivacionDAO } from '../dao/EventosEstadoActivacion.DAO'
 import { ClienteDAO } from '../dao/Cliente.DAO'
-import { ACTIVACION_EVENTOS_TIMETOLIVE, ESTADO_ACTIVACION_OTPGENERADO, ESTADO_ACTIVACION_BLOQUEADO } from '../constants/constants'
+import { EventosEstadoActivacionService } from './EventosEstadoActivacion.Service'
+import {
+  ACTIVACION_EVENTOS_TIMETOLIVE,
+  ESTADO_ACTIVACION_OTPGENERADO,
+  ESTADO_ACTIVACION_BLOQUEADO,
+  ESTADO_ACTIVACION_PROSPECTO,
+  ACTIVACION_BLOQUEO_REINTENTOS
+} from '../constants/constants'
 import { NotFoundCliente } from '../commons/exceptions'
-
-/**
- * SERV: Establece el estatus de actuvacion.
- * @param {*} idCliente el número idCliente.
- * @param {*} estadoActivacion El número del estatus de Activacion.
- */
-async function setEstadoActivacion(idCliente, estadoActivacion, codigoOtp) {
-  log.info('SERV: Iniciando setEstadoActivacion')
-  const cliente = await ClienteDAO.findByIdCliente(idCliente)
-  if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
-  const activacion = {
-    idCliente,
-    estadoActivacion,
-    estadoActivacionNombre: EstadoActivacionDAO.convertirEstadoActivacionNombre(estadoActivacion),
-    ultimaActualizacion: Date.now()
-  }
-  log.debug(`setEstadoActivacion: idCliente: ${idCliente} activacion: ${estadoActivacion}, codigoOtp: ${codigoOtp} `)
-  if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
-  await EstadoActivacionDAO.setEstadoActivacion(idCliente, activacion)
-  log.info('SERV: Terminando setEstadoActivacion')
-  // eslint-disable-next-line no-use-before-define
-  return getEstadoActivacion(idCliente)
-}
 
 const unixTimeStamp = (fecha, addSeconds) => toInteger(fecha.getTime() / 1000, 10) + toInteger(addSeconds)
 
@@ -57,7 +42,52 @@ async function getEstadoActivacion(idCliente) {
   return toReturn
 }
 
+/**
+ * SERV: Establece el estatus de actuvacion.
+ * @param {*} idCliente el número idCliente.
+ * @param {*} estadoActivacion El número del estatus de Activacion.
+ */
+async function setEstadoActivacion(idCliente, estadoActivacion, codigoOtp) {
+  log.info('SERV: Iniciando setEstadoActivacion')
+  const cliente = await ClienteDAO.findByIdCliente(idCliente)
+  if (cliente === null) throw new NotFoundCliente({ message: `No se encontro el cliente ${idCliente}.` })
+  const activacion = {
+    idCliente,
+    estadoActivacion,
+    estadoActivacionNombre: EstadoActivacionDAO.convertirEstadoActivacionNombre(estadoActivacion),
+    ultimaActualizacion: Date.now()
+  }
+  if (codigoOtp !== undefined) activacion.codigoOtp = codigoOtp
+  await EstadoActivacionDAO.setEstadoActivacion(idCliente, activacion)
+  await EventosEstadoActivacionDAO.agregarEvento(activacion)
+  log.info('SERV: Terminando setEstadoActivacion')
+}
+
+const getEstadoActivacionEvaluado = async idCliente => {
+  log.info('SERV: Iniciando AuthOtp.evaluarBloqueo')
+  // evaluando acciones
+  const eventosParaBloqueo = await EventosEstadoActivacionService.countEventosForBloqueo(idCliente)
+  const bloquearCliente = ACTIVACION_BLOQUEO_REINTENTOS - eventosParaBloqueo <= 0
+
+  // evaluacion del estatus actual y cambiar el estatus a bloquado cuando no lo este
+  let activacion = await getEstadoActivacion(idCliente)
+
+  // evalua el desbloqueo de cuenta..
+  if (!bloquearCliente && activacion.estadoActivacion === ESTADO_ACTIVACION_BLOQUEADO)
+    await setEstadoActivacion(idCliente, ESTADO_ACTIVACION_PROSPECTO)
+
+  // procedimientos cuando la cuenta necesita bloearse o se debe de encontrar debidamente bloqueada
+  if (bloquearCliente && activacion.estadoActivacion !== ESTADO_ACTIVACION_BLOQUEADO)
+    await setEstadoActivacion(idCliente, ESTADO_ACTIVACION_BLOQUEADO)
+
+  activacion = await getEstadoActivacion(idCliente)
+  // preparanto resultados a Retornar
+  log.info('SERV: Terminando AuthOtp.evaluarBloqueo')
+  return activacion
+}
+
 export const EstadoActivacionService = {
   getEstadoActivacion,
-  setEstadoActivacion
+  setEstadoActivacion,
+  getEstadoActivacionEvaluado
 }
